@@ -1,17 +1,7 @@
 import type { createSolidAPIHandlerContext } from "@solid-mediakit/trpc/handler";
 import { initTRPC } from "@trpc/server";
 import { db } from "../database/db";
-
-export const createContext = async (opts: createSolidAPIHandlerContext) => {
-	return { db, req: opts.req, res: opts.res };
-};
-
-export type Context = Awaited<ReturnType<typeof createContext>>;
-
-export const t = initTRPC.context<Context>().create();
-
-export const router = t.router;
-export const publicProcedure = t.procedure;
+import { publicProcedure, router } from "./utils/context";
 
 export const appRouter = router({
 	test: publicProcedure.query(() => {

@@ -1,6 +1,7 @@
 import type { APIEvent } from "@solidjs/start/server";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { appRouter, createContext } from "~/server/trpc/mainRouter";
+import { appRouter } from "~/server/trpc/mainRouter";
+import { createContext } from "~/server/trpc/utils/context";
 
 const handler = (event: APIEvent) =>
 	// adapts tRPC to fetch API style requests

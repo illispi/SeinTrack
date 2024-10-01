@@ -1,6 +1,6 @@
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
-import { Suspense } from "solid-js";
+import { ErrorBoundary, Suspense } from "solid-js";
 import Nav from "~/components/Nav";
 import "./app.css";
 import { QueryClientProvider } from "@tanstack/solid-query";
@@ -15,7 +15,7 @@ export default function App() {
 					<Suspense>
 						<QueryClientProvider client={queryClient}>
 							<trpc.Provider queryClient={queryClient}>
-								{props.children}
+								<Suspense>{props.children}</Suspense>
 							</trpc.Provider>
 						</QueryClientProvider>
 					</Suspense>
