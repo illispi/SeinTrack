@@ -1,6 +1,5 @@
-import { A } from "@solidjs/router";
 import { Suspense } from "solid-js";
-import Counter from "~/components/Counter";
+import ListMonth from "~/components/ListMonth";
 import { trpc } from "~/utils/trpc";
 
 export default function Home() {
@@ -10,6 +9,7 @@ export default function Home() {
 		<main class="text-center mx-auto text-gray-700 p-4">
 			<Suspense>
 				<div>{test.data?.message}</div>
+				<ListMonth month={4} year={2024} />
 			</Suspense>
 		</main>
 	);

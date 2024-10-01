@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+/* 
 :root {
   --background-rgb: 214, 219, 220;
   --foreground-rgb: 0, 0, 0;
@@ -17,4 +17,4 @@
 body {
   background: rgb(var(--background-rgb));
   color: rgb(var(--foreground-rgb));
-}
+} */
