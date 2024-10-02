@@ -7,34 +7,28 @@ const yearChange = (year: number, month: number, forward: boolean) => {
 	if (month === 0 && !forward) {
 		return { month: 11, year: year - 1 };
 	}
-	if (forward) {
-		return { month: month + 1, year };
-	}
-	return { month: month - 1, year };
+
+	return { month, year };
 };
 
 const dayAdjust = (month: number, year: number) => {
 	const adjustYearPos = yearChange(year, month, true);
 	const adjustYearNeg = yearChange(year, month, false);
 
-	const firstDay = new Date(year, month, 1).getDay();
-	const lastDayCurrent = new Date(new Date(year, month + 1, 1) - 1).getDay();
-	const lastDayPreviousMonth = new Date(new Date(year, month, 1) - 1).getDay();
+	const firstDay = new Date(year, month, 0).getDay();
+	const lastDayPreviousMonth = new Date(new Date(year, month, 1) - 1).getDate();
+
+	const DayAmountCur = new Date(new Date(year, month + 1, 1) - 1).getDate();
+	const lastDay = new Date(year, month, DayAmountCur).getDay();
 
 	const daysBehind = firstDay === 0 ? 6 : firstDay - 1;
-	const daysForward = firstDay === 0 ? 0 : 7 - firstDay;
+	const daysForward = lastDay === 0 ? 0 : 7 - lastDay + 1;
 
 	const daysArr = [];
 	for (let i = 0; i < daysBehind; i++) {
-		daysArr.push(
-			new Date(
-				adjustYearNeg.year,
-				adjustYearNeg.month,
-				lastDayPreviousMonth - i,
-			).getDate(),
-		);
+		daysArr.push(lastDayPreviousMonth - i);
 	}
-	for (let i = 0; i < lastDayCurrent; i++) {
+	for (let i = 0; i < DayAmountCur; i++) {
 		daysArr.push(new Date(year, month, i).getDate());
 	}
 	for (let i = 0; i < daysForward; i++) {
@@ -64,7 +58,7 @@ const daysInGrid = (year: number, month: number) => {
 const ListMonth: Component<{ month: number; year: number }> = (props) => {
 	return (
 		<div class="grid grid-cols-7 gap-4 max-w-5xl">
-			<For each={dayAdjust(props.year, props.month)}>
+			<For each={dayAdjust(props.month, props.year)}>
 				{(days, index) => <div>{days}</div>}
 			</For>
 		</div>

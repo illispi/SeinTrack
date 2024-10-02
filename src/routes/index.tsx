@@ -5,11 +5,13 @@ import { trpc } from "~/utils/trpc";
 export default function Home() {
 	const test = trpc.test.createQuery();
 
+	const date = new Date();
+
 	return (
 		<main class="text-center mx-auto text-gray-700 p-4">
 			<Suspense>
 				<div>{test.data?.message}</div>
-				<ListMonth month={4} year={2024} />
+				<ListMonth month={date.getMonth()} year={date.getFullYear()} />
 			</Suspense>
 		</main>
 	);
