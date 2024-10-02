@@ -11,7 +11,7 @@ export default function Home() {
 		<main class="text-center mx-auto text-gray-700 p-4">
 			<Suspense>
 				<div>{test.data?.message}</div>
-				<ListMonth month={date.getMonth()} year={date.getFullYear()} />
+				<ListMonth month={0} year={2025} />
 			</Suspense>
 		</main>
 	);

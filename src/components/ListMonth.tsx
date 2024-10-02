@@ -26,7 +26,7 @@ const dayAdjust = (month: number, year: number) => {
 
 	const daysArr = [];
 	for (let i = 0; i < daysBehind; i++) {
-		daysArr.push(lastDayPreviousMonth - i);
+		daysArr.push(lastDayPreviousMonth - daysBehind + i);
 	}
 	for (let i = 0; i < DayAmountCur; i++) {
 		daysArr.push(new Date(year, month, i).getDate());
