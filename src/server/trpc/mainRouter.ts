@@ -10,7 +10,6 @@ export const appRouter = router({
 		};
 	}),
 	getHoursOfDay: publicProcedure
-		// .input(v.parser(v.any()))
 		.input(v.parser(v.array(v.date())))
 		.query(async ({ input, ctx }) => {
 			const hoursArr = [];
@@ -30,6 +29,15 @@ export const appRouter = router({
 			}
 
 			return hoursArr;
+		}),
+	changeDayHours: publicProcedure
+		.input(v.parser(v.object({ date: v.date(), hours: v.number() })))
+		.mutation(async ({ input, ctx }) => {
+			const hours = await ctx.db
+				.updateTable("date")
+				.set({ hoursWorked: input.hours })
+				.where("date", "=", input.date)
+				.executeTakeFirst();
 		}),
 });
 
