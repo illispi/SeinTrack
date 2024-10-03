@@ -5,6 +5,7 @@ import { httpBatchLink } from "@trpc/client";
 import { getRequestEvent, isServer } from "solid-js/web";
 import { createTRPCSolidStart } from "@solid-mediakit/trpc";
 import type { IAppRouter } from "~/server/trpc/mainRouter";
+import superjson from "superjson";
 
 const getBaseUrl = () => {
 	//NOTE I removed this, but its in docs
@@ -17,6 +18,7 @@ export const trpc = createTRPCSolidStart<IAppRouter>({
 	config() {
 		// PageEvent of Solid-start
 		return {
+			transformer: superjson,
 			links: [
 				httpBatchLink({
 					url: `${getBaseUrl()}/api/trpc`,
