@@ -19,18 +19,12 @@ const adjustDateByOne = (year: number, month: number, forward: boolean) => {
 };
 
 export default function Home() {
-	const test = trpc.test.createQuery();
-
-	const [curMonth, setCurMonth] = createSignal(8);
-	const [curYear, setCurYear] = createSignal(2025);
-
-	// const [curMonth, setCurMonth] = createSignal(new Date().getMonth());
-	// const [curYear, setCurYear] = createSignal(new Date().getFullYear());
+	const [curMonth, setCurMonth] = createSignal(new Date().getMonth());
+	const [curYear, setCurYear] = createSignal(new Date().getFullYear());
 
 	return (
 		<main class="text-center mx-auto text-gray-700 p-4 flex items-center justify-start w-full">
 			<Suspense>
-				<div>{test.data?.message}</div>
 				<ListMonth month={curMonth()} year={curYear()} />
 				<Button
 					onClick={() => {
