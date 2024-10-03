@@ -1,4 +1,5 @@
 import { For, type Component } from "solid-js";
+import { isSunday, isTuesday } from "date-fns";
 
 const yearChange = (year: number, month: number, forward: boolean) => {
 	if (month === 11 && forward) {
@@ -15,51 +16,45 @@ const dayAdjust = (month: number, year: number) => {
 	const adjustYearPos = yearChange(year, month, true);
 	const adjustYearNeg = yearChange(year, month, false);
 
-	const firstDay = new Date(year, month, 0).getDay();
+	const firstDay = new Date(year, month, 1).getDay();
 	const lastDayPreviousMonth = new Date(new Date(year, month, 1) - 1).getDate();
 
 	const DayAmountCur = new Date(new Date(year, month + 1, 1) - 1).getDate();
-	const lastDay = new Date(year, month, DayAmountCur).getDay();
 
 	const daysBehind = firstDay === 0 ? 6 : firstDay - 1;
-	const daysForward = lastDay === 0 ? 0 : 7 - lastDay + 1;
 
 	const daysArr = [];
 	for (let i = 0; i < daysBehind; i++) {
 		daysArr.push(lastDayPreviousMonth - daysBehind + i);
 	}
 	for (let i = 0; i < DayAmountCur; i++) {
-		daysArr.push(new Date(year, month, i).getDate());
+		daysArr.push(new Date(year, month, i + 1).getDate());
 	}
+	const daysForward = 6 * 7 - daysArr.length;
 	for (let i = 0; i < daysForward; i++) {
 		daysArr.push(
-			new Date(adjustYearPos.year, adjustYearPos.month, i).getDate(),
+			new Date(adjustYearPos.year, adjustYearPos.month, i + 1).getDate(),
 		);
 	}
 
 	return daysArr;
 };
 
-const daysInGrid = (year: number, month: number) => {
-	const days = new Date(year, month, 0).getDate();
+const ListMonth: Component<{ month: number; year: number }> = (props) => {
 	const weekdays = [
-		"Sunday",
 		"Monday",
 		"Tuesday",
 		"Wednesday",
 		"Thursday",
 		"Friday",
 		"Saturday",
+		"Sunday",
 	];
-
-	return Array.from({ length: days }, (_, i) => i + 1);
-};
-
-const ListMonth: Component<{ month: number; year: number }> = (props) => {
 	return (
 		<div class="grid grid-cols-7 gap-4 max-w-5xl">
+			<For each={weekdays}>{(day) => <div>{day}</div>}</For>
 			<For each={dayAdjust(props.month, props.year)}>
-				{(days, index) => <div>{days}</div>}
+				{(date, index) => <div>{date}</div>}
 			</For>
 		</div>
 	);
