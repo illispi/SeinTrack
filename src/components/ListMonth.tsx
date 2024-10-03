@@ -69,7 +69,7 @@ const ListMonth: Component<{ month: number; year: number }> = (props) => {
 						<Suspense>
 							<Show when={hours.data}>
 								{(hours) => (
-									<Show when={hours()[index()]} fallback={"null"}>
+									<Show when={hours()[index()].hours} fallback={"null"}>
 										<Show
 											when={true}
 											fallback={

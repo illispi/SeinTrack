@@ -1,3 +1,4 @@
+import { A } from "@solidjs/router";
 import { createSignal, Suspense } from "solid-js";
 import ListMonth from "~/components/ListMonth";
 import { Button } from "~/components/ui/button";
@@ -26,6 +27,7 @@ export default function Home() {
 
 	return (
 		<main class="text-center mx-auto text-gray-700 p-4 flex flex-col items-center justify-start w-full gap-6 m-8">
+			<A href="/testing/test/">Testing</A>
 			<Suspense>
 				<ListMonth month={curMonth()} year={curYear()} />
 				<div class="flex justify-center items-center gap-8">
