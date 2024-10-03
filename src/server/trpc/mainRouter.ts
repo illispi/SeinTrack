@@ -11,8 +11,10 @@ export const appRouter = router({
 	}),
 	getHoursOfDay: publicProcedure
 		.input(v.parser(v.any()))
+		// .input(v.parser(v.array(v.date())))
 		.query(async ({ input, ctx }) => {
 			const hoursArr = [];
+
 			for (let index = 0; index < input.length; index++) {
 				const hours = await ctx.db
 					.selectFrom("date")

@@ -39,6 +39,7 @@ export const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
 			suspense: true,
+			experimental_prefetchInRender: true,
 		},
 	},
 });

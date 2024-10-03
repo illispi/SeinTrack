@@ -11,7 +11,7 @@ const test: Component = (props) => {
 		<div>
 			<Suspense>
 				<Show when={hours.data}>
-					<For each={hours.data}>{(dat) => dat}</For>
+					<For each={hours.data}>{(dat) => dat.date}</For>
 				</Show>
 			</Suspense>
 		</div>
