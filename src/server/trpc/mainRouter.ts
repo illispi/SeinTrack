@@ -16,9 +16,9 @@ export const appRouter = router({
 
 			for (let index = 0; index < input.length; index++) {
 				const hours = await ctx.db
-					.selectFrom("date")
+					.selectFrom("dateRows")
 					.select("hoursWorked")
-					.where("date", "=", input[index])
+					.where("dates", "=", input[index])
 					.executeTakeFirst();
 
 				if (!hours) {
@@ -34,9 +34,9 @@ export const appRouter = router({
 		.input(v.parser(v.object({ date: v.date(), hours: v.number() })))
 		.mutation(async ({ input, ctx }) => {
 			const hours = await ctx.db
-				.updateTable("date")
+				.updateTable("dateRows")
 				.set({ hoursWorked: input.hours })
-				.where("date", "=", input.date)
+				.where("dates", "=", input.date)
 				.executeTakeFirst();
 		}),
 });

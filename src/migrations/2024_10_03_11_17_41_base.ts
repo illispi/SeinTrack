@@ -3,13 +3,13 @@ import { sql } from "kysely";
 
 export async function up(db: Kysely<any>): Promise<void> {
 	await db.schema
-		.createTable("date")
+		.createTable("dateRows")
 		.addColumn("id", "serial", (col) => col.primaryKey())
 		.addColumn("hours_worked", "decimal")
-		.addColumn("date", "timestamp", (col) => col.defaultTo(null))
+		.addColumn("dates", "timestamp", (col) => col.defaultTo(null))
 		.execute();
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-	await db.schema.dropTable("date").ifExists().execute();
+	await db.schema.dropTable("dateRows").ifExists().execute();
 }
