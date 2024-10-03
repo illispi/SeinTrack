@@ -1,7 +1,8 @@
 import { createSignal, For, Show, Suspense, type Component } from "solid-js";
-import { isSunday, isTuesday } from "date-fns";
 import { trpc } from "~/utils/trpc";
 import clsx from "clsx";
+import { Button } from "./ui/button";
+import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
 
 const yearChange = (year: number, month: number, forward: boolean) => {
 	if (month === 11 && forward) {
@@ -58,10 +59,17 @@ const ListMonth: Component<{ month: number; year: number }> = (props) => {
 	];
 
 	const [selectedDate, setSelectedDate] = createSignal(new Date());
+	const [curHours, setCurHours] = createSignal(0);
+
+	const utils = trpc.useContext();
 
 	const hours = trpc.getHoursOfDay.createQuery(() =>
 		dayAdjust(props.month, props.year),
 	);
+
+	const changeHours = trpc.changeDayHours.createMutation(() => ({
+		onSuccess: () => utils.invalidate(),
+	}));
 	return (
 		<div class="grid grid-cols-7 gap-4 max-w-5xl">
 			<For each={weekdays}>{(day) => <div>{day}</div>}</For>
@@ -72,7 +80,7 @@ const ListMonth: Component<{ month: number; year: number }> = (props) => {
 						<Suspense fallback={<div class="w-full h-full" />}>
 							<Show when={hours.data}>
 								{(hours) => (
-									<button
+									<Button
 										class={clsx(
 											selectedDate() === hours()[index()].date
 												? "bg-green-500"
@@ -119,13 +127,33 @@ const ListMonth: Component<{ month: number; year: number }> = (props) => {
 												</svg>
 											</Show>
 										</Show>
-									</button>
+									</Button>
 								)}
 							</Show>
 						</Suspense>
 					</div>
 				)}
 			</For>
+			<TextField>
+				<TextFieldLabel for="email">Hours</TextFieldLabel>
+				<TextFieldInput
+					type="number"
+					onInput={(e) => {
+						setCurHours(e.target.value);
+					}}
+				/>
+			</TextField>
+			<Button
+				type="button"
+				onClick={() =>
+					changeHours.mutate({
+						date: selectedDate(),
+						hours: Number(curHours()),
+					})
+				}
+			>
+				Change hours
+			</Button>
 		</div>
 	);
 };
