@@ -10,22 +10,24 @@ export const appRouter = router({
 		};
 	}),
 	getHoursOfDay: publicProcedure
-		.input(v.parser(v.array(v.date())))
+		.input(v.parser(v.any()))
 		.query(async ({ input, ctx }) => {
+			const hoursArr = [];
 			for (let index = 0; index < input.length; index++) {
-				const hoursArr = [];
 				const hours = await ctx.db
 					.selectFrom("date")
 					.select("hoursWorked")
 					.where("date", "=", input[index])
 					.executeTakeFirst();
 
-				if (hours === undefined) {
-					hoursArr.push(null);
+				if (!hours) {
+					hoursArr.push({ date: input[index], hours: null });
 				} else {
-					hoursArr.push(hours.hoursWorked);
+					hoursArr.push({ date: input[index], hours: null });
 				}
 			}
+
+			return hoursArr;
 		}),
 });
 

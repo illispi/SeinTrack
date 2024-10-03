@@ -1,5 +1,6 @@
-import { For, Show, type Component } from "solid-js";
+import { For, Show, Suspense, type Component } from "solid-js";
 import { isSunday, isTuesday } from "date-fns";
+import { trpc } from "~/utils/trpc";
 
 const yearChange = (year: number, month: number, forward: boolean) => {
 	if (month === 11 && forward) {
@@ -12,7 +13,7 @@ const yearChange = (year: number, month: number, forward: boolean) => {
 	return { month, year };
 };
 
-const dayAdjust = (month: number, year: number) => {
+export const dayAdjust = (month: number, year: number) => {
 	const adjustYearPos = yearChange(year, month, true);
 	const adjustYearNeg = yearChange(year, month, false);
 
@@ -54,51 +55,61 @@ const ListMonth: Component<{ month: number; year: number }> = (props) => {
 		"Saturday",
 		"Sunday",
 	];
+
+	const hours = trpc.getHoursOfDay.createQuery(() =>
+		dayAdjust(props.month, props.year),
+	);
 	return (
 		<div class="grid grid-cols-7 gap-4 max-w-5xl">
 			<For each={weekdays}>{(day) => <div>{day}</div>}</For>
 			<For each={dayAdjust(props.month, props.year)}>
-				{(date) => (
+				{(date, index) => (
 					<div class="flex flex-col justify-start items-center">
 						<h5>{date.getDate()}</h5>
-						<Show when={true} fallback={""}>
-							<Show
-								when={true}
-								fallback={
-									<svg
-										fill="currentColor"
-										stroke-width="0"
-										xmlns="http://www.w3.org/2000/svg"
-										viewBox="0 0 16 16"
-										height="1em"
-										width="1em"
-										style="overflow: visible; color: currentcolor;"
-									>
-										<title>Failed</title>
-										<path
-											fill="currentColor"
-											d="M15.854 12.854 11 8l4.854-4.854a.503.503 0 0 0 0-.707L13.561.146a.499.499 0 0 0-.707 0L8 5 3.146.146a.5.5 0 0 0-.707 0L.146 2.439a.499.499 0 0 0 0 .707L5 8 .146 12.854a.5.5 0 0 0 0 .707l2.293 2.293a.499.499 0 0 0 .707 0L8 11l4.854 4.854a.5.5 0 0 0 .707 0l2.293-2.293a.499.499 0 0 0 0-.707z"
-										/>
-									</svg>
-								}
-							>
-								<svg
-									fill="currentColor"
-									stroke-width="0"
-									xmlns="http://www.w3.org/2000/svg"
-									viewBox="0 0 16 16"
-									height="1em"
-									width="1em"
-									style="overflow: visible; color: currentcolor;"
-								>
-									<title>checkmark</title>
-									<path
-										fill="currentColor"
-										d="M13.5 2 6 9.5 2.5 6 0 8.5l6 6 10-10z"
-									/>
-								</svg>
+						<Suspense>
+							<Show when={hours.data}>
+								{(hours) => (
+									<Show when={hours()[index()]} fallback={"null"}>
+										<Show
+											when={true}
+											fallback={
+												<svg
+													fill="currentColor"
+													stroke-width="0"
+													xmlns="http://www.w3.org/2000/svg"
+													viewBox="0 0 16 16"
+													height="1em"
+													width="1em"
+													style="overflow: visible; color: currentcolor;"
+												>
+													<title>Failed</title>
+													<path
+														fill="currentColor"
+														d="M15.854 12.854 11 8l4.854-4.854a.503.503 0 0 0 0-.707L13.561.146a.499.499 0 0 0-.707 0L8 5 3.146.146a.5.5 0 0 0-.707 0L.146 2.439a.499.499 0 0 0 0 .707L5 8 .146 12.854a.5.5 0 0 0 0 .707l2.293 2.293a.499.499 0 0 0 .707 0L8 11l4.854 4.854a.5.5 0 0 0 .707 0l2.293-2.293a.499.499 0 0 0 0-.707z"
+													/>
+												</svg>
+											}
+										>
+											<svg
+												fill="currentColor"
+												stroke-width="0"
+												xmlns="http://www.w3.org/2000/svg"
+												viewBox="0 0 16 16"
+												height="1em"
+												width="1em"
+												style="overflow: visible; color: currentcolor;"
+											>
+												<title>checkmark</title>
+												<path
+													fill="currentColor"
+													d="M13.5 2 6 9.5 2.5 6 0 8.5l6 6 10-10z"
+												/>
+											</svg>
+										</Show>
+									</Show>
+								)}
 							</Show>
-						</Show>
+						</Suspense>
 					</div>
 				)}
 			</For>
