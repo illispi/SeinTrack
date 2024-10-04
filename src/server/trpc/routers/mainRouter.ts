@@ -1,8 +1,8 @@
 import { sql } from "kysely";
-import { publicProcedure, router } from "./utils/context";
 
 import * as v from "valibot";
 import { TRPCError } from "@trpc/server";
+import { publicProcedure, router } from "../initTrpc";
 
 export const appRouter = router({
 	test: publicProcedure.query(() => {
@@ -12,7 +12,6 @@ export const appRouter = router({
 		.input(v.parser(v.array(v.date())))
 		.query(async ({ input, ctx }) => {
 			const hoursArr = [];
-			throw new TRPCError({ code: "BAD_REQUEST" });
 			for (let index = 0; index < input.length; index++) {
 				const hours = await ctx.db
 					.selectFrom("dateRows")

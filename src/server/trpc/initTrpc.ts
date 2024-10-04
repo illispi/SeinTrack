@@ -1,11 +1,6 @@
-import type { createSolidAPIHandlerContext } from "@solid-mediakit/trpc/handler";
 import { initTRPC } from "@trpc/server";
-import { db } from "~/server/database/db";
 import superjson from "superjson";
-
-export const createContext = async (opts: createSolidAPIHandlerContext) => {
-	return { db, req: opts.req, res: opts.res };
-};
+import type { createContext } from "./context";
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
 
