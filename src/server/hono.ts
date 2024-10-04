@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 import { trpcServer } from "@hono/trpc-server";
 import { appRouter } from "./trpc/routers/mainRouter";
+import { createContext } from "./trpc/context";
+import { db } from "./database/db";
 
 const app = new Hono();
 
@@ -10,10 +12,7 @@ app.use(
 	trpcServer({
 		endpoint: "/api/trpc",
 		router: appRouter,
-		// onError(opts) {
-		// 	const { error, type, path, input, ctx, req } = opts;
-		// 	return error.code;
-		// },
+		createContext: (opts, c) => ({ db, req: c.req, res: c.res }),
 	}),
 );
 
