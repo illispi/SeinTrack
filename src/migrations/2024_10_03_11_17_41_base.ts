@@ -5,7 +5,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 	await db.schema
 		.createTable("date_rows")
 		.addColumn("id", "serial", (col) => col.primaryKey())
-		.addColumn("hours_worked", "numeric")
+		.addColumn("hours_worked", "float4")
 		.addColumn("dates", "timestamp", (col) => col.defaultTo(null))
 		.execute();
 }
