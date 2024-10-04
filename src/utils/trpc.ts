@@ -8,10 +8,11 @@ import type { IAppRouter } from "~/server/trpc/mainRouter";
 import superjson from "superjson";
 
 const getBaseUrl = () => {
-	//NOTE I removed this, but its in docs
-	// if (typeof window !== "undefined") return "";
+	if (typeof window !== "undefined") return "";
 
-	return `${import.meta.env.VITE_SITE}`;
+	return `${
+		!import.meta.env.VITE_SITE ? process.env.SITE_URL : "localhost:3000"
+	}`;
 };
 
 export const trpc = createTRPCSolidStart<IAppRouter>({

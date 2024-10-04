@@ -1,4 +1,11 @@
-import { createSignal, For, Show, Suspense, type Component } from "solid-js";
+import {
+	createSignal,
+	ErrorBoundary,
+	For,
+	Show,
+	Suspense,
+	type Component,
+} from "solid-js";
 import { trpc } from "~/utils/trpc";
 import clsx from "clsx";
 import { Button } from "./ui/button";
@@ -77,22 +84,53 @@ const ListMonth: Component<{ month: number; year: number }> = (props) => {
 				{(date, index) => (
 					<div class="flex flex-col justify-start items-center w-8 h-16">
 						<h5>{date.getDate()}</h5>
-						<Suspense fallback={<div class="w-full h-full" />}>
-							<Show when={hours.data}>
-								{(hours) => (
-									<Button
-										class={clsx(
-											selectedDate() === hours()[index()].date
-												? "bg-green-500"
-												: "",
-										)}
-										type="button"
-										onClick={() => setSelectedDate(hours()[index()].date)}
-									>
-										<Show when={hours()[index()].hours} fallback={"null"}>
-											<Show
-												when={true}
-												fallback={
+						<ErrorBoundary
+							fallback={(e, reset) => {
+								console.log(e);
+								return (
+									<div class="fixed top-0 left-0 z-40 flex h-screen w-screen items-center justify-center bg-black/30 backdrop-blur-sm transition-all duration-500">
+										<div class="flex max-h-96 w-11/12 max-w-2xl flex-col justify-between gap-16 rounded-3xl border-fuchsia-600 border-t-4 bg-white px-4 py-12 shadow-xl lg:p-16">
+											<h1 class="text-center text-2xl">Error occured!</h1>
+											<h2 class="text-center">{`Message: ${e.message}`}</h2>
+											<Button onClick={reset}>Try again</Button>
+										</div>
+									</div>
+								);
+							}}
+						>
+							<Suspense fallback={<div class="w-full h-full" />}>
+								<Show when={hours.data}>
+									{(hours) => (
+										<Button
+											class={clsx(
+												selectedDate() === hours()[index()].date
+													? "bg-green-500"
+													: "",
+											)}
+											type="button"
+											onClick={() => setSelectedDate(hours()[index()].date)}
+										>
+											<Show when={hours()[index()].hours} fallback={"null"}>
+												<Show
+													when={true}
+													fallback={
+														<svg
+															fill="currentColor"
+															stroke-width="0"
+															xmlns="http://www.w3.org/2000/svg"
+															viewBox="0 0 16 16"
+															height="1em"
+															width="1em"
+															style="overflow: visible; color: currentcolor;"
+														>
+															<title>Failed</title>
+															<path
+																fill="currentColor"
+																d="M15.854 12.854 11 8l4.854-4.854a.503.503 0 0 0 0-.707L13.561.146a.499.499 0 0 0-.707 0L8 5 3.146.146a.5.5 0 0 0-.707 0L.146 2.439a.499.499 0 0 0 0 .707L5 8 .146 12.854a.5.5 0 0 0 0 .707l2.293 2.293a.499.499 0 0 0 .707 0L8 11l4.854 4.854a.5.5 0 0 0 .707 0l2.293-2.293a.499.499 0 0 0 0-.707z"
+															/>
+														</svg>
+													}
+												>
 													<svg
 														fill="currentColor"
 														stroke-width="0"
@@ -102,35 +140,19 @@ const ListMonth: Component<{ month: number; year: number }> = (props) => {
 														width="1em"
 														style="overflow: visible; color: currentcolor;"
 													>
-														<title>Failed</title>
+														<title>checkmark</title>
 														<path
 															fill="currentColor"
-															d="M15.854 12.854 11 8l4.854-4.854a.503.503 0 0 0 0-.707L13.561.146a.499.499 0 0 0-.707 0L8 5 3.146.146a.5.5 0 0 0-.707 0L.146 2.439a.499.499 0 0 0 0 .707L5 8 .146 12.854a.5.5 0 0 0 0 .707l2.293 2.293a.499.499 0 0 0 .707 0L8 11l4.854 4.854a.5.5 0 0 0 .707 0l2.293-2.293a.499.499 0 0 0 0-.707z"
+															d="M13.5 2 6 9.5 2.5 6 0 8.5l6 6 10-10z"
 														/>
 													</svg>
-												}
-											>
-												<svg
-													fill="currentColor"
-													stroke-width="0"
-													xmlns="http://www.w3.org/2000/svg"
-													viewBox="0 0 16 16"
-													height="1em"
-													width="1em"
-													style="overflow: visible; color: currentcolor;"
-												>
-													<title>checkmark</title>
-													<path
-														fill="currentColor"
-														d="M13.5 2 6 9.5 2.5 6 0 8.5l6 6 10-10z"
-													/>
-												</svg>
+												</Show>
 											</Show>
-										</Show>
-									</Button>
-								)}
-							</Show>
-						</Suspense>
+										</Button>
+									)}
+								</Show>
+							</Suspense>
+						</ErrorBoundary>
 					</div>
 				)}
 			</For>

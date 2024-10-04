@@ -10,7 +10,7 @@ export const appRouter = router({
 		};
 	}),
 	getHoursOfDay: publicProcedure
-		.input(v.parser(v.array(v.date())))
+		.input(v.parser(v.array(v.number())))
 		.query(async ({ input, ctx }) => {
 			const hoursArr = [];
 
