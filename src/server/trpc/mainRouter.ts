@@ -24,7 +24,7 @@ export const appRouter = router({
 				if (!hours) {
 					hoursArr.push({ date: input[index], hours: null });
 				} else {
-					hoursArr.push({ date: input[index], hours: null });
+					hoursArr.push({ date: input[index], hours: hours.hoursWorked });
 				}
 			}
 
@@ -33,11 +33,23 @@ export const appRouter = router({
 	changeDayHours: publicProcedure
 		.input(v.parser(v.object({ date: v.date(), hours: v.number() })))
 		.mutation(async ({ input, ctx }) => {
-			const hours = await ctx.db
-				.updateTable("dateRows")
-				.set({ hoursWorked: input.hours })
+			const exists = await ctx.db
+				.selectFrom("dateRows")
+				.select(["dates"])
 				.where("dates", "=", input.date)
 				.executeTakeFirst();
+			if (exists) {
+				const hours = await ctx.db
+					.updateTable("dateRows")
+					.set({ hoursWorked: input.hours })
+					.where("dates", "=", input.date)
+					.executeTakeFirst();
+			} else {
+				const hours = await ctx.db
+					.insertInto("dateRows")
+					.values({ dates: input.date, hoursWorked: input.hours })
+					.execute();
+			}
 		}),
 });
 

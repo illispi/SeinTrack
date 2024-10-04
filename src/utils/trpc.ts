@@ -11,7 +11,7 @@ const getBaseUrl = () => {
 	if (typeof window !== "undefined") return "";
 
 	return `${
-		!import.meta.env.VITE_SITE ? process.env.SITE_URL : "localhost:3000"
+		!import.meta.env.VITE_SITE ? process.env.SITE_URL : "http://localhost:3000"
 	}`;
 };
 
