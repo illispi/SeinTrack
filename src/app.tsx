@@ -7,20 +7,20 @@ import { queryClient, trpc } from "./utils/trpc";
 
 export default function App() {
 	return (
-		<Router
-			root={(props) => (
-				<>
-					<Suspense>
-						<QueryClientProvider client={queryClient}>
-							<trpc.Provider queryClient={queryClient}>
+		<QueryClientProvider client={queryClient}>
+			<trpc.Provider queryClient={queryClient}>
+				<Router
+					root={(props) => (
+						<>
+							<Suspense>
 								<Suspense>{props.children}</Suspense>
-							</trpc.Provider>
-						</QueryClientProvider>
-					</Suspense>
-				</>
-			)}
-		>
-			<FileRoutes />
-		</Router>
+							</Suspense>
+						</>
+					)}
+				>
+					<FileRoutes />
+				</Router>
+			</trpc.Provider>
+		</QueryClientProvider>
 	);
 }
