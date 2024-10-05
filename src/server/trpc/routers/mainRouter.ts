@@ -6,7 +6,8 @@ import { publicProcedure, router } from "../initTrpc";
 
 export const appRouter = router({
 	test: publicProcedure.query(() => {
-		throw new TRPCError({ code: "BAD_REQUEST" });
+		throw new TRPCError({ code: "NOT_FOUND" });
+		return "hello";
 	}),
 	getHoursOfDay: publicProcedure
 		.input(v.parser(v.array(v.date())))

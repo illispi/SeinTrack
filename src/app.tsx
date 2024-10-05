@@ -7,8 +7,8 @@ import { queryClient, trpc } from "./utils/trpc";
 
 export default function App() {
 	return (
-		<QueryClientProvider client={queryClient}>
-			<trpc.Provider queryClient={queryClient}>
+		<trpc.Provider queryClient={queryClient}>
+			<QueryClientProvider client={queryClient}>
 				<Router
 					root={(props) => (
 						<>
@@ -20,7 +20,7 @@ export default function App() {
 				>
 					<FileRoutes />
 				</Router>
-			</trpc.Provider>
-		</QueryClientProvider>
+			</QueryClientProvider>
+		</trpc.Provider>
 	);
 }
