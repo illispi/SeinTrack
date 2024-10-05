@@ -1,16 +1,18 @@
 import { A } from "@solidjs/router";
-import { For, Show, Suspense, type Component } from "solid-js";
+import { ErrorBoundary, For, Show, Suspense, type Component } from "solid-js";
 import { dayAdjust } from "~/components/ListMonth";
-import { client, trpc } from "~/utils/trpc";
+import {  trpc } from "~/utils/trpc";
 
 const test: Component = (props) => {
 	const test = trpc.test.createQuery();
 	return (
 		<div>
 			<A href="/">ROOT</A>
-			<Suspense>
-				<Show when={test.data}>{(t) => <div>{t()}</div>}</Show>
-			</Suspense>
+			<ErrorBoundary fallback="error">
+				<Suspense>
+					<Show when={test.data}>{(t) => <div>{t()}</div>}</Show>
+				</Suspense>
+			</ErrorBoundary>
 		</div>
 	);
 };

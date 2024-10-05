@@ -11,11 +11,9 @@ export default function App() {
 			<QueryClientProvider client={queryClient}>
 				<Router
 					root={(props) => (
-						<>
-							<Suspense>
-								<Suspense>{props.children}</Suspense>
-							</Suspense>
-						</>
+						<ErrorBoundary fallback="boundary">
+							<Suspense>{props.children}</Suspense>
+						</ErrorBoundary>
 					)}
 				>
 					<FileRoutes />
