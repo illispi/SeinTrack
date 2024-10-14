@@ -48,15 +48,20 @@ export const dayAdjust = (month: number, year: number) => {
 	return daysArr;
 };
 
-const ListMonth: Component<{ month: number; year: number }> = (props) => {
+const ListMonth: Component<{
+	month: number;
+	year: number;
+	projectName: string;
+}> = (props) => {
 	const [selectedDate, setSelectedDate] = createSignal<Date | null>(null);
 	const [curHours, setCurHours] = createSignal(0);
 
 	const utils = trpc.useContext();
 
-	const hours = trpc.getHoursOfDay.createQuery(() =>
-		dayAdjust(props.month, props.year),
-	);
+	const hours = trpc.getHoursOfDay.createQuery(() => ({
+		dates: dayAdjust(props.month, props.year),
+		projectName: props.projectName,
+	}));
 
 	const changeHours = trpc.changeDayHours.createMutation(() => ({
 		onSuccess: () => utils.invalidate(),
@@ -146,12 +151,15 @@ const ListMonth: Component<{ month: number; year: number }> = (props) => {
 				</TextField>
 				<Button
 					type="button"
-					onClick={() =>
-						changeHours.mutate({
-							date: selectedDate(),
-							hours: Number(curHours()),
-						})
-					}
+					onClick={() => {
+						if (selectedDate()) {
+							changeHours.mutate({
+								date: selectedDate(),
+								hours: Number(curHours()),
+								projectName: props.projectName,
+							});
+						}
+					}}
 				>
 					Change hours
 				</Button>

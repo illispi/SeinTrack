@@ -53,7 +53,7 @@ const NewProject: Component = (props) => {
 				<DialogFooter>
 					<Button
 						onClick={() =>
-							projectsMut.mutate({ hoursTarget: hours(), name: name() })
+							projectsMut.mutate({ hoursTarget: Number(hours()), name: name() })
 						}
 						type="submit"
 					>
