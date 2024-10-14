@@ -9,13 +9,17 @@ export const getHoursOfDay = publicProcedure
 		const projectId = await ctx.db
 			.selectFrom("projects")
 			.select(["id"])
-			.where("name", "=", input.projectName);
+			.where("name", "=", input.projectName)
+			.executeTakeFirst();
+		if (!projectId) {
+			return null;
+		}
 		const hoursArr = [];
 		for (let index = 0; index < input.dates.length; index++) {
 			const hours = await ctx.db
 				.selectFrom("dates")
 				.select("hoursWorked")
-				.where("projectId", "=", projectId)
+				.where("projectId", "=", projectId?.id)
 				.where("date", "=", input.dates[index])
 				.executeTakeFirst();
 
@@ -42,7 +46,12 @@ export const changeDayHours = publicProcedure
 		const projectId = await ctx.db
 			.selectFrom("projects")
 			.select(["id"])
-			.where("name", "=", input.projectName);
+			.where("name", "=", input.projectName)
+			.executeTakeFirst();
+
+		if (!projectId) {
+			return null;
+		}
 		const exists = await ctx.db
 			.selectFrom("dates")
 			.select(["date"])
@@ -57,7 +66,11 @@ export const changeDayHours = publicProcedure
 		} else {
 			const hours = await ctx.db
 				.insertInto("dates")
-				.values({ date: input.date, hoursWorked: input.hours, projectId })
+				.values({
+					date: input.date,
+					hoursWorked: input.hours,
+					projectId: projectId?.id,
+				})
 				.execute();
 		}
 		return;
