@@ -10,46 +10,69 @@ export const appRouter = router({
 		return "hello";
 	}),
 	getHoursOfDay: publicProcedure
-		.input(v.parser(v.array(v.date())))
+		.input(
+			v.parser(v.object({ dates: v.array(v.date()), projectName: v.string() })),
+		)
 		.query(async ({ input, ctx }) => {
+			const projectId = await ctx.db
+				.selectFrom("projects")
+				.select(["id"])
+				.where("name", "=", input.projectName);
 			const hoursArr = [];
-			for (let index = 0; index < input.length; index++) {
+			for (let index = 0; index < input.dates.length; index++) {
 				const hours = await ctx.db
-					.selectFrom("dateRows")
+					.selectFrom("dates")
 					.select("hoursWorked")
-					.where("dates", "=", input[index])
+					.where("projectId", "=", projectId)
+					.where("date", "=", input.dates[index])
 					.executeTakeFirst();
 
 				if (!hours) {
-					hoursArr.push({ date: input[index], hours: null });
+					hoursArr.push({ date: input.dates[index], hours: null });
 				} else {
-					hoursArr.push({ date: input[index], hours: hours.hoursWorked });
+					hoursArr.push({ date: input.dates[index], hours: hours.hoursWorked });
 				}
 			}
 
 			return hoursArr;
 		}),
 	changeDayHours: publicProcedure
-		.input(v.parser(v.object({ date: v.date(), hours: v.number() })))
+		.input(
+			v.parser(
+				v.object({
+					date: v.date(),
+					hours: v.number(),
+					projectName: v.string(),
+				}),
+			),
+		)
 		.mutation(async ({ input, ctx }) => {
+			const projectId = await ctx.db
+				.selectFrom("projects")
+				.select(["id"])
+				.where("name", "=", input.projectName);
 			const exists = await ctx.db
-				.selectFrom("dateRows")
-				.select(["dates"])
-				.where("dates", "=", input.date)
+				.selectFrom("dates")
+				.select(["date"])
+				.where("date", "=", input.date)
 				.executeTakeFirst();
 			if (exists) {
 				const hours = await ctx.db
-					.updateTable("dateRows")
+					.updateTable("dates")
 					.set({ hoursWorked: input.hours })
-					.where("dates", "=", input.date)
+					.where("date", "=", input.date)
 					.executeTakeFirst();
 			} else {
 				const hours = await ctx.db
-					.insertInto("dateRows")
-					.values({ dates: input.date, hoursWorked: input.hours })
+					.insertInto("dates")
+					.values({ date: input.date, hoursWorked: input.hours, projectId })
 					.execute();
 			}
+			return;
 		}),
+	createProject: createProject,
 });
 
 export type IAppRouter = typeof appRouter;
+
+//BUG Does mutations need to return anything or do they leak memory like this without one?
