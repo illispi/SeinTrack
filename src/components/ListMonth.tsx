@@ -10,30 +10,20 @@ import { trpc } from "~/utils/trpc";
 import clsx from "clsx";
 import { Button } from "./ui/button";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
-
-const yearChange = (year: number, month: number, forward: boolean) => {
-	if (month === 11 && forward) {
-		return { month: 0, year: year + 1 };
-	}
-	if (month === 0 && !forward) {
-		return { month: 11, year: year - 1 };
-	}
-
-	if (forward) {
-		return { month: month + 1, year };
-	}
-
-	return { month: month - 1, year };
-};
+import { adjustDateByOne, weekdaysArr } from "~/utils/functionsAndVariables";
 
 export const dayAdjust = (month: number, year: number) => {
-	const adjustYearPos = yearChange(year, month, true);
-	const adjustYearNeg = yearChange(year, month, false);
+	const adjustYearPos = adjustDateByOne(year, month, true);
+	const adjustYearNeg = adjustDateByOne(year, month, false);
 
 	const firstDay = new Date(year, month, 1).getDay();
-	const lastDayPreviousMonth = new Date(new Date(year, month, 1) - 1).getDate();
+	const lastDayPreviousMonth = new Date(
+		new Date(year, month, 1).getTime() - 1,
+	).getDate();
 
-	const DayAmountCur = new Date(new Date(year, month + 1, 1) - 1).getDate();
+	const DayAmountCur = new Date(
+		new Date(year, month + 1, 1).getTime() - 1,
+	).getDate();
 
 	const daysBehind = firstDay === 0 ? 6 : firstDay - 1;
 
@@ -59,16 +49,6 @@ export const dayAdjust = (month: number, year: number) => {
 };
 
 const ListMonth: Component<{ month: number; year: number }> = (props) => {
-	const weekdays = [
-		"Monday",
-		"Tuesday",
-		"Wednesday",
-		"Thursday",
-		"Friday",
-		"Saturday",
-		"Sunday",
-	];
-
 	const [selectedDate, setSelectedDate] = createSignal(new Date());
 	const [curHours, setCurHours] = createSignal(0);
 
@@ -82,11 +62,11 @@ const ListMonth: Component<{ month: number; year: number }> = (props) => {
 		onSuccess: () => utils.invalidate(),
 	}));
 	return (
-		<div class="grid grid-cols-7 gap-4 max-w-5xl">
-			<For each={weekdays}>{(day) => <div>{day}</div>}</For>
+		<div class="grid grid-cols-7 gap-4 max-w-5xl place-content-center place-items-center">
+			<For each={weekdaysArr}>{(day) => <div>{day}</div>}</For>
 			<For each={dayAdjust(props.month, props.year)}>
 				{(date, index) => (
-					<div class="flex flex-col justify-start items-center w-8 h-16">
+					<div class="flex flex-col justify-center items-center w-8 h-16">
 						<h5>{date.getDate()}</h5>
 
 						<Suspense fallback={<div class="w-full h-full" />}>

@@ -4,6 +4,7 @@ import { ErrorBoundary, Suspense } from "solid-js";
 import "./app.css";
 import { QueryClientProvider } from "@tanstack/solid-query";
 import { queryClient, trpc } from "./utils/trpc";
+import { SolidQueryDevtools } from "@tanstack/solid-query-devtools";
 
 export default function App() {
 	return (
@@ -13,6 +14,7 @@ export default function App() {
 					root={(props) => (
 						<ErrorBoundary fallback="boundary">
 							<Suspense>{props.children}</Suspense>
+							<SolidQueryDevtools initialIsOpen={false} />
 						</ErrorBoundary>
 					)}
 				>
