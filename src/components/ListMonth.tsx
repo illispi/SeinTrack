@@ -19,7 +19,11 @@ const yearChange = (year: number, month: number, forward: boolean) => {
 		return { month: 11, year: year - 1 };
 	}
 
-	return { month, year };
+	if (forward) {
+		return { month: month + 1, year };
+	}
+
+	return { month: month - 1, year };
 };
 
 export const dayAdjust = (month: number, year: number) => {
@@ -38,7 +42,7 @@ export const dayAdjust = (month: number, year: number) => {
 		daysArr.push(
 			new Date(
 				adjustYearNeg.year,
-				adjustYearNeg.month === 11 ? 11 : adjustYearNeg.month - 1,
+				adjustYearNeg.month,
 				lastDayPreviousMonth - daysBehind + i + 1,
 			),
 		);
@@ -48,8 +52,7 @@ export const dayAdjust = (month: number, year: number) => {
 	}
 	const daysForward = 6 * 7 - daysArr.length;
 	for (let i = 0; i < daysForward; i++) {
-		const adjusted = yearChange(adjustYearPos.year, adjustYearPos.month, true);
-		daysArr.push(new Date(adjusted.year, adjusted.month, i + 1));
+		daysArr.push(new Date(adjustYearPos.year, adjustYearPos.month, i + 1));
 	}
 
 	return daysArr;
