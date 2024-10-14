@@ -49,7 +49,7 @@ export const dayAdjust = (month: number, year: number) => {
 };
 
 const ListMonth: Component<{ month: number; year: number }> = (props) => {
-	const [selectedDate, setSelectedDate] = createSignal(new Date());
+	const [selectedDate, setSelectedDate] = createSignal<Date | null>(null);
 	const [curHours, setCurHours] = createSignal(0);
 
 	const utils = trpc.useContext();
@@ -62,29 +62,53 @@ const ListMonth: Component<{ month: number; year: number }> = (props) => {
 		onSuccess: () => utils.invalidate(),
 	}));
 	return (
-		<div class="grid grid-cols-7 gap-4 max-w-5xl place-content-center place-items-center">
-			<For each={weekdaysArr}>{(day) => <div>{day}</div>}</For>
-			<For each={dayAdjust(props.month, props.year)}>
-				{(date, index) => (
-					<div class="flex flex-col justify-center items-center w-8 h-16">
-						<h5>{date.getDate()}</h5>
+		<div class="flex flex-col justify-start items-center max-w-5xl w-full">
+			<div class="grid grid-cols-7 gap-4 w-full place-content-center place-items-center">
+				<For each={weekdaysArr}>{(day) => <div>{day}</div>}</For>
+				<For each={dayAdjust(props.month, props.year)}>
+					{(date, index) => (
+						<div class="flex flex-col justify-center items-center w-8 h-16">
+							<h5>{date.getDate()}</h5>
 
-						<Suspense fallback={<div class="w-full h-full" />}>
-							<Show when={hours.data}>
-								{(hours) => (
-									<Button
-										class={clsx(
-											selectedDate() === hours()[index()].date
-												? "bg-green-500"
-												: "",
-										)}
-										type="button"
-										onClick={() => setSelectedDate(hours()[index()].date)}
-									>
-										<Show when={hours()[index()].hours} fallback={"null"}>
-											<Show
-												when={true}
-												fallback={
+							<Suspense fallback={<div class="w-full h-full" />}>
+								<Show when={hours.data}>
+									{(hours) => (
+										<Button
+											class={clsx()}
+											variant={
+												selectedDate() === hours()[index()].date
+													? "secondary"
+													: "default"
+											}
+											type="button"
+											onClick={() =>
+												selectedDate() === hours()[index()].date
+													? setSelectedDate(null)
+													: setSelectedDate(hours()[index()].date)
+											}
+										>
+											<Show when={hours()[index()].hours} fallback={"null"}>
+												<Show
+													//TODO add less than check here
+													when={true}
+													fallback={
+														<svg
+															fill="currentColor"
+															stroke-width="0"
+															xmlns="http://www.w3.org/2000/svg"
+															viewBox="0 0 16 16"
+															height="1em"
+															width="1em"
+															style="overflow: visible; color: currentcolor;"
+														>
+															<title>Failed</title>
+															<path
+																fill="currentColor"
+																d="M15.854 12.854 11 8l4.854-4.854a.503.503 0 0 0 0-.707L13.561.146a.499.499 0 0 0-.707 0L8 5 3.146.146a.5.5 0 0 0-.707 0L.146 2.439a.499.499 0 0 0 0 .707L5 8 .146 12.854a.5.5 0 0 0 0 .707l2.293 2.293a.499.499 0 0 0 .707 0L8 11l4.854 4.854a.5.5 0 0 0 .707 0l2.293-2.293a.499.499 0 0 0 0-.707z"
+															/>
+														</svg>
+													}
+												>
 													<svg
 														fill="currentColor"
 														stroke-width="0"
@@ -94,58 +118,44 @@ const ListMonth: Component<{ month: number; year: number }> = (props) => {
 														width="1em"
 														style="overflow: visible; color: currentcolor;"
 													>
-														<title>Failed</title>
+														<title>checkmark</title>
 														<path
 															fill="currentColor"
-															d="M15.854 12.854 11 8l4.854-4.854a.503.503 0 0 0 0-.707L13.561.146a.499.499 0 0 0-.707 0L8 5 3.146.146a.5.5 0 0 0-.707 0L.146 2.439a.499.499 0 0 0 0 .707L5 8 .146 12.854a.5.5 0 0 0 0 .707l2.293 2.293a.499.499 0 0 0 .707 0L8 11l4.854 4.854a.5.5 0 0 0 .707 0l2.293-2.293a.499.499 0 0 0 0-.707z"
+															d="M13.5 2 6 9.5 2.5 6 0 8.5l6 6 10-10z"
 														/>
 													</svg>
-												}
-											>
-												<svg
-													fill="currentColor"
-													stroke-width="0"
-													xmlns="http://www.w3.org/2000/svg"
-													viewBox="0 0 16 16"
-													height="1em"
-													width="1em"
-													style="overflow: visible; color: currentcolor;"
-												>
-													<title>checkmark</title>
-													<path
-														fill="currentColor"
-														d="M13.5 2 6 9.5 2.5 6 0 8.5l6 6 10-10z"
-													/>
-												</svg>
+												</Show>
 											</Show>
-										</Show>
-									</Button>
-								)}
-							</Show>
-						</Suspense>
-					</div>
-				)}
-			</For>
-			<TextField>
-				<TextFieldLabel for="email">Hours</TextFieldLabel>
-				<TextFieldInput
-					type="number"
-					onInput={(e) => {
-						setCurHours(e.target.value);
-					}}
-				/>
-			</TextField>
-			<Button
-				type="button"
-				onClick={() =>
-					changeHours.mutate({
-						date: selectedDate(),
-						hours: Number(curHours()),
-					})
-				}
-			>
-				Change hours
-			</Button>
+										</Button>
+									)}
+								</Show>
+							</Suspense>
+						</div>
+					)}
+				</For>
+			</div>
+			<div class="w-full flex flex-col items-center justify-center">
+				<TextField>
+					<TextFieldLabel for="email">Hours</TextFieldLabel>
+					<TextFieldInput
+						type="number"
+						onInput={(e) => {
+							setCurHours(e.target.value);
+						}}
+					/>
+				</TextField>
+				<Button
+					type="button"
+					onClick={() =>
+						changeHours.mutate({
+							date: selectedDate(),
+							hours: Number(curHours()),
+						})
+					}
+				>
+					Change hours
+				</Button>
+			</div>
 		</div>
 	);
 };

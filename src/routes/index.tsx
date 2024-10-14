@@ -18,7 +18,7 @@ export default function Home() {
 			<Suspense>
 				<ListMonth month={curMonth()} year={curYear()} />
 			</Suspense>
-			<div class="flex justify-center items-center gap-8">
+			<div class="flex justify-center items-center gap-8 w-full">
 				<Button
 					onClick={() => {
 						const back = adjustDateByOne(curYear(), curMonth(), false);
