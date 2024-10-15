@@ -24,7 +24,7 @@ const DayEditor: Component<{
 						{date().toDateString()}
 						<div class="w-full flex flex-col items-center justify-center">
 							<TextField>
-								<TextFieldLabel for="email">Hours</TextFieldLabel>
+								<TextFieldLabel>Hours</TextFieldLabel>
 								<TextFieldInput
 									type="number"
 									value={curHours()}

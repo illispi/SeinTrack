@@ -1,10 +1,14 @@
-import type { Component } from "solid-js";
+import type { Component, ParentComponent } from "solid-js";
 
-const SidePanel: Component = (props) => {
+const SidePanel: ParentComponent = (props) => {
 	return (
-		<div class="fixed top-0 left-0 w-96 border-r border-black min-h-screen h-full">
-			HELLO
-		</div>
+		<>
+			<div class="hidden lg:flex border-r border-black min-h-screen h-full w-full max-w-72">
+				HELLO
+			</div>
+			{props.children}
+			<div class="hidden 2xl:block w-full max-w-72 h-full" />
+		</>
 	);
 };
 
