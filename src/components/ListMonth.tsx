@@ -174,10 +174,10 @@ const ListMonth: Component<{
 															: false
 													}
 													fallback={
-														<h3 class=" text-3xl font-semibold">{`${data()[index()].hours ? data()[index()].hours : 0}`}</h3>
+														<h3 class=" text-2xl font-semibold">{`${data()[index()].hours ? data()[index()].hours : 0}`}</h3>
 													}
 												>
-													<h3 class=" text-3xl font-semibold">{`${data()[index()].hours}`}</h3>
+													<h3 class=" text-2xl font-semibold">{`${data()[index()].hours}`}</h3>
 												</Show>
 											</Show>
 										</div>

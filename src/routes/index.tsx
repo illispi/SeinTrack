@@ -35,6 +35,7 @@ export default function Home() {
 										</Suspense>
 										<div class="flex justify-center items-center gap-8 w-full">
 											<Button
+												variant={"outline"}
 												onClick={() => {
 													const back = adjustDateByOne(
 														curYear(),
@@ -47,8 +48,11 @@ export default function Home() {
 											>
 												Back
 											</Button>
-											<Button>{`${curMonth() + 1}/${curYear()}`}</Button>
 											<Button
+												variant={"outline"}
+											>{`${curMonth() + 1}/${curYear()}`}</Button>
+											<Button
+												variant={"outline"}
 												onClick={() => {
 													const forward = adjustDateByOne(
 														curYear(),

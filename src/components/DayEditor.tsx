@@ -34,6 +34,7 @@ const DayEditor: Component<{
 								/>
 							</TextField>
 							<Button
+								variant={"outline"}
 								type="button"
 								onClick={() => {
 									if (props.selectedDate) {
