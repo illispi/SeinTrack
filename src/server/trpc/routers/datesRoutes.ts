@@ -90,13 +90,23 @@ export const getFirstAndLastDate = publicProcedure
 		const dates = await ctx.db
 			.selectFrom("dates")
 			.select(["date"])
-			.where("hoursWorked", "!=", null)
+			.where("hoursWorked", "is not", null)
 			.where("projectId", "=", projectId?.id)
 			.orderBy("date asc")
 			.execute();
 
 		if (dates.length > 0) {
-			return { firstDate: dates[0].date, lastDate: dates[dates.length - 1] };
+			const dateFL = {
+				firstDate: dates[0].date,
+				lastDate: dates[dates.length - 1].date,
+			};
+			console.log(dateFL);
+
+			if (dateFL.firstDate && dateFL.lastDate) {
+				return dateFL;
+			}
+
+			return null;
 		}
 
 		return null;

@@ -57,8 +57,8 @@ export const dayAdjust = (month: number, year: number) => {
 
 const isCountedDay = (
 	date: Date,
-	latestDate: Date | null,
-	firstDate: Date | null,
+	latestDate: Date | null | undefined,
+	firstDate: Date | null | undefined,
 	countingDays: number[],
 ) => {
 	if (!latestDate || !firstDate) {
@@ -79,22 +79,9 @@ const ListMonth: Component<{
 }> = (props) => {
 	const [countedDays, setCountedDays] = createStore([1, 2, 3, 4, 5]);
 
-	const [latestDate, setLatestDate] = createSignal<null | Date>(null);
-	const [firstDate, setFirstDate] = createSignal<null | Date>(null);
-
-	createEffect(() => {
-		setLatestDate(
-			hours.data
-				? latestDateFunc(hours.data?.filter((e) => e.hours).map((e) => e.date))
-				: null,
-		);
-		//TODO make endpoint to get first date
-		setFirstDate(
-			hours.data
-				? firstDateFunc(hours.data?.filter((e) => e.hours).map((e) => e.date))
-				: null,
-		);
-	});
+	const firstAndLastDate = trpc.getFirstAndLastDate.createQuery(
+		() => props.projectName,
+	);
 
 	const [selectedDate, setSelectedDate] = createSignal<Date | null>(null);
 	const [curHours, setCurHours] = createSignal(0);
@@ -148,8 +135,8 @@ const ListMonth: Component<{
 												when={
 													isCountedDay(
 														data()[index()].date,
-														latestDate(),
-														firstDate(),
+														firstAndLastDate.data?.lastDate,
+														firstAndLastDate.data?.firstDate,
 														countedDays,
 													) || data()[index()].hours > 3
 												}
