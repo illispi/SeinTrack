@@ -82,7 +82,7 @@ const colorPicker = (
 	countedDays: number[],
 ) => {
 	if (selectedDate === iterDate) {
-		return "bg-black";
+		return "bg-amber-300";
 	}
 	if (isCountedDay(iterDate, lastDate, firstDate, countedDays) || hours > 0) {
 		if (
@@ -143,19 +143,10 @@ const ListMonth: Component<{
 											data()[index()].hours,
 											countedDays,
 										),
-										"flex flex-col justify-start items-center w-full h-16 border border-black hover:bg-gray-300 transition-all duration-300",
+										"flex flex-col justify-start items-center w-full h-16 border border-black hover:bg-amber-300 transition-all duration-300",
 									)}
 								>
-									<h5
-										class={clsx(
-											"text-md font-normal",
-											selectedDate() === data()[index()].date
-												? "text-white"
-												: "text-black",
-										)}
-									>
-										{date.getDate()}
-									</h5>
+									<h5>{date.getDate()}</h5>
 
 									<Suspense fallback={<div class="w-full h-full" />}>
 										<div>
