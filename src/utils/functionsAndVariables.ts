@@ -46,3 +46,7 @@ export const latestDateFunc = (dates: Date[]) => {
 	dates.sort((a, b) => a.getTime() - b.getTime());
 	return dates[dates.length - 1];
 };
+export const firstDateFunc = (dates: Date[]) => {
+	dates.sort((a, b) => a.getTime() - b.getTime());
+	return dates[0];
+};

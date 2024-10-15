@@ -13,6 +13,7 @@ import { Button } from "./ui/button";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
 import {
 	adjustDateByOne,
+	firstDateFunc,
 	latestDateFunc,
 	weekdaysArr,
 } from "~/utils/functionsAndVariables";
@@ -54,18 +55,38 @@ export const dayAdjust = (month: number, year: number) => {
 	return daysArr;
 };
 
+const isCountedDay = (
+	date: Date,
+	latestDate: Date | null,
+	firstDate: Date | null,
+	countingDays: number[],
+) => {
+	if (!latestDate || !firstDate) {
+		return false;
+	}
+	const countedDay = countingDays.includes(date.getDay());
+	if (date <= latestDate && date >= firstDate && countedDay) {
+		return true;
+	}
+	return false;
+};
+
 const ListMonth: Component<{
 	month: number;
 	year: number;
 	projectName: string;
 }> = (props) => {
-	const [coutedDays, setCountedDays] = createStore([1, 2, 3, 4, 5]);
+	const [countedDays, setCountedDays] = createStore([1, 2, 3, 4, 5]);
 
 	const [latestDate, setLatestDate] = createSignal<null | Date>(null);
+	const [firstDate, setFirstDate] = createSignal<null | Date>(null);
 
 	createEffect(() => {
 		setLatestDate(
 			hours.data ? latestDateFunc(hours.data?.map((e) => e.date)) : null,
+		);
+		setFirstDate(
+			hours.data ? firstDateFunc(hours.data?.map((e) => e.date)) : null,
 		);
 	});
 
@@ -120,7 +141,16 @@ const ListMonth: Component<{
 											<Show when={hours()[index()].hours} fallback="">
 												<Show
 													//TODO add less than check here
-													when={true}
+													when={
+														isCountedDay(
+															hours()[index()].date,
+															latestDate(),
+															firstDate(),
+															countedDays,
+														) && hours()[index()].hours
+															? hours()[index()].hours < 3
+															: false
+													}
 													fallback={
 														<svg
 															class="fill-red-500"
