@@ -91,14 +91,10 @@ const ListMonth: Component<{
 
 	const [selectedDate, setSelectedDate] = createSignal<Date | null>(null);
 
-
-	
-
 	const hours = trpc.getHoursOfDay.createQuery(() => ({
 		dates: dayAdjust(props.month, props.year),
 		projectName: props.projectName,
 	}));
-
 
 	return (
 		<div class="flex flex-col justify-start items-center max-w-5xl w-full">
@@ -142,15 +138,20 @@ const ListMonth: Component<{
 														firstAndLastDate.data?.lastDate,
 														firstAndLastDate.data?.firstDate,
 														countedDays,
-													) || data()[index()].hours > 3
+													) || data()[index()].hours > 0
 												}
 												fallback=""
 											>
 												<Show
-													//TODO add less than check here
 													when={
 														data()[index()].hours
-															? data()[index()].hours > 3
+															? data()[index()].hours > 3 ||
+																!isCountedDay(
+																	data()[index()].date,
+																	firstAndLastDate.data?.lastDate,
+																	firstAndLastDate.data?.firstDate,
+																	countedDays,
+																)
 															: false
 													}
 													fallback={
@@ -168,7 +169,6 @@ const ListMonth: Component<{
 					)}
 				</For>
 			</div>
-			
 		</div>
 	);
 };
