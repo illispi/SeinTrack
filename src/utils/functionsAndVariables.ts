@@ -41,3 +41,8 @@ export const adjustDateByOne = (
 
 	return { month: month - 1, year };
 };
+
+export const latestDateFunc = (dates: Date[]) => {
+	dates.sort((a, b) => a.getTime() - b.getTime());
+	return dates[dates.length - 1];
+};

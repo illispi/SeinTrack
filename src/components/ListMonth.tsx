@@ -1,4 +1,5 @@
 import {
+	createEffect,
 	createSignal,
 	ErrorBoundary,
 	For,
@@ -10,7 +11,11 @@ import { trpc } from "~/utils/trpc";
 import clsx from "clsx";
 import { Button } from "./ui/button";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
-import { adjustDateByOne, weekdaysArr } from "~/utils/functionsAndVariables";
+import {
+	adjustDateByOne,
+	latestDateFunc,
+	weekdaysArr,
+} from "~/utils/functionsAndVariables";
 import { createStore } from "solid-js/store";
 
 export const dayAdjust = (month: number, year: number) => {
@@ -55,6 +60,14 @@ const ListMonth: Component<{
 	projectName: string;
 }> = (props) => {
 	const [coutedDays, setCountedDays] = createStore([1, 2, 3, 4, 5]);
+
+	const [latestDate, setLatestDate] = createSignal<null | Date>(null);
+
+	createEffect(() => {
+		setLatestDate(
+			hours.data ? latestDateFunc(hours.data?.map((e) => e.date)) : null,
+		);
+	});
 
 	const [selectedDate, setSelectedDate] = createSignal<Date | null>(null);
 	const [curHours, setCurHours] = createSignal(0);
