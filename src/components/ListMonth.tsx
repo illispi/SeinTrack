@@ -120,7 +120,7 @@ const ListMonth: Component<{
 								>
 									<h5
 										class={clsx(
-											"text-lg font-semibold",
+											"text-md font-normal",
 											selectedDate() === data()[index()].date
 												? "text-white"
 												: "text-black",
@@ -150,38 +150,10 @@ const ListMonth: Component<{
 															: false
 													}
 													fallback={
-														<svg
-															class="fill-red-500"
-															stroke-width="0"
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 16 16"
-															height="2.0em"
-															width="2.0em"
-															style="overflow: visible; color: currentcolor;"
-														>
-															<title>Failed</title>
-															<path
-																class="fill-red-500"
-																d="M15.854 12.854 11 8l4.854-4.854a.503.503 0 0 0 0-.707L13.561.146a.499.499 0 0 0-.707 0L8 5 3.146.146a.5.5 0 0 0-.707 0L.146 2.439a.499.499 0 0 0 0 .707L5 8 .146 12.854a.5.5 0 0 0 0 .707l2.293 2.293a.499.499 0 0 0 .707 0L8 11l4.854 4.854a.5.5 0 0 0 .707 0l2.293-2.293a.499.499 0 0 0 0-.707z"
-															/>
-														</svg>
+														<h3 class="text-red-500 text-3xl font-semibold">{`${data()[index()].hours ? data()[index()].hours : 0}`}</h3>
 													}
 												>
-													<svg
-														class="fill-green-500"
-														stroke-width="0"
-														xmlns="http://www.w3.org/2000/svg"
-														viewBox="0 0 16 16"
-														height="2.0em"
-														width="2.0em"
-														style="overflow: visible; color: currentcolor;"
-													>
-														<title>checkmark</title>
-														<path
-															class="fill-green-500"
-															d="M13.5 2 6 9.5 2.5 6 0 8.5l6 6 10-10z"
-														/>
-													</svg>
+													<h3 class="text-green-500 text-3xl font-semibold">{`${data()[index()].hours}`}</h3>
 												</Show>
 											</Show>
 										</div>

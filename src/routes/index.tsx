@@ -20,7 +20,7 @@ export default function Home() {
 					{(data) => (
 						<>
 							<SidePanel />
-							<div class="text-center mx-auto text-gray-700 p-4 flex flex-col items-center justify-start w-full gap-6 m-8">
+							<div class="text-center mx-auto text-gray-700 flex flex-col items-center justify-start w-full gap-6 m-8">
 								<h2 class="font-semibold text-lg">{`${monthsArr[curMonth()]} ${curYear()}`}</h2>
 								<Suspense>
 									<ListMonth
