@@ -11,6 +11,7 @@ import clsx from "clsx";
 import { Button } from "./ui/button";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
 import { adjustDateByOne, weekdaysArr } from "~/utils/functionsAndVariables";
+import { createStore } from "solid-js/store";
 
 export const dayAdjust = (month: number, year: number) => {
 	const adjustYearPos = adjustDateByOne(year, month, true);
@@ -53,6 +54,8 @@ const ListMonth: Component<{
 	year: number;
 	projectName: string;
 }> = (props) => {
+	const [coutedDays, setCountedDays] = createStore([1, 2, 3, 4, 5]);
+
 	const [selectedDate, setSelectedDate] = createSignal<Date | null>(null);
 	const [curHours, setCurHours] = createSignal(0);
 
@@ -72,20 +75,34 @@ const ListMonth: Component<{
 				<For each={weekdaysArr}>{(day) => <div>{day}</div>}</For>
 				<For each={dayAdjust(props.month, props.year)}>
 					{(date, index) => (
-						<button
-							type="button"
-							onClick={() =>
-								selectedDate() === hours.data[index()].date
-									? setSelectedDate(null)
-									: setSelectedDate(hours.data[index()].date)
-							}
-							class="flex flex-col justify-start items-center w-full h-16 border border-slate-200 hover:bg-slate-300 transition-all duration-300"
-						>
-							<h5 class="text-lg font-semibold">{date.getDate()}</h5>
+						<Show when={hours.data}>
+							{(hours) => (
+								<button
+									type="button"
+									onClick={() =>
+										selectedDate() === hours()[index()].date
+											? setSelectedDate(null)
+											: setSelectedDate(hours()[index()].date)
+									}
+									class={clsx(
+										selectedDate() === hours()[index()].date
+											? "bg-slate-600 active:bg-slate-600 hover:bg-slate-600"
+											: "bg-white",
+										"flex flex-col justify-start items-center w-full h-16 border border-slate-200 hover:bg-slate-300 transition-all duration-300",
+									)}
+								>
+									<h5
+										class={clsx(
+											"text-lg font-semibold",
+											selectedDate() === hours()[index()].date
+												? "text-white"
+												: "text-black",
+										)}
+									>
+										{date.getDate()}
+									</h5>
 
-							<Suspense fallback={<div class="w-full h-full" />}>
-								<Show when={hours.data}>
-									{(hours) => (
+									<Suspense fallback={<div class="w-full h-full" />}>
 										<div>
 											<Show when={hours()[index()].hours} fallback="">
 												<Show
@@ -127,10 +144,10 @@ const ListMonth: Component<{
 												</Show>
 											</Show>
 										</div>
-									)}
-								</Show>
-							</Suspense>
-						</button>
+									</Suspense>
+								</button>
+							)}
+						</Show>
 					)}
 				</For>
 			</div>
