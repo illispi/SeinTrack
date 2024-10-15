@@ -61,7 +61,10 @@ export default function Home() {
 										Next
 									</Button>
 								</div>
-								<DayEditor date={curDate()} />
+								<DayEditor
+									selectedDate={curDate()}
+									projectName={data()[0].name}
+								/>
 							</div>
 						</>
 					)}

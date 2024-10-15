@@ -90,18 +90,16 @@ const ListMonth: Component<{
 	});
 
 	const [selectedDate, setSelectedDate] = createSignal<Date | null>(null);
-	const [curHours, setCurHours] = createSignal(0);
 
-	const utils = trpc.useContext();
+
+	
 
 	const hours = trpc.getHoursOfDay.createQuery(() => ({
 		dates: dayAdjust(props.month, props.year),
 		projectName: props.projectName,
 	}));
 
-	const changeHours = trpc.changeDayHours.createMutation(() => ({
-		onSuccess: () => utils.invalidate(),
-	}));
+
 	return (
 		<div class="flex flex-col justify-start items-center max-w-5xl w-full">
 			<div class="grid grid-cols-7 w-full place-content-center place-items-center">
@@ -170,31 +168,7 @@ const ListMonth: Component<{
 					)}
 				</For>
 			</div>
-			<div class="w-full flex flex-col items-center justify-center">
-				<TextField>
-					<TextFieldLabel for="email">Hours</TextFieldLabel>
-					<TextFieldInput
-						type="number"
-						onInput={(e) => {
-							setCurHours(e.target.value);
-						}}
-					/>
-				</TextField>
-				<Button
-					type="button"
-					onClick={() => {
-						if (selectedDate()) {
-							changeHours.mutate({
-								date: selectedDate(),
-								hours: Number(curHours()),
-								projectName: props.projectName,
-							});
-						}
-					}}
-				>
-					Change hours
-				</Button>
-			</div>
+			
 		</div>
 	);
 };
