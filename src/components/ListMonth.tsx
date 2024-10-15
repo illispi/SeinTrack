@@ -68,74 +68,69 @@ const ListMonth: Component<{
 	}));
 	return (
 		<div class="flex flex-col justify-start items-center max-w-5xl w-full">
-			<div class="grid grid-cols-7 gap-4 w-full place-content-center place-items-center">
+			<div class="grid grid-cols-7 w-full place-content-center place-items-center">
 				<For each={weekdaysArr}>{(day) => <div>{day}</div>}</For>
 				<For each={dayAdjust(props.month, props.year)}>
 					{(date, index) => (
-						<div class="flex flex-col justify-center items-center w-8 h-16">
-							<h5>{date.getDate()}</h5>
+						<button
+							type="button"
+							onClick={() =>
+								selectedDate() === hours.data[index()].date
+									? setSelectedDate(null)
+									: setSelectedDate(hours.data[index()].date)
+							}
+							class="flex flex-col justify-start items-center w-full h-16 border border-slate-200 hover:bg-slate-300 transition-all duration-300"
+						>
+							<h5 class="text-lg font-semibold">{date.getDate()}</h5>
 
 							<Suspense fallback={<div class="w-full h-full" />}>
 								<Show when={hours.data}>
 									{(hours) => (
-										<Button
-											class={clsx()}
-											variant={
-												selectedDate() === hours()[index()].date
-													? "secondary"
-													: "default"
-											}
-											type="button"
-											onClick={() =>
-												selectedDate() === hours()[index()].date
-													? setSelectedDate(null)
-													: setSelectedDate(hours()[index()].date)
-											}
-										>
-											<Show when={hours()[index()].hours} fallback={"null"}>
+										<div>
+											<Show when={hours()[index()].hours} fallback="">
 												<Show
 													//TODO add less than check here
 													when={true}
 													fallback={
 														<svg
-															fill="currentColor"
+															class="fill-red-500"
 															stroke-width="0"
 															xmlns="http://www.w3.org/2000/svg"
 															viewBox="0 0 16 16"
-															height="1em"
-															width="1em"
+															height="2.0em"
+															width="2.0em"
 															style="overflow: visible; color: currentcolor;"
 														>
 															<title>Failed</title>
 															<path
-																fill="currentColor"
+																class="fill-red-500"
 																d="M15.854 12.854 11 8l4.854-4.854a.503.503 0 0 0 0-.707L13.561.146a.499.499 0 0 0-.707 0L8 5 3.146.146a.5.5 0 0 0-.707 0L.146 2.439a.499.499 0 0 0 0 .707L5 8 .146 12.854a.5.5 0 0 0 0 .707l2.293 2.293a.499.499 0 0 0 .707 0L8 11l4.854 4.854a.5.5 0 0 0 .707 0l2.293-2.293a.499.499 0 0 0 0-.707z"
 															/>
 														</svg>
 													}
 												>
 													<svg
-														fill="currentColor"
+														class="fill-green-500"
 														stroke-width="0"
 														xmlns="http://www.w3.org/2000/svg"
 														viewBox="0 0 16 16"
-														height="1em"
-														width="1em"
+														height="2.0em"
+														width="2.0em"
 														style="overflow: visible; color: currentcolor;"
 													>
 														<title>checkmark</title>
 														<path
-															fill="currentColor"
+															class="fill-green-500"
 															d="M13.5 2 6 9.5 2.5 6 0 8.5l6 6 10-10z"
 														/>
 													</svg>
 												</Show>
 											</Show>
-										</Button>
+										</div>
 									)}
 								</Show>
 							</Suspense>
-						</div>
+						</button>
 					)}
 				</For>
 			</div>
