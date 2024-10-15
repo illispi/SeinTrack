@@ -73,6 +73,29 @@ const isCountedDay = (
 	return false;
 };
 
+const colorPicker = (
+	selectedDate: Date,
+	iterDate: Date,
+	firstDate: Date,
+	lastDate: Date,
+	hours: number,
+	countedDays: number[],
+) => {
+	if (selectedDate === iterDate) {
+		return "bg-black";
+	}
+	if (isCountedDay(iterDate, lastDate, firstDate, countedDays) || hours > 0) {
+		if (
+			hours > 3 ||
+			!isCountedDay(iterDate, lastDate, firstDate, countedDays)
+		) {
+			return "bg-green-300";
+		}
+		return "bg-red-300";
+	}
+	return "bg-white";
+};
+
 const ListMonth: Component<{
 	month: number;
 	year: number;
@@ -112,10 +135,15 @@ const ListMonth: Component<{
 											: setSelectedDate(data()[index()].date);
 									}}
 									class={clsx(
-										selectedDate() === data()[index()].date
-											? "bg-black active:bg-black hover:bg-black"
-											: "bg-white",
-										"flex flex-col justify-start items-center w-full h-16 border border-gray-200 hover:bg-gray-300 transition-all duration-300",
+										colorPicker(
+											selectedDate(),
+											data()[index()].date,
+											firstAndLastDate.data?.firstDate,
+											firstAndLastDate.data?.lastDate,
+											data()[index()].hours,
+											countedDays,
+										),
+										"flex flex-col justify-start items-center w-full h-16 border border-black hover:bg-gray-300 transition-all duration-300",
 									)}
 								>
 									<h5
@@ -155,10 +183,10 @@ const ListMonth: Component<{
 															: false
 													}
 													fallback={
-														<h3 class="text-red-500 text-3xl font-semibold">{`${data()[index()].hours ? data()[index()].hours : 0}`}</h3>
+														<h3 class=" text-3xl font-semibold">{`${data()[index()].hours ? data()[index()].hours : 0}`}</h3>
 													}
 												>
-													<h3 class="text-green-500 text-3xl font-semibold">{`${data()[index()].hours}`}</h3>
+													<h3 class=" text-3xl font-semibold">{`${data()[index()].hours}`}</h3>
 												</Show>
 											</Show>
 										</div>
