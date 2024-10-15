@@ -83,10 +83,14 @@ const ListMonth: Component<{
 
 	createEffect(() => {
 		setLatestDate(
-			hours.data ? latestDateFunc(hours.data?.map((e) => e.date)) : null,
+			hours.data
+				? latestDateFunc(hours.data?.filter((e) => e.hours).map((e) => e.date))
+				: null,
 		);
 		setFirstDate(
-			hours.data ? firstDateFunc(hours.data?.map((e) => e.date)) : null,
+			hours.data
+				? firstDateFunc(hours.data?.filter((e) => e.hours).map((e) => e.date))
+				: null,
 		);
 	});
 
@@ -148,8 +152,8 @@ const ListMonth: Component<{
 															firstDate(),
 															countedDays,
 														) && hours()[index()].hours
-															? hours()[index()].hours < 3
-															: false
+															? hours()[index()].hours > 3
+															: true
 													}
 													fallback={
 														<svg
