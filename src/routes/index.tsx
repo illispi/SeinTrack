@@ -1,5 +1,6 @@
 import { A } from "@solidjs/router";
 import { createSignal, Show, Suspense } from "solid-js";
+import DayEditor from "~/components/DayEditor";
 import ListMonth from "~/components/ListMonth";
 import NewProject from "~/components/NewProject";
 import SidePanel from "~/components/SidePanel";
@@ -60,6 +61,7 @@ export default function Home() {
 										Next
 									</Button>
 								</div>
+								<DayEditor date={curDate()} />
 							</div>
 						</>
 					)}
