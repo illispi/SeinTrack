@@ -65,6 +65,7 @@ const isCountedDay = (
 		return false;
 	}
 	const countedDay = countingDays.includes(date.getDay());
+
 	if (date <= latestDate && date >= firstDate && countedDay) {
 		return true;
 	}
@@ -87,6 +88,7 @@ const ListMonth: Component<{
 				? latestDateFunc(hours.data?.filter((e) => e.hours).map((e) => e.date))
 				: null,
 		);
+		//TODO make endpoint to get first date
 		setFirstDate(
 			hours.data
 				? firstDateFunc(hours.data?.filter((e) => e.hours).map((e) => e.date))
@@ -143,12 +145,14 @@ const ListMonth: Component<{
 									<Suspense fallback={<div class="w-full h-full" />}>
 										<div>
 											<Show
-												when={isCountedDay(
-													data()[index()].date,
-													latestDate(),
-													firstDate(),
-													countedDays,
-												)}
+												when={
+													isCountedDay(
+														data()[index()].date,
+														latestDate(),
+														firstDate(),
+														countedDays,
+													) || data()[index()].hours > 3
+												}
 												fallback=""
 											>
 												<Show
