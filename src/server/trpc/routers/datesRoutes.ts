@@ -100,7 +100,6 @@ export const getFirstAndLastDate = publicProcedure
 				firstDate: dates[0].date,
 				lastDate: dates[dates.length - 1].date,
 			};
-			console.log(dateFL);
 
 			if (dateFL.firstDate && dateFL.lastDate) {
 				return dateFL;

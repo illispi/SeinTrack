@@ -10,6 +10,7 @@ import { trpc } from "~/utils/trpc";
 export default function Home() {
 	const [curMonth, setCurMonth] = createSignal(new Date().getMonth());
 	const [curYear, setCurYear] = createSignal(new Date().getFullYear());
+	const [curDate, setCurDate] = createSignal<null | Date>(null);
 	const projects = trpc.allProjects.createQuery();
 
 	return (
@@ -27,6 +28,7 @@ export default function Home() {
 										month={curMonth()}
 										year={curYear()}
 										projectName={data()[0].name}
+										setCurDate={setCurDate}
 									/>
 								</Suspense>
 								<div class="flex justify-center items-center gap-8 w-full">

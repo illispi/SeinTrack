@@ -3,6 +3,7 @@ import {
 	createSignal,
 	ErrorBoundary,
 	For,
+	Setter,
 	Show,
 	Suspense,
 	type Component,
@@ -76,12 +77,17 @@ const ListMonth: Component<{
 	month: number;
 	year: number;
 	projectName: string;
+	setCurDate: Setter<Date | null>;
 }> = (props) => {
 	const [countedDays, setCountedDays] = createStore([1, 2, 3, 4, 5]);
 
 	const firstAndLastDate = trpc.getFirstAndLastDate.createQuery(
 		() => props.projectName,
 	);
+
+	createEffect(() => {
+		props.setCurDate(selectedDate());
+	});
 
 	const [selectedDate, setSelectedDate] = createSignal<Date | null>(null);
 	const [curHours, setCurHours] = createSignal(0);
@@ -106,16 +112,16 @@ const ListMonth: Component<{
 							{(data) => (
 								<button
 									type="button"
-									onClick={() =>
+									onClick={() => {
 										selectedDate() === data()[index()].date
 											? setSelectedDate(null)
-											: setSelectedDate(data()[index()].date)
-									}
+											: setSelectedDate(data()[index()].date);
+									}}
 									class={clsx(
 										selectedDate() === data()[index()].date
-											? "bg-slate-600 active:bg-slate-600 hover:bg-slate-600"
+											? "bg-black active:bg-black hover:bg-black"
 											: "bg-white",
-										"flex flex-col justify-start items-center w-full h-16 border border-slate-200 hover:bg-slate-300 transition-all duration-300",
+										"flex flex-col justify-start items-center w-full h-16 border border-gray-200 hover:bg-gray-300 transition-all duration-300",
 									)}
 								>
 									<h5
