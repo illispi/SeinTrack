@@ -114,16 +114,16 @@ const ListMonth: Component<{
 				<For each={dayAdjust(props.month, props.year)}>
 					{(date, index) => (
 						<Show when={hours.data}>
-							{(hours) => (
+							{(data) => (
 								<button
 									type="button"
 									onClick={() =>
-										selectedDate() === hours()[index()].date
+										selectedDate() === data()[index()].date
 											? setSelectedDate(null)
-											: setSelectedDate(hours()[index()].date)
+											: setSelectedDate(data()[index()].date)
 									}
 									class={clsx(
-										selectedDate() === hours()[index()].date
+										selectedDate() === data()[index()].date
 											? "bg-slate-600 active:bg-slate-600 hover:bg-slate-600"
 											: "bg-white",
 										"flex flex-col justify-start items-center w-full h-16 border border-slate-200 hover:bg-slate-300 transition-all duration-300",
@@ -132,7 +132,7 @@ const ListMonth: Component<{
 									<h5
 										class={clsx(
 											"text-lg font-semibold",
-											selectedDate() === hours()[index()].date
+											selectedDate() === data()[index()].date
 												? "text-white"
 												: "text-black",
 										)}
@@ -142,18 +142,21 @@ const ListMonth: Component<{
 
 									<Suspense fallback={<div class="w-full h-full" />}>
 										<div>
-											<Show when={hours()[index()].hours} fallback="">
+											<Show
+												when={isCountedDay(
+													data()[index()].date,
+													latestDate(),
+													firstDate(),
+													countedDays,
+												)}
+												fallback=""
+											>
 												<Show
 													//TODO add less than check here
 													when={
-														isCountedDay(
-															hours()[index()].date,
-															latestDate(),
-															firstDate(),
-															countedDays,
-														) && hours()[index()].hours
-															? hours()[index()].hours > 3
-															: true
+														data()[index()].hours
+															? data()[index()].hours > 3
+															: false
 													}
 													fallback={
 														<svg
