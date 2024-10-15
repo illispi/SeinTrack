@@ -75,3 +75,29 @@ export const changeDayHours = publicProcedure
 		}
 		return;
 	});
+export const getFirstAndLastDate = publicProcedure
+	.input(v.parser(v.string()))
+	.query(async ({ input, ctx }) => {
+		const projectId = await ctx.db
+			.selectFrom("projects")
+			.select(["id"])
+			.where("name", "=", input)
+			.executeTakeFirst();
+
+		if (!projectId) {
+			return null;
+		}
+		const dates = await ctx.db
+			.selectFrom("dates")
+			.select(["date"])
+			.where("hoursWorked", "!=", null)
+			.where("projectId", "=", projectId?.id)
+			.orderBy("date asc")
+			.execute();
+
+		if (dates.length > 0) {
+			return { firstDate: dates[0].date, lastDate: dates[dates.length - 1] };
+		}
+
+		return null;
+	});

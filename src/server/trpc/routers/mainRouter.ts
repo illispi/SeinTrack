@@ -4,7 +4,11 @@ import * as v from "valibot";
 import { TRPCError } from "@trpc/server";
 import { publicProcedure, router } from "../initTrpc";
 import { allProjects, editProject } from "./projectRoutes";
-import { changeDayHours, getHoursOfDay } from "./datesRoutes";
+import {
+	changeDayHours,
+	getFirstAndLastDate,
+	getHoursOfDay,
+} from "./datesRoutes";
 
 export const appRouter = router({
 	test: publicProcedure.query(() => {
@@ -15,6 +19,7 @@ export const appRouter = router({
 	changeDayHours: changeDayHours,
 	createProject: editProject,
 	allProjects: allProjects,
+	getFirstAndLastDate: getFirstAndLastDate,
 });
 
 export type IAppRouter = typeof appRouter;
