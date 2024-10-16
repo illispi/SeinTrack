@@ -163,15 +163,13 @@ const ListMonth: Component<{
 											>
 												<Show
 													when={
-														data()[index()].hours
-															? data()[index()].hours > 3 ||
-																!isCountedDay(
-																	data()[index()].date,
-																	firstAndLastDate.data?.lastDate,
-																	firstAndLastDate.data?.firstDate,
-																	countedDays,
-																)
-															: false
+														data()[index()].hours > 3 ||
+														!isCountedDay(
+															data()[index()].date,
+															firstAndLastDate.data?.lastDate,
+															firstAndLastDate.data?.firstDate,
+															countedDays,
+														)
 													}
 													fallback={
 														<h3 class=" text-2xl font-semibold">{`${data()[index()].hours ? data()[index()].hours : 0}`}</h3>

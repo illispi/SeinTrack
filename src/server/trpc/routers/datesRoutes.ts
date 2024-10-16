@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { publicProcedure } from "../initTrpc";
 import * as v from "valibot";
 
@@ -54,17 +55,32 @@ export const changeDayHours = publicProcedure
 		}
 		const exists = await ctx.db
 			.selectFrom("dates")
-			.select(["date"])
+			.select(["date", "dates.hoursWorked"])
 			.where("date", "=", input.date)
 			.executeTakeFirst();
 		if (exists) {
-			const hours = await ctx.db
+			if (!exists.hoursWorked) {
+				await ctx.db
+					.updateTable("dates")
+					.set({ hoursWorked: input.hours })
+					.where("date", "=", input.date)
+					.executeTakeFirst();
+				return;
+			}
+			if (exists.hoursWorked + input.hours > 24) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "Hours exceed 24 hours",
+				});
+			}
+			const hours = exists.hoursWorked + input.hours;
+			await ctx.db
 				.updateTable("dates")
-				.set({ hoursWorked: input.hours })
+				.set({ hoursWorked: hours < 0 ? 0 : hours })
 				.where("date", "=", input.date)
 				.executeTakeFirst();
 		} else {
-			const hours = await ctx.db
+			await ctx.db
 				.insertInto("dates")
 				.values({
 					date: input.date,
