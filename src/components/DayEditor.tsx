@@ -33,6 +33,7 @@ const DayEditor: Component<{
 		onSuccess: () => {
 			utils.invalidate();
 			setAddHours(0);
+			setAddMinutes(0);
 		},
 	}));
 	return (
@@ -51,6 +52,7 @@ const DayEditor: Component<{
 									validationState={
 										addHours() + addMinutes() / 60 > 24 ? "invalid" : "valid"
 									}
+									value={addHours()}
 								>
 									<NumberFieldGroup>
 										<NumberFieldInput />
@@ -67,6 +69,7 @@ const DayEditor: Component<{
 									validationState={
 										addHours() + addMinutes() / 60 > 24 ? "invalid" : "valid"
 									}
+									value={addMinutes()}
 								>
 									<NumberFieldGroup>
 										<NumberFieldInput />
