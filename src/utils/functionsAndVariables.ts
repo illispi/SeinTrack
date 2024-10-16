@@ -59,3 +59,13 @@ export const firstDateFunc = (dates: Date[]) => {
 	dates.sort((a, b) => a.getTime() - b.getTime());
 	return dates[0];
 };
+
+export const hoursToFormat = (hoursDec: number) => {
+	let minutes = Math.floor(((hoursDec * 60) % 60) / 15) * 15;
+	if (minutes >= 60) {
+		minutes = 0;
+	}
+	const hours = hoursDec.toFixed(0);
+
+	return { minutes, hours };
+};

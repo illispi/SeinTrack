@@ -20,6 +20,7 @@ import {
 	weekdaysShortHandArr,
 } from "~/utils/functionsAndVariables";
 import { createStore } from "solid-js/store";
+import MinuteFormat from "./MinuteFormat";
 
 export const dayAdjust = (month: number, year: number) => {
 	const adjustYearPos = adjustDateByOne(year, month, true);
@@ -150,7 +151,7 @@ const ListMonth: Component<{
 											data()[index()].hours,
 											countedDays,
 										),
-										"flex flex-col justify-start items-center w-full h-16 border border-black hover:bg-amber-300 transition-all duration-300",
+										"flex flex-col justify-around items-center w-full h-16 border border-black hover:bg-amber-300 transition-all duration-300",
 									)}
 								>
 									<h5>{date.getDate()}</h5>
@@ -179,10 +180,10 @@ const ListMonth: Component<{
 														)
 													}
 													fallback={
-														<h3 class=" text-2xl font-semibold">{`${data()[index()].hours ? data()[index()].hours : 0}`}</h3>
+														<MinuteFormat hours={data()[index()].hours} />
 													}
 												>
-													<h3 class=" text-2xl font-semibold">{`${data()[index()].hours}`}</h3>
+													<MinuteFormat hours={data()[index()].hours} />
 												</Show>
 											</Show>
 										</div>
