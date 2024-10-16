@@ -7,7 +7,7 @@ const SidePanel: ParentComponent = (props) => {
 				HELLO
 			</div>
 			{props.children}
-			<div class="hidden lg:flex grow h-full min-h-screen" />
+			<div class="hidden xl:flex grow h-full min-h-screen" />
 		</>
 	);
 };

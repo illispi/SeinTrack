@@ -120,7 +120,7 @@ const ListMonth: Component<{
 	}));
 
 	return (
-		<div class="flex flex-col justify-start items-center max-w-5xl w-full">
+		<div class="flex flex-col justify-start items-center max-w-5xl w-full lg:px-6">
 			<div class="grid grid-cols-7 w-full place-content-center place-items-center">
 				<For each={weekdaysArr}>{(day) => <div>{day}</div>}</For>
 				<For each={dayAdjust(props.month, props.year)}>
