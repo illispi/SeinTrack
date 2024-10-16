@@ -7,6 +7,15 @@ export const weekdaysArr = [
 	"Saturday",
 	"Sunday",
 ];
+export const weekdaysShortHandArr = [
+	"Mon.",
+	"Tue.",
+	"Wed.",
+	"Thu.",
+	"Fri",
+	"Sat",
+	"Sun",
+];
 
 export const monthsArr = [
 	"January",
