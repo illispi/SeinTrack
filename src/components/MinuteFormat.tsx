@@ -25,7 +25,6 @@ const MinuteFormat: Component<{ hours: number | null }> = (props) => {
 				}
 			>
 				<h3 class="lg:text-2xl font-semibold">{`${props.hours ? hoursToFormat(props.hours).hours : hoursToFormat(0).hours}`}</h3>
-				<span class="lg:text-lg font-light">{"h "}</span>
 				<Show
 					when={
 						props.hours
@@ -33,8 +32,8 @@ const MinuteFormat: Component<{ hours: number | null }> = (props) => {
 							: hoursToFormat(0).minutes
 					}
 				>
+					<span class="lg:text-2xl font-semibold">:</span>
 					<h3 class="lg:text-2xl font-semibold">{`${props.hours ? hoursToFormat(props.hours).minutes : hoursToFormat(0).minutes}`}</h3>
-					<span class="lg:text-lg font-light">{"m"}</span>
 				</Show>
 			</Show>
 		</div>

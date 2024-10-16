@@ -65,7 +65,7 @@ export const hoursToFormat = (hoursDec: number) => {
 	if (minutes >= 60) {
 		minutes = 0;
 	}
-	const hours = hoursDec.toFixed(0);
+	const hours = Math.floor(hoursDec);
 
 	return { minutes, hours };
 };
