@@ -151,7 +151,10 @@ const ListMonth: Component<{
 											data()[index()].hours,
 											countedDays,
 										),
-										"flex flex-col justify-around items-center w-full h-16 border border-black hover:bg-amber-300 transition-all duration-300",
+										index() === 0 ? "border-t" : "",
+										index() < 7 && index() > 0 ? "border-t" : "",
+										index() % 7 === 0 ? "border-l" : "",
+										"flex flex-col justify-around items-center w-full h-16 border-r border-b border-black hover:bg-amber-300 transition-all duration-300",
 									)}
 								>
 									<h5>{date.getDate()}</h5>
