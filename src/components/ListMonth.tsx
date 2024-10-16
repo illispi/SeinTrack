@@ -82,7 +82,7 @@ const colorPicker = (
 	hours: number,
 	countedDays: number[],
 ) => {
-	if (selectedDate === iterDate) {
+	if (selectedDate?.toDateString() === iterDate?.toDateString()) {
 		return "bg-amber-300";
 	}
 	if (isCountedDay(iterDate, lastDate, firstDate, countedDays) || hours > 0) {
@@ -111,6 +111,7 @@ const ListMonth: Component<{
 
 	createEffect(() => {
 		props.setCurDate(selectedDate());
+		console.log(selectedDate());
 	});
 
 	const [selectedDate, setSelectedDate] = createSignal<Date | null>(null);
