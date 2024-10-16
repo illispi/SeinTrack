@@ -1,4 +1,4 @@
-import { createSignal, Show, type Component } from "solid-js";
+import { createEffect, createSignal, Show, type Component } from "solid-js";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
 import { Button } from "./ui/button";
 import { trpc } from "~/utils/trpc";
@@ -10,6 +10,7 @@ import {
 	NumberFieldIncrementTrigger,
 	NumberFieldInput,
 } from "./ui/number-field";
+import { showToast, Toaster } from "./ui/toast";
 
 const DayEditor: Component<{
 	selectedDate: Date | null;
@@ -17,6 +18,15 @@ const DayEditor: Component<{
 }> = (props) => {
 	const [addHours, setAddHours] = createSignal(0);
 	const [addMinutes, setAddMinutes] = createSignal(0);
+	createEffect(() => {
+		if (changeHours.isError) {
+			showToast({
+				title: "ERROR!",
+				description: changeHours.error?.message,
+				variant: "error",
+			});
+		}
+	});
 
 	const utils = trpc.useContext();
 	const changeHours = trpc.changeDayHours.createMutation(() => ({
@@ -86,9 +96,8 @@ const DayEditor: Component<{
 							>
 								Add time
 							</Button>
-							<Show when={changeHours.isError}>
-								{changeHours.error?.message}
-							</Show>
+
+							<Toaster />
 						</div>
 					</div>
 				)}
