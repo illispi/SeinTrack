@@ -11,6 +11,7 @@ import {
 	NumberFieldInput,
 } from "./ui/number-field";
 import { showToast, Toaster } from "./ui/toast";
+import AddTime from "./AddTime";
 
 const DayEditor: Component<{
 	selectedDate: Date | null;
@@ -43,44 +44,12 @@ const DayEditor: Component<{
 					<div class="flex flex-col gap-4 text-lg">
 						{date().toDateString()}
 						<div class="w-full flex flex-col items-center justify-center gap-4">
-							<div class="grid w-full grid-cols-2 gap-2">
-								<h3>Hours:</h3>
-								<h3>Minutes:</h3>
-								<NumberField
-									class="flex w-36 flex-col gap-2"
-									onRawValueChange={setAddHours}
-									validationState={
-										addHours() + addMinutes() / 60 > 24 ? "invalid" : "valid"
-									}
-									value={addHours()}
-								>
-									<NumberFieldGroup>
-										<NumberFieldInput />
-										<NumberFieldIncrementTrigger />
-										<NumberFieldDecrementTrigger />
-									</NumberFieldGroup>
-									<NumberFieldErrorMessage>
-										Exceeds 24 hours
-									</NumberFieldErrorMessage>
-								</NumberField>
-								<NumberField
-									class="flex w-36 flex-col gap-2"
-									onRawValueChange={setAddMinutes}
-									validationState={
-										addHours() + addMinutes() / 60 > 24 ? "invalid" : "valid"
-									}
-									value={addMinutes()}
-								>
-									<NumberFieldGroup>
-										<NumberFieldInput />
-										<NumberFieldIncrementTrigger />
-										<NumberFieldDecrementTrigger />
-									</NumberFieldGroup>
-									<NumberFieldErrorMessage>
-										Exceeds 24 hours
-									</NumberFieldErrorMessage>
-								</NumberField>
-							</div>
+							<AddTime
+								hours={addHours()}
+								minutes={addMinutes()}
+								setHours={setAddHours}
+								setMinutes={setAddMinutes}
+							/>
 
 							<Button
 								variant={"outline"}
