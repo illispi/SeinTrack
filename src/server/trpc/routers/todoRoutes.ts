@@ -239,6 +239,41 @@ export const getDoneTodosByMonth = publicProcedure
 		return monthsTodosDone;
 	});
 
-// getAllDoneTodosPaginated
-// getTagsWithActiveSwitch
-// getTagGroupsWithActiveSwitch
+export const getTagsOrGroupsActiveOrNot = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				projectId: v.number(),
+				switch: v.enum(Switch),
+				active: v.boolean(),
+			}),
+		),
+	)
+	.query(async ({ input, ctx }) => {
+		if (input.switch === Switch.tag) {
+			const activeTags = await ctx.db
+				.selectFrom("tags")
+				.select(["id", "tag"])
+				.where("tags.projectId", "=", input.projectId)
+				.where("tagActive", "=", input.active)
+				.where("tag", "is not", null)
+				.execute();
+
+			if (activeTags.length === 0) {
+				return null;
+			}
+			return activeTags;
+		}
+		if (input.switch === Switch.tagGroup) {
+			const activeTagGroups = await ctx.db
+				.selectFrom("tagGroups")
+				.select(["id", "tagGroup"])
+				.where("tagGroupActive", "=", input.active)
+				.execute();
+
+			if (activeTagGroups.length === 0) {
+				return null;
+			}
+			return activeTagGroups;
+		}
+	});
