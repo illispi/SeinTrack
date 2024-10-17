@@ -53,23 +53,23 @@ const TodoPanel: Component = () => {
 
 	//TODO remove
 	const temp = allProjects.data ? allProjects.data[0] : null;
+	// const temp = { id: 1 };
 	const unDoneTodos = trpc.getUnDoneTodos.createQuery(() => ({
 		projectId: temp?.id,
 	}));
 	const tagsActive = trpc.getTagsOrGroupsActiveOrNot.createQuery(() => ({
 		active: true,
 		projectId: temp?.id,
-		switch: Switch.tag,
+		switch: 1,
 	}));
 	const tagGroupsActive = trpc.getTagsOrGroupsActiveOrNot.createQuery(() => ({
 		active: true,
 		projectId: temp?.id,
-		switch: Switch.tagGroup,
+		switch: 0,
 	}));
 	return (
 		<>
-			<div class="hidden h-full min-h-screen grow xl:flex" />
-			<div class="flex lg:hidden">
+			<div class="hidden h-full min-h-screen grow xl:flex">
 				<Dialog>
 					<DialogTrigger as={Button<"button">}>Add todo</DialogTrigger>
 					<DialogContent class="sm:max-w-[425px]">
@@ -79,6 +79,9 @@ const TodoPanel: Component = () => {
 								Make changes to your profile here. Click save when you're done.
 							</DialogDescription>
 						</DialogHeader>
+						<Show when={unDoneTodos.data} fallback="doesnt work">
+							Works
+						</Show>
 						<Show when={tagsActive.data} fallback="No tags found">
 							{(tags) => (
 								<Combobox
@@ -149,6 +152,7 @@ const TodoPanel: Component = () => {
 					</DialogContent>
 				</Dialog>
 			</div>
+			<div class="flex lg:hidden"></div>
 		</>
 	);
 };

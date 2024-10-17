@@ -191,8 +191,8 @@ export const getUnDoneTodos = publicProcedure
 				"tagGroups.tagGroup",
 				"tags.tag",
 			])
-			.where("completed", "=", false)
-			.where("projectId", "=", input.projectId)
+			.where("todos.completed", "=", false)
+			.where("todos.projectId", "=", input.projectId)
 			.execute();
 
 		if (unDoneTodos.length === 0) {
@@ -225,8 +225,8 @@ export const getDoneTodosByMonth = publicProcedure
 				"tags.tag",
 				"dates.date",
 			])
-			.where("completed", "=", true)
-			.where("projectId", "=", input.projectId)
+			.where("todos.completed", "=", true)
+			.where("todos.projectId", "=", input.projectId)
 			.execute();
 
 		if (doneTodos.length === 0) {

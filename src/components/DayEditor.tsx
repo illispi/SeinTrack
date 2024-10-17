@@ -39,7 +39,7 @@ const DayEditor: Component<{
 		<div class="">
 			<Show when={props.selectedDate} fallback="No date selected">
 				{(date) => (
-					<div class="flex flex-col gap-8 rounded-lg border-t-4 border-green-400 bg-gray-50 p-4 text-lg shadow-md">
+					<div class="flex flex-col gap-8 rounded-lg border-t-4 border-green-400  p-4 text-lg shadow-lg">
 						<h4 class="text-xl underline underline-offset-2">
 							{date().toDateString()}
 						</h4>
