@@ -1,15 +1,14 @@
-import { Show, type Component } from "solid-js";
+import { type Component, Show } from "solid-js";
+import { Button } from "./ui/button";
 import {
-	DialogTrigger,
+	Dialog,
 	DialogContent,
-	DialogHeader,
-	DialogTitle,
 	DialogDescription,
 	DialogFooter,
-	Dialog,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
 } from "./ui/dialog";
-import { TextFieldLabel, TextFieldInput, TextField } from "./ui/text-field";
-import { Button } from "./ui/button";
 
 import {
 	Combobox,
@@ -22,8 +21,51 @@ import {
 	ComboboxSection,
 	ComboboxTrigger,
 } from "./ui/combobox";
+import { trpc } from "~/utils/trpc";
+import { Switch } from "~/server/trpc/routers/todoRoutes";
+import type { IAppRouter } from "~/server/trpc/routers/mainRouter";
+import type { inferRouterOutputs } from "@trpc/server";
 
-const TodoPanel: Component = (props) => {
+type RouterOutput = inferRouterOutputs<IAppRouter>;
+
+const massageTagsAndGroupsToArr = (
+	data: RouterOutput["getTagsOrGroupsActiveOrNot"],
+): string[] => {
+	const arr = [];
+	if (data) {
+		for (const el of data) {
+			if ("tag" in el) {
+				if (el.tag) {
+					arr.push(el.tag);
+				}
+			} else {
+				arr.push(el.tagGroup);
+			}
+		}
+	}
+
+	return arr;
+};
+
+const TodoPanel: Component = () => {
+	const utils = trpc.useContext();
+	const allProjects = trpc.allProjects.createQuery();
+
+	//TODO remove
+	const temp = allProjects.data ? allProjects.data[0] : null;
+	const unDoneTodos = trpc.getUnDoneTodos.createQuery(() => ({
+		projectId: temp?.id,
+	}));
+	const tagsActive = trpc.getTagsOrGroupsActiveOrNot.createQuery(() => ({
+		active: true,
+		projectId: temp?.id,
+		switch: Switch.tag,
+	}));
+	const tagGroupsActive = trpc.getTagsOrGroupsActiveOrNot.createQuery(() => ({
+		active: true,
+		projectId: temp?.id,
+		switch: Switch.tagGroup,
+	}));
 	return (
 		<>
 			<div class="hidden h-full min-h-screen grow xl:flex" />
@@ -37,35 +79,69 @@ const TodoPanel: Component = (props) => {
 								Make changes to your profile here. Click save when you're done.
 							</DialogDescription>
 						</DialogHeader>
-						<Show when={ALL_OPTIONS}>
-							<Combobox
-								options={ALL_OPTIONS}
-								// optionValue="value"
-								// optionTextValue="label"
-								// optionLabel="label"
-								// optionDisabled="disabled"
-								// optionGroupChildren="options"
-								placeholder="Select tag"
-								itemComponent={(props) => (
-									<ComboboxItem item={props.item}>
-										<ComboboxItemLabel>
-											{props.item.rawValue.label}
-										</ComboboxItemLabel>
-										<ComboboxItemIndicator />
-									</ComboboxItem>
-								)}
-								sectionComponent={(props) => (
-									<ComboboxSection>
-										{props.section.rawValue.label}
-									</ComboboxSection>
-								)}
-							>
-								<ComboboxControl aria-label="Food">
-									<ComboboxInput />
-									<ComboboxTrigger />
-								</ComboboxControl>
-								<ComboboxContent />
-							</Combobox>
+						<Show when={tagsActive.data}>
+							{(tags) => (
+								<Combobox
+									options={massageTagsAndGroupsToArr(tags())}
+									// optionValue="value"
+									// optionTextValue="label"
+									// optionLabel="label"
+									// optionDisabled="disabled"
+									// optionGroupChildren="options"
+									placeholder="Select tag"
+									itemComponent={(props) => (
+										<ComboboxItem item={props.item}>
+											<ComboboxItemLabel>
+												{props.item.rawValue.label}
+											</ComboboxItemLabel>
+											<ComboboxItemIndicator />
+										</ComboboxItem>
+									)}
+									sectionComponent={(props) => (
+										<ComboboxSection>
+											{props.section.rawValue.label}
+										</ComboboxSection>
+									)}
+								>
+									<ComboboxControl aria-label="Tag">
+										<ComboboxInput />
+										<ComboboxTrigger />
+									</ComboboxControl>
+									<ComboboxContent />
+								</Combobox>
+							)}
+						</Show>
+						<Show when={tagGroupsActive.data}>
+							{(tagGroups) => (
+								<Combobox
+									options={massageTagsAndGroupsToArr(tagGroups())}
+									// optionValue="value"
+									// optionTextValue="label"
+									// optionLabel="label"
+									// optionDisabled="disabled"
+									// optionGroupChildren="options"
+									placeholder="Select tag group"
+									itemComponent={(props) => (
+										<ComboboxItem item={props.item}>
+											<ComboboxItemLabel>
+												{props.item.rawValue.label}
+											</ComboboxItemLabel>
+											<ComboboxItemIndicator />
+										</ComboboxItem>
+									)}
+									sectionComponent={(props) => (
+										<ComboboxSection>
+											{props.section.rawValue.label}
+										</ComboboxSection>
+									)}
+								>
+									<ComboboxControl aria-label="Tag group">
+										<ComboboxInput />
+										<ComboboxTrigger />
+									</ComboboxControl>
+									<ComboboxContent />
+								</Combobox>
+							)}
 						</Show>
 						<DialogFooter>
 							<Button type="submit">Save changes</Button>

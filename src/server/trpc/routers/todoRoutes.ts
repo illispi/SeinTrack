@@ -2,7 +2,7 @@ import * as v from "valibot";
 import { publicProcedure } from "../initTrpc";
 import { TRPCError } from "@trpc/server";
 
-enum Switch {
+export enum Switch {
 	tagGroup = 0,
 	tag = 1,
 }
@@ -172,11 +172,14 @@ export const getUnDoneTodos = publicProcedure
 	.input(
 		v.parser(
 			v.object({
-				projectId: v.number(),
+				projectId: v.nullish(v.number()),
 			}),
 		),
 	)
 	.query(async ({ input, ctx }) => {
+		if (!input.projectId) {
+			throw new TRPCError({ code: "BAD_REQUEST" });
+		}
 		const unDoneTodos = await ctx.db
 			.selectFrom("todos")
 			.innerJoin("tagGroups", "tagGroups.id", "tagGroupId")
@@ -243,13 +246,16 @@ export const getTagsOrGroupsActiveOrNot = publicProcedure
 	.input(
 		v.parser(
 			v.object({
-				projectId: v.number(),
+				projectId: v.nullish(v.number()),
 				switch: v.enum(Switch),
 				active: v.boolean(),
 			}),
 		),
 	)
 	.query(async ({ input, ctx }) => {
+		if (!input.projectId) {
+			throw new TRPCError({ code: "BAD_REQUEST" });
+		}
 		if (input.switch === Switch.tag) {
 			const activeTags = await ctx.db
 				.selectFrom("tags")

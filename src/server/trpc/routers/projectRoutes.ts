@@ -27,7 +27,7 @@ export const editProject = publicProcedure
 export const allProjects = publicProcedure.query(async ({ ctx }) => {
 	const projects = await ctx.db
 		.selectFrom("projects")
-		.select(["name", "targetHours"])
+		.select(["name", "targetHours", "id"])
 		.execute();
 	if (projects.length === 0) {
 		return null;
