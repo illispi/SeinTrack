@@ -20,17 +20,7 @@
 		"enabled": true,
 		"rules": {
 			"recommended": true,
-			"a11y": { "noSvgWithoutTitle": "off" },
-			"nursery": {
-				"useSortedClasses": {
-					"level": "warn",
-					"fix": "safe",
-					"options": {
-						"attributes": ["classList", "class"],
-						"functions": ["clsx", "cva", "tw"]
-					}
-				}
-			}
+			"a11y": { "noSvgWithoutTitle": "off" }
 		}
 	},
 	"javascript": {

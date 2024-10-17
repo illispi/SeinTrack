@@ -4,7 +4,7 @@ import Counter from "~/components/Counter";
 export default function About() {
 	return (
 		<main class="mx-auto p-4 text-center text-gray-700">
-			<h1 class="my-16 max-w-6 font-thin text-6xl text-sky-700 uppercase">
+			<h1 class="my-16 max-w-6 text-6xl font-thin uppercase text-sky-700">
 				About Page
 			</h1>
 			<Counter />
