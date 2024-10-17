@@ -143,7 +143,6 @@ const ListMonth: Component<{
 											? setSelectedDate(null)
 											: setSelectedDate(data()[index()].date);
 									}}
-									// eslint-disable-next-line tailwindcss/classnames-order
 									class={clsx(
 										colorPicker(
 											selectedDate(),
@@ -156,7 +155,7 @@ const ListMonth: Component<{
 										index() === 0 ? "border-t" : "",
 										index() < 7 && index() > 0 ? "border-t" : "",
 										index() % 7 === 0 ? "border-l" : "",
-										"flex h-16 w-full flex-col items-center justify-around border-black border-r border-b transition-all duration-300 hover:bg-amber-300",
+										"flex h-16 w-full flex-col items-center justify-around border-b border-r border-black transition-all duration-300 hover:bg-amber-300",
 									)}
 								>
 									<h5>{date.getDate()}</h5>

@@ -2,15 +2,6 @@ import { type Component, Show, createEffect, createSignal } from "solid-js";
 import { trpc } from "~/utils/trpc";
 import AddTime from "./AddTime";
 import { Button } from "./ui/button";
-import {
-	NumberField,
-	NumberFieldDecrementTrigger,
-	NumberFieldErrorMessage,
-	NumberFieldGroup,
-	NumberFieldIncrementTrigger,
-	NumberFieldInput,
-} from "./ui/number-field";
-import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
 import { Toaster, showToast } from "./ui/toast";
 
 const DayEditor: Component<{
