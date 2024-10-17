@@ -12,9 +12,9 @@ export const weekdaysShortHandArr = [
 	"Tue.",
 	"Wed.",
 	"Thu.",
-	"Fri",
-	"Sat",
-	"Sun",
+	"Fri.",
+	"Sat.",
+	"Sun.",
 ];
 
 export const monthsArr = [

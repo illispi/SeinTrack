@@ -131,7 +131,6 @@ const ListMonth: Component<{
 				<For each={weekdaysShortHandArr}>
 					{(day) => <div class="block pb-6 lg:hidden">{day}</div>}
 				</For>
-
 				<For each={dayAdjust(props.month, props.year)}>
 					{(date, index) => (
 						<Show when={hours.data}>
@@ -139,6 +138,7 @@ const ListMonth: Component<{
 								<button
 									type="button"
 									onClick={() => {
+										// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 										selectedDate() === data()[index()].date
 											? setSelectedDate(null)
 											: setSelectedDate(data()[index()].date);
@@ -158,40 +158,42 @@ const ListMonth: Component<{
 										"flex h-16 w-full flex-col items-center justify-around border-b border-r border-black transition-all duration-300 hover:bg-amber-300",
 									)}
 								>
-									<h5>{date.getDate()}</h5>
+									<div class="flex size-full flex-col items-center justify-start">
+										<h5>{date.getDate()}</h5>
 
-									<Suspense fallback={<div class="size-full" />}>
-										<div>
-											<Show
-												when={
-													isCountedDay(
-														data()[index()].date,
-														firstAndLastDate.data?.lastDate,
-														firstAndLastDate.data?.firstDate,
-														countedDays,
-													) || data()[index()].hours > 0
-												}
-												fallback=""
-											>
+										<Suspense fallback={<div class="size-full" />}>
+											<div>
 												<Show
 													when={
-														data()[index()].hours > 3 ||
-														!isCountedDay(
+														isCountedDay(
 															data()[index()].date,
 															firstAndLastDate.data?.lastDate,
 															firstAndLastDate.data?.firstDate,
 															countedDays,
-														)
+														) || data()[index()].hours > 0
 													}
-													fallback={
-														<MinuteFormat hours={data()[index()].hours} />
-													}
+													fallback=""
 												>
-													<MinuteFormat hours={data()[index()].hours} />
+													<Show
+														when={
+															data()[index()].hours > 3 ||
+															!isCountedDay(
+																data()[index()].date,
+																firstAndLastDate.data?.lastDate,
+																firstAndLastDate.data?.firstDate,
+																countedDays,
+															)
+														}
+														fallback={
+															<MinuteFormat hours={data()[index()].hours} />
+														}
+													>
+														<MinuteFormat hours={data()[index()].hours} />
+													</Show>
 												</Show>
-											</Show>
-										</div>
-									</Suspense>
+											</div>
+										</Suspense>
+									</div>
 								</button>
 							)}
 						</Show>
