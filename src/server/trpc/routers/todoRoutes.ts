@@ -20,37 +20,37 @@ export const AddTodo = publicProcedure
 			.where("projects.name", "=", input.project)
 			.executeTakeFirstOrThrow();
 
-		if (input.tag) {
-			const tagId = await ctx.db
-				.selectFrom("tags")
-				.select(["id"])
-				.where("tag", "=", input.tag)
-				.executeTakeFirst();
-			const tagGroupId = await ctx.db
-				.selectFrom("tagGroups")
-				.select(["id"])
-				.where("tagGroup", "=", input.tagGroup)
-				.executeTakeFirst();
+		const tagId = input.tag
+			? await ctx.db
+					.selectFrom("tags")
+					.select(["id"])
+					.where("tag", "=", input.tag)
+					.executeTakeFirst()
+			: null;
+		const tagGroupId = await ctx.db
+			.selectFrom("tagGroups")
+			.select(["id"])
+			.where("tagGroup", "=", input.tagGroup)
+			.executeTakeFirst();
 
-			if (!tagGroupId) {
-				throw new TRPCError({
-					code: "BAD_REQUEST",
-					message: `Tag group ${input.tagGroup} not found`,
-				});
-			}
-			await ctx.db
-				.insertInto("todos")
-				.values({
-					completed: false,
-					projectId: existsId.id,
-					todo: input.todo,
-					dateId: null,
-					hoursWorked: null,
-					tagId: tagId?.id,
-					tagGroupId: tagGroupId?.id,
-				})
-				.executeTakeFirstOrThrow();
+		if (!tagGroupId) {
+			throw new TRPCError({
+				code: "BAD_REQUEST",
+				message: `Tag group ${input.tagGroup} not found`,
+			});
 		}
+		await ctx.db
+			.insertInto("todos")
+			.values({
+				completed: false,
+				projectId: existsId.id,
+				todo: input.todo,
+				dateId: null,
+				hoursWorked: null,
+				tagId: tagId?.id,
+				tagGroupId: tagGroupId?.id,
+			})
+			.executeTakeFirstOrThrow();
 
 		return;
 	});
