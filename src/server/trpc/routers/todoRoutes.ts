@@ -181,7 +181,13 @@ export const getUnDoneTodos = publicProcedure
 			.selectFrom("todos")
 			.innerJoin("tagGroups", "tagGroups.id", "tagGroupId")
 			.innerJoin("tags", "tags.id", "tagId")
-			.select(["id", "tagId", "dateId", "tagGroups.tagGroup", "tags.tag"])
+			.select([
+				"todos.id",
+				"todos.tagId",
+				"todos.dateId",
+				"tagGroups.tagGroup",
+				"tags.tag",
+			])
 			.where("completed", "=", false)
 			.where("projectId", "=", input.projectId)
 			.execute();
@@ -205,9 +211,17 @@ export const getDoneTodosByMonth = publicProcedure
 	.query(async ({ input, ctx }) => {
 		const doneTodos = await ctx.db
 			.selectFrom("todos")
-			.innerJoin("tagGroups", "tagGroups.id", "tagGroupId")
-			.innerJoin("tags", "tags.id", "tagId")
-			.select(["id", "tagId", "dateId", "tagGroups.tagGroup", "tags.tag"])
+			.innerJoin("tagGroups", "tagGroups.id", "todos.tagGroupId")
+			.innerJoin("tags", "tags.id", "todos.tagId")
+			.innerJoin("dates", "dates.id", "todos.dateId")
+			.select([
+				"todos.id",
+				"todos.tagId",
+				"todos.dateId",
+				"tagGroups.tagGroup",
+				"tags.tag",
+				"dates.date",
+			])
 			.where("completed", "=", true)
 			.where("projectId", "=", input.projectId)
 			.execute();
@@ -216,7 +230,13 @@ export const getDoneTodosByMonth = publicProcedure
 			return null;
 		}
 
-		return doneTodos;
+		const monthsTodosDone = doneTodos.filter(
+			(e) =>
+				e.date?.getFullYear() === input.year &&
+				e.date.getMonth() === input.month,
+		);
+
+		return monthsTodosDone;
 	});
 
 // getAllDoneTodosPaginated
