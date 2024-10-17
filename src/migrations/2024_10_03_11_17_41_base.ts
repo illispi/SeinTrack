@@ -5,7 +5,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 	await db.schema
 		.createTable("projects")
 		.addColumn("id", "serial", (col) => col.primaryKey())
-		.addColumn("name", "text", (col) => col.notNull())
+		.addColumn("name", "text", (col) => col.notNull().unique())
 		.addColumn("target_hours", "float4", (col) => col.defaultTo(3).notNull())
 		.execute();
 	await db.schema
@@ -22,14 +22,14 @@ export async function up(db: Kysely<any>): Promise<void> {
 		.createTable("tag_groups")
 		.addColumn("id", "serial", (col) => col.primaryKey())
 		.addColumn("tag_group", "text", (col) => col.notNull().unique())
-		.addColumn("tag_group_active", "boolean")
+		.addColumn("tag_group_active", "boolean", (col) => col.notNull())
 		.execute();
 
 	await db.schema
 		.createTable("tags")
 		.addColumn("id", "serial", (col) => col.primaryKey())
 		.addColumn("tag", "text", (col) => col.notNull().unique())
-		.addColumn("tag_active", "boolean")
+		.addColumn("tag_active", "boolean", (col) => col.notNull())
 		.addColumn("project_id", "integer", (col) =>
 			col.references("projects.id").onDelete("cascade").notNull(),
 		)

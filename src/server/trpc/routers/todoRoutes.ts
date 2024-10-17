@@ -2,31 +2,23 @@ import * as v from "valibot";
 import { publicProcedure } from "../initTrpc";
 import { TRPCError } from "@trpc/server";
 
+enum Switch {
+	tagGroup = 0,
+	tag = 1,
+}
+
 export const AddTodo = publicProcedure
 	.input(
 		v.parser(
 			v.object({
 				todo: v.string(),
-				tag: v.nullish(v.string()),
+				tagId: v.nullish(v.number()),
 				tagGroup: v.string(),
-				project: v.string(),
+				projectId: v.number(),
 			}),
 		),
 	)
 	.mutation(async ({ input, ctx }) => {
-		const existsId = await ctx.db
-			.selectFrom("projects")
-			.select(["id"])
-			.where("projects.name", "=", input.project)
-			.executeTakeFirstOrThrow();
-
-		const tag = input.tag
-			? await ctx.db
-					.selectFrom("tags")
-					.select(["id"])
-					.where("tag", "=", input.tag)
-					.executeTakeFirst()
-			: null;
 		const tagGroup = await ctx.db
 			.selectFrom("tagGroups")
 			.select(["id"])
@@ -43,11 +35,11 @@ export const AddTodo = publicProcedure
 			.insertInto("todos")
 			.values({
 				completed: false,
-				projectId: existsId.id,
+				projectId: input.projectId,
 				todo: input.todo,
 				dateId: null,
 				hoursWorked: null,
-				tagId: tag?.id,
+				tagId: input.tagId,
 				tagGroupId: tagGroup?.id,
 			})
 			.executeTakeFirstOrThrow();
@@ -58,27 +50,21 @@ export const completeTodo = publicProcedure
 	.input(
 		v.parser(
 			v.object({
-				id: v.number(),
+				todoId: v.number(),
 				hoursWorked: v.number(),
-				date: v.date(),
+				dateId: v.number(),
 			}),
 		),
 	)
 	.mutation(async ({ input, ctx }) => {
-		const date = await ctx.db
-			.selectFrom("dates")
-			.select(["id"])
-			.where("date", "=", input.date)
-			.executeTakeFirstOrThrow();
-
 		await ctx.db
 			.updateTable("todos")
 			.set({
 				completed: true,
 				hoursWorked: input.hoursWorked,
-				dateId: date.id,
+				dateId: input.dateId,
 			})
-			.where("id", "=", input.id)
+			.where("id", "=", input.todoId)
 			.executeTakeFirstOrThrow();
 
 		return;
@@ -90,27 +76,14 @@ export const editTodo = publicProcedure
 			v.object({
 				id: v.number(),
 				hoursWorked: v.number(),
-				date: v.date(),
+				dateId: v.number(),
 				todo: v.string(),
-				tag: v.nullish(v.string()),
+				tagId: v.number(),
 				tagGroup: v.string(),
 			}),
 		),
 	)
 	.mutation(async ({ input, ctx }) => {
-		const date = await ctx.db
-			.selectFrom("dates")
-			.select(["id"])
-			.where("date", "=", input.date)
-			.executeTakeFirstOrThrow();
-
-		const tag = input.tag
-			? await ctx.db
-					.selectFrom("tags")
-					.select(["id"])
-					.where("tag", "=", input.tag)
-					.executeTakeFirst()
-			: null;
 		const tagGroup = await ctx.db
 			.selectFrom("tagGroups")
 			.select(["id"])
@@ -122,9 +95,9 @@ export const editTodo = publicProcedure
 			.set({
 				completed: true,
 				hoursWorked: input.hoursWorked,
-				dateId: date.id,
+				dateId: input.dateId,
 				tagGroupId: tagGroup?.id,
-				tagId: tag?.id,
+				tagId: input.tagId,
 				todo: input.todo,
 			})
 			.where("id", "=", input.id)
@@ -132,6 +105,65 @@ export const editTodo = publicProcedure
 
 		return;
 	});
-// export const addTodoGroup
-// export const toggleActivationTodo
-// export const toggleActivationTodoGroup
+export const addTagOrGroup = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				nameOfTagOrGroup: v.string(),
+				switch: v.enum(Switch),
+				projectId: v.number(),
+			}),
+		),
+	)
+	.mutation(async ({ input, ctx }) => {
+		if (input.switch === Switch.tag) {
+			await ctx.db
+				.insertInto("tags")
+				.values({
+					tagActive: true,
+					projectId: input.projectId,
+					tag: input.nameOfTagOrGroup,
+				})
+				.executeTakeFirstOrThrow();
+		}
+		if (input.switch === Switch.tagGroup) {
+			await ctx.db
+				.insertInto("tagGroups")
+				.values({
+					tagGroupActive: true,
+					tagGroup: input.nameOfTagOrGroup,
+				})
+				.executeTakeFirstOrThrow();
+		}
+		return;
+	});
+export const toggleTagOrGroupActivation = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				enable: v.boolean(),
+				switch: v.enum(Switch),
+				projectId: v.number(),
+			}),
+		),
+	)
+	.mutation(async ({ input, ctx }) => {
+		if (input.switch === Switch.tag) {
+			await ctx.db
+				.updateTable("tags")
+				.set({
+					tagActive: input.enable,
+					projectId: input.projectId,
+				})
+				.executeTakeFirstOrThrow();
+		}
+		if (input.switch === Switch.tagGroup) {
+			await ctx.db
+				.updateTable("tagGroups")
+				.set({
+					tagGroupActive: input.enable,
+				})
+				.executeTakeFirstOrThrow();
+		}
+		return;
+	});
