@@ -30,6 +30,9 @@ export async function up(db: Kysely<any>): Promise<void> {
 		.addColumn("id", "serial", (col) => col.primaryKey())
 		.addColumn("tag", "text", (col) => col.notNull().unique())
 		.addColumn("tag_active", "boolean")
+		.addColumn("project_id", "integer", (col) =>
+			col.references("projects.id").onDelete("cascade").notNull(),
+		)
 		.execute();
 
 	await db.schema
