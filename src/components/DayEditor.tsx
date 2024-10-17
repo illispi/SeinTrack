@@ -43,7 +43,7 @@ const DayEditor: Component<{
 				{(date) => (
 					<div class="flex flex-col gap-4 text-lg">
 						{date().toDateString()}
-						<div class="w-full flex flex-col items-center justify-center gap-4">
+						<div class="flex w-full flex-col items-center justify-center gap-4">
 							<AddTime
 								hours={addHours()}
 								minutes={addMinutes()}

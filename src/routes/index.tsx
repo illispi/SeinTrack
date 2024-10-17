@@ -17,13 +17,13 @@ export default function Home() {
 	return (
 		<>
 			<A href="/testing/test/">Testing</A>
-			<main class="flex justify-center items-start lg:grid lg:grid-cols-[1fr_3fr]  2xl:grid-cols-[1fr_2fr_1fr] mx-auto w-full">
+			<main class="mx-auto flex w-full items-start justify-center lg:grid lg:grid-cols-[1fr_3fr] 2xl:grid-cols-[1fr_2fr_1fr]">
 				<Suspense>
 					<Show when={projects.data} fallback={<NewProject />}>
 						{(data) => (
 							<>
 								<SidePanel>
-									<div class="text-center mx-auto text-gray-700 flex flex-col items-center justify-start w-full gap-6 m-8">
+									<div class="m-8 mx-auto flex w-full flex-col items-center justify-start gap-6 text-center text-gray-700">
 										<h2 class="font-semibold text-lg">{`${monthsArr[curMonth()]} ${curYear()}`}</h2>
 										<Suspense>
 											<ListMonth
@@ -33,7 +33,7 @@ export default function Home() {
 												setCurDate={setCurDate}
 											/>
 										</Suspense>
-										<div class="flex justify-center items-center gap-8 w-full">
+										<div class="flex w-full items-center justify-center gap-8">
 											<Button
 												variant={"outline"}
 												onClick={() => {

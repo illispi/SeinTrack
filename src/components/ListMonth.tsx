@@ -123,13 +123,13 @@ const ListMonth: Component<{
 	}));
 
 	return (
-		<div class="flex flex-col justify-start items-center max-w-5xl w-full lg:px-6">
-			<div class="grid grid-cols-7 w-full place-content-center place-items-center">
+		<div class="flex w-full max-w-5xl flex-col items-center justify-start lg:px-6">
+			<div class="grid w-full grid-cols-7 place-content-center place-items-center">
 				<For each={weekdaysArr}>
-					{(day) => <div class="hidden lg:block pb-6">{day}</div>}
+					{(day) => <div class="hidden pb-6 lg:block">{day}</div>}
 				</For>
 				<For each={weekdaysShortHandArr}>
-					{(day) => <div class="block lg:hidden pb-6">{day}</div>}
+					{(day) => <div class="block pb-6 lg:hidden">{day}</div>}
 				</For>
 				<For each={dayAdjust(props.month, props.year)}>
 					{(date, index) => (
@@ -154,12 +154,12 @@ const ListMonth: Component<{
 										index() === 0 ? "border-t" : "",
 										index() < 7 && index() > 0 ? "border-t" : "",
 										index() % 7 === 0 ? "border-l" : "",
-										"flex flex-col justify-around items-center w-full h-16 border-r border-b border-black hover:bg-amber-300 transition-all duration-300",
+										"flex h-16 w-full flex-col items-center justify-around border-black border-r border-b transition-all duration-300 hover:bg-amber-300",
 									)}
 								>
 									<h5>{date.getDate()}</h5>
 
-									<Suspense fallback={<div class="w-full h-full" />}>
+									<Suspense fallback={<div class="h-full w-full" />}>
 										<div>
 											<Show
 												when={

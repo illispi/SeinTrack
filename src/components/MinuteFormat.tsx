@@ -3,7 +3,7 @@ import { hoursToFormat } from "~/utils/functionsAndVariables";
 
 const MinuteFormat: Component<{ hours: number | null }> = (props) => {
 	return (
-		<div class="flex justify-end items-end h-full">
+		<div class="flex h-full items-end justify-end">
 			<Show
 				when={props.hours}
 				fallback={
@@ -24,7 +24,7 @@ const MinuteFormat: Component<{ hours: number | null }> = (props) => {
 					</svg>
 				}
 			>
-				<h3 class="lg:text-2xl font-semibold">{`${props.hours ? hoursToFormat(props.hours).hours : hoursToFormat(0).hours}`}</h3>
+				<h3 class="font-semibold lg:text-2xl">{`${props.hours ? hoursToFormat(props.hours).hours : hoursToFormat(0).hours}`}</h3>
 				<Show
 					when={
 						props.hours
@@ -32,8 +32,8 @@ const MinuteFormat: Component<{ hours: number | null }> = (props) => {
 							: hoursToFormat(0).minutes
 					}
 				>
-					<span class="lg:text-2xl font-semibold">:</span>
-					<h3 class="lg:text-2xl font-semibold">{`${props.hours ? hoursToFormat(props.hours).minutes : hoursToFormat(0).minutes}`}</h3>
+					<span class="font-semibold lg:text-2xl">:</span>
+					<h3 class="font-semibold lg:text-2xl">{`${props.hours ? hoursToFormat(props.hours).minutes : hoursToFormat(0).minutes}`}</h3>
 				</Show>
 			</Show>
 		</div>
