@@ -1,4 +1,3 @@
-
 import { publicProcedure, router } from "../initTrpc";
 import {
 	changeDayHours,
@@ -6,7 +5,16 @@ import {
 	getHoursOfDay,
 } from "./datesRoutes";
 import { allProjects, editProject } from "./projectRoutes";
-import { AddTodo, addTagOrGroup, completeTodo, editTodo, toggleTagOrGroupActivation } from "./todoRoutes";
+import {
+	AddTodo,
+	addTagOrGroup,
+	completeTodo,
+	editTodo,
+	getDoneTodosByMonth,
+	getTagsOrGroupsActiveOrNot,
+	getUnDoneTodos,
+	toggleTagOrGroupActivation,
+} from "./todoRoutes";
 
 export const appRouter = router({
 	test: publicProcedure.query(() => {
@@ -22,7 +30,10 @@ export const appRouter = router({
 	completeTodo: completeTodo,
 	editTodo: editTodo,
 	addTagOrGroup: addTagOrGroup,
-	toggleTagOrGroupActivation: toggleTagOrGroupActivation
+	toggleTagOrGroupActivation: toggleTagOrGroupActivation,
+	getUnDoneTodos: getUnDoneTodos,
+	getDoneTodosByMonth: getDoneTodosByMonth,
+	getTagsOrGroupsActiveOrNot: getTagsOrGroupsActiveOrNot,
 });
 
 export type IAppRouter = typeof appRouter;
