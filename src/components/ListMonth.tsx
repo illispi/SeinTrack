@@ -89,7 +89,7 @@ const colorPicker = (
 	}
 	if (isCountedDay(iterDate, lastDate, firstDate, countedDays) || hours > 0) {
 		if (
-			hours > 3 ||
+			hours >= 3 ||
 			!isCountedDay(iterDate, lastDate, firstDate, countedDays)
 		) {
 			return "bg-green-300";
@@ -180,7 +180,7 @@ const ListMonth: Component<{
 												>
 													<Show
 														when={
-															data()[index()].hours > 3 ||
+															data()[index()].hours >= 3 ||
 															!isCountedDay(
 																data()[index()].date,
 																firstAndLastDate.data?.lastDate,

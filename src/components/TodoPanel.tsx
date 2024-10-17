@@ -1,4 +1,4 @@
-import type { Component } from "solid-js";
+import { Show, type Component } from "solid-js";
 import {
 	DialogTrigger,
 	DialogContent,
@@ -37,34 +37,36 @@ const TodoPanel: Component = (props) => {
 								Make changes to your profile here. Click save when you're done.
 							</DialogDescription>
 						</DialogHeader>
-						<Combobox
-							options={ALL_OPTIONS}
-							// optionValue="value"
-							// optionTextValue="label"
-							// optionLabel="label"
-							// optionDisabled="disabled"
-							// optionGroupChildren="options"
-							placeholder="Select tag"
-							itemComponent={(props) => (
-								<ComboboxItem item={props.item}>
-									<ComboboxItemLabel>
-										{props.item.rawValue.label}
-									</ComboboxItemLabel>
-									<ComboboxItemIndicator />
-								</ComboboxItem>
-							)}
-							sectionComponent={(props) => (
-								<ComboboxSection>
-									{props.section.rawValue.label}
-								</ComboboxSection>
-							)}
-						>
-							<ComboboxControl aria-label="Food">
-								<ComboboxInput />
-								<ComboboxTrigger />
-							</ComboboxControl>
-							<ComboboxContent />
-						</Combobox>
+						<Show when={ALL_OPTIONS}>
+							<Combobox
+								options={ALL_OPTIONS}
+								// optionValue="value"
+								// optionTextValue="label"
+								// optionLabel="label"
+								// optionDisabled="disabled"
+								// optionGroupChildren="options"
+								placeholder="Select tag"
+								itemComponent={(props) => (
+									<ComboboxItem item={props.item}>
+										<ComboboxItemLabel>
+											{props.item.rawValue.label}
+										</ComboboxItemLabel>
+										<ComboboxItemIndicator />
+									</ComboboxItem>
+								)}
+								sectionComponent={(props) => (
+									<ComboboxSection>
+										{props.section.rawValue.label}
+									</ComboboxSection>
+								)}
+							>
+								<ComboboxControl aria-label="Food">
+									<ComboboxInput />
+									<ComboboxTrigger />
+								</ComboboxControl>
+								<ComboboxContent />
+							</Combobox>
+						</Show>
 						<DialogFooter>
 							<Button type="submit">Save changes</Button>
 						</DialogFooter>

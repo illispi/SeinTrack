@@ -21,16 +21,15 @@ export async function up(db: Kysely<any>): Promise<void> {
 	await db.schema
 		.createTable("tag_groups")
 		.addColumn("id", "serial", (col) => col.primaryKey())
-		.addColumn("tag_group", "text")
+		.addColumn("tag_group", "text", (col) => col.notNull().unique())
+		.addColumn("tag_group_active", "boolean")
 		.execute();
 
 	await db.schema
 		.createTable("tags")
 		.addColumn("id", "serial", (col) => col.primaryKey())
-		.addColumn("tag_group_id", "integer", (col) =>
-			col.references("tag_groups.id").onDelete("cascade"),
-		)
-		.addColumn("tag", "text")
+		.addColumn("tag", "text", (col) => col.notNull().unique())
+		.addColumn("tag_active", "boolean")
 		.execute();
 
 	await db.schema
@@ -41,8 +40,12 @@ export async function up(db: Kysely<any>): Promise<void> {
 			col.references("projects.id").onDelete("cascade").notNull(),
 		)
 		.addColumn("date_id", "integer", (col) => col.references("dates.id"))
-		.addColumn("todo", "text", (col) => col.notNull())
+		.addColumn("tag_group_id", "integer", (col) =>
+			col.references("tag_groups.id"),
+		)
+		.addColumn("todo", "text", (col) => col.notNull().unique())
 		.addColumn("hours_worked", "float4")
+		.addColumn("completed", "boolean")
 		.execute();
 }
 
