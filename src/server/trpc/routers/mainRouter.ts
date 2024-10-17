@@ -1,7 +1,4 @@
-import { sql } from "kysely";
 
-import { TRPCError } from "@trpc/server";
-import * as v from "valibot";
 import { publicProcedure, router } from "../initTrpc";
 import {
 	changeDayHours,
@@ -9,6 +6,7 @@ import {
 	getHoursOfDay,
 } from "./datesRoutes";
 import { allProjects, editProject } from "./projectRoutes";
+import { AddTodo, addTagOrGroup, completeTodo, editTodo, toggleTagOrGroupActivation } from "./todoRoutes";
 
 export const appRouter = router({
 	test: publicProcedure.query(() => {
@@ -20,6 +18,11 @@ export const appRouter = router({
 	createProject: editProject,
 	allProjects: allProjects,
 	getFirstAndLastDate: getFirstAndLastDate,
+	AddTodo: AddTodo,
+	completeTodo: completeTodo,
+	editTodo: editTodo,
+	addTagOrGroup: addTagOrGroup,
+	toggleTagOrGroupActivation: toggleTagOrGroupActivation
 });
 
 export type IAppRouter = typeof appRouter;

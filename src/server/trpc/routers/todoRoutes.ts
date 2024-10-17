@@ -80,6 +80,7 @@ export const editTodo = publicProcedure
 				todo: v.string(),
 				tagId: v.number(),
 				tagGroup: v.string(),
+				completed: v.boolean(),
 			}),
 		),
 	)
@@ -93,7 +94,7 @@ export const editTodo = publicProcedure
 		await ctx.db
 			.updateTable("todos")
 			.set({
-				completed: true,
+				completed: input.completed,
 				hoursWorked: input.hoursWorked,
 				dateId: input.dateId,
 				tagGroupId: tagGroup?.id,
@@ -167,3 +168,57 @@ export const toggleTagOrGroupActivation = publicProcedure
 		}
 		return;
 	});
+export const getUnDoneTodos = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				projectId: v.number(),
+			}),
+		),
+	)
+	.query(async ({ input, ctx }) => {
+		const unDoneTodos = await ctx.db
+			.selectFrom("todos")
+			.innerJoin("tagGroups", "tagGroups.id", "tagGroupId")
+			.innerJoin("tags", "tags.id", "tagId")
+			.select(["id", "tagId", "dateId", "tagGroups.tagGroup", "tags.tag"])
+			.where("completed", "=", false)
+			.where("projectId", "=", input.projectId)
+			.execute();
+
+		if (unDoneTodos.length === 0) {
+			return null;
+		}
+
+		return unDoneTodos;
+	});
+export const getDoneTodosByMonth = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				projectId: v.number(),
+				month: v.number(),
+				year: v.number(),
+			}),
+		),
+	)
+	.query(async ({ input, ctx }) => {
+		const doneTodos = await ctx.db
+			.selectFrom("todos")
+			.innerJoin("tagGroups", "tagGroups.id", "tagGroupId")
+			.innerJoin("tags", "tags.id", "tagId")
+			.select(["id", "tagId", "dateId", "tagGroups.tagGroup", "tags.tag"])
+			.where("completed", "=", true)
+			.where("projectId", "=", input.projectId)
+			.execute();
+
+		if (doneTodos.length === 0) {
+			return null;
+		}
+
+		return doneTodos;
+	});
+
+// getAllDoneTodosPaginated
+// getTagsWithActiveSwitch
+// getTagGroupsWithActiveSwitch
