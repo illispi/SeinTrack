@@ -114,7 +114,6 @@ const ListMonth: Component<{
 
 	createEffect(() => {
 		props.setCurDate(selectedDate());
-		console.log(selectedDate());
 	});
 
 	const [selectedDate, setSelectedDate] = createSignal<Date | null>(
@@ -127,7 +126,7 @@ const ListMonth: Component<{
 	}));
 
 	return (
-		<div class="flex w-full max-w-5xl flex-col items-center justify-start lg:px-6">
+		<div class="flex w-full max-w-5xl flex-col items-center justify-start">
 			<div class="grid w-full grid-cols-7 place-content-center place-items-center">
 				<For each={weekdaysArr}>
 					{(day) => <div class="hidden pb-6 lg:block">{day}</div>}

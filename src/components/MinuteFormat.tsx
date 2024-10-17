@@ -8,13 +8,13 @@ const MinuteFormat: Component<{ hours: number | null }> = (props) => {
 				when={props.hours}
 				fallback={
 					<svg
-						class="mt-1 lg:mt-2"
+						class="mt-1 h-4 w-4 lg:mt-2"
 						fill="currentColor"
 						stroke-width="0"
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 16 16"
-						height="1.2em"
-						width="1.2em"
+						// height="1.2em"
+						// width="1.2em"
 						style="overflow: visible; color: currentcolor;"
 					>
 						<title>Cross</title>
