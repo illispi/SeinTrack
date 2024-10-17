@@ -126,10 +126,10 @@ const ListMonth: Component<{
 		<div class="flex flex-col justify-start items-center max-w-5xl w-full lg:px-6">
 			<div class="grid grid-cols-7 w-full place-content-center place-items-center">
 				<For each={weekdaysArr}>
-					{(day) => <div class="hidden lg:block">{day}</div>}
+					{(day) => <div class="hidden lg:block pb-6">{day}</div>}
 				</For>
 				<For each={weekdaysShortHandArr}>
-					{(day) => <div class="block lg:hidden">{day}</div>}
+					{(day) => <div class="block lg:hidden pb-6">{day}</div>}
 				</For>
 				<For each={dayAdjust(props.month, props.year)}>
 					{(date, index) => (

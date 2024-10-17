@@ -8,7 +8,8 @@
     "sql": "bun kysely-codegen --dialect postgres --camel-case",
     "migrate:latest": "bun ./src/tools/migrate.ts",
     "migrate:down": "bun ./src/tools/migrate.ts down",
-    "migrate:new": "bun ./src/tools/migrationFile.ts"
+    "migrate:new": "bun ./src/tools/migrationFile.ts",
+    "check": "biome check"
   },
   "dependencies": {
     "@hono/trpc-server": "^0.3.2",
@@ -40,6 +41,7 @@
     "node": ">=18"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.3",
     "@types/node": "^22.7.4",
     "@types/pg": "^8.11.10",
     "kysely-codegen": "^0.16.8"
