@@ -131,6 +131,7 @@ const ListMonth: Component<{
 				<For each={weekdaysShortHandArr}>
 					{(day) => <div class="block pb-6 lg:hidden">{day}</div>}
 				</For>
+
 				<For each={dayAdjust(props.month, props.year)}>
 					{(date, index) => (
 						<Show when={hours.data}>
@@ -142,6 +143,7 @@ const ListMonth: Component<{
 											? setSelectedDate(null)
 											: setSelectedDate(data()[index()].date);
 									}}
+									// eslint-disable-next-line tailwindcss/classnames-order
 									class={clsx(
 										colorPicker(
 											selectedDate(),
@@ -159,7 +161,7 @@ const ListMonth: Component<{
 								>
 									<h5>{date.getDate()}</h5>
 
-									<Suspense fallback={<div class="h-full w-full" />}>
+									<Suspense fallback={<div class="size-full" />}>
 										<div>
 											<Show
 												when={
