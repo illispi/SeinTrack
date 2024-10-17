@@ -44,9 +44,9 @@ export async function up(db: Kysely<any>): Promise<void> {
 		)
 		.addColumn("date_id", "integer", (col) => col.references("dates.id"))
 		.addColumn("tag_group_id", "integer", (col) =>
-			col.references("tag_groups.id"),
+			col.references("tag_groups.id").notNull(),
 		)
-		.addColumn("todo", "text", (col) => col.notNull().unique())
+		.addColumn("todo", "text", (col) => col.notNull())
 		.addColumn("hours_worked", "float4")
 		.addColumn("completed", "boolean")
 		.execute();

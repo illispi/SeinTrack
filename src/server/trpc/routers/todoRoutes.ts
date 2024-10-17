@@ -1,5 +1,6 @@
 import * as v from "valibot";
 import { publicProcedure } from "../initTrpc";
+import { TRPCError } from "@trpc/server";
 
 export const AddTodo = publicProcedure
 	.input(
@@ -17,8 +18,26 @@ export const AddTodo = publicProcedure
 			.selectFrom("projects")
 			.select(["id"])
 			.where("projects.name", "=", input.project)
-			.executeTakeFirst();
-		if (existsId) {
+			.executeTakeFirstOrThrow();
+
+		if (input.tag) {
+			const tagId = await ctx.db
+				.selectFrom("tags")
+				.select(["id"])
+				.where("tag", "=", input.tag)
+				.executeTakeFirst();
+			const tagGroupId = await ctx.db
+				.selectFrom("tagGroups")
+				.select(["id"])
+				.where("tagGroup", "=", input.tagGroup)
+				.executeTakeFirst();
+
+			if (!tagGroupId) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: `Tag group ${input.tagGroup} not found`,
+				});
+			}
 			await ctx.db
 				.insertInto("todos")
 				.values({
@@ -27,20 +46,76 @@ export const AddTodo = publicProcedure
 					todo: input.todo,
 					dateId: null,
 					hoursWorked: null,
-					tagId: input.tag,
+					tagId: tagId?.id,
+					tagGroupId: tagGroupId?.id,
 				})
-				.execute();
-		} else {
-			await ctx.db
-				.updateTable("projects")
-				.where("id", "=", existsId.id)
-				.set({ name: input.name, targetHours: input.hoursTarget })
-				.execute();
+				.executeTakeFirstOrThrow();
 		}
+
+		return;
+	});
+export const completeTodo = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				id: v.number(),
+				project: v.string(),
+				hoursWorked: v.number(),
+				date: v.date(),
+			}),
+		),
+	)
+	.mutation(async ({ input, ctx }) => {
+		const dateId = await ctx.db
+			.selectFrom("dates")
+			.select(["id"])
+			.where("date", "=", input.date)
+			.executeTakeFirstOrThrow();
+
+		await ctx.db
+			.updateTable("todos")
+			.set({
+				completed: true,
+				hoursWorked: input.hoursWorked,
+				dateId: dateId.id,
+			})
+			.where("id", "=", input.id)
+			.executeTakeFirstOrThrow();
+
+		return;
+	});
+
+export const editTodo = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				id: v.number(),
+				project: v.string(),
+				hoursWorked: v.number(),
+				date: v.date(),
+			}),
+		),
+	)
+	.mutation(async ({ input, ctx }) => {
+		const dateId = await ctx.db
+			.selectFrom("dates")
+			.select(["id"])
+			.where("date", "=", input.date)
+			.executeTakeFirstOrThrow();
+
+		await ctx.db
+			.updateTable("todos")
+			.set({
+				completed: true,
+				hoursWorked: input.hoursWorked,
+				dateId: dateId.id,
+			})
+			.where("id", "=", input.id)
+			.executeTakeFirstOrThrow();
+
 		return;
 	});
 // export const editTodo
-// export const completeTodo
 // export const addTodoGroup
 // export const toggleActivationTodo
 // export const toggleActivationTodoGroup
