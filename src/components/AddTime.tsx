@@ -8,8 +8,8 @@ const AddTime: Component<{
 	setMinutes: Setter<number>;
 }> = (props) => {
 	return (
-		<div class="flex flex-col justify-center items-center gap-4">
-			<div class="flex justify-around items-center w-full">
+		<div class="flex flex-col items-center justify-center gap-4">
+			<div class="flex w-full items-center justify-around">
 				<Button
 					variant={"outline"}
 					onClick={() =>
@@ -51,7 +51,7 @@ const AddTime: Component<{
 					</svg>
 				</Button>
 			</div>
-			<div class="flex justify-center items-center gap-2">
+			<div class="flex items-center justify-center gap-2">
 				<For each={new Array(4)}>
 					{(_, i) => (
 						<Button
