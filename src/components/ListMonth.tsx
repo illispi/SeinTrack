@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import {
 	type Component,
-	ErrorBoundary,
 	For,
 	type Setter,
 	Show,
@@ -12,15 +11,11 @@ import {
 import { createStore } from "solid-js/store";
 import {
 	adjustDateByOne,
-	firstDateFunc,
-	latestDateFunc,
 	weekdaysArr,
 	weekdaysShortHandArr,
 } from "~/utils/functionsAndVariables";
 import { trpc } from "~/utils/trpc";
 import MinuteFormat from "./MinuteFormat";
-import { Button } from "./ui/button";
-import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
 
 export const dayAdjust = (month: number, year: number) => {
 	const adjustYearPos = adjustDateByOne(year, month, true);
@@ -83,6 +78,12 @@ const colorPicker = (
 	hours: number,
 	countedDays: number[],
 ) => {
+	if (
+		new Date().toDateString() === iterDate.toDateString() &&
+		selectedDate?.toDateString() !== iterDate?.toDateString()
+	) {
+		return "bg-sky-400";
+	}
 	if (selectedDate?.toDateString() === iterDate?.toDateString()) {
 		return "bg-amber-300";
 	}
@@ -103,6 +104,7 @@ const ListMonth: Component<{
 	year: number;
 	projectName: string;
 	setCurDate: Setter<Date | null>;
+	curDate: Date | null;
 }> = (props) => {
 	const [countedDays, setCountedDays] = createStore([1, 2, 3, 4, 5]);
 
@@ -115,7 +117,9 @@ const ListMonth: Component<{
 		console.log(selectedDate());
 	});
 
-	const [selectedDate, setSelectedDate] = createSignal<Date | null>(null);
+	const [selectedDate, setSelectedDate] = createSignal<Date | null>(
+		props.curDate,
+	);
 
 	const hours = trpc.getHoursOfDay.createQuery(() => ({
 		dates: dayAdjust(props.month, props.year),
@@ -152,6 +156,7 @@ const ListMonth: Component<{
 											data()[index()].hours,
 											countedDays,
 										),
+
 										index() === 0 ? "border-t" : "",
 										index() < 7 && index() > 0 ? "border-t" : "",
 										index() % 7 === 0 ? "border-l" : "",

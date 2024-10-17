@@ -10,7 +10,14 @@ const DayEditor: Component<{
 }> = (props) => {
 	const [addHours, setAddHours] = createSignal(0);
 	const [addMinutes, setAddMinutes] = createSignal(0);
+	const [lastSelectedDate, setLastSelectedDate] = createSignal(
+		props.selectedDate,
+	);
 	createEffect(() => {
+		if (lastSelectedDate() !== props.selectedDate) {
+			setAddHours(0);
+			setAddMinutes(0);
+		}
 		if (changeHours.isError) {
 			showToast({
 				title: "ERROR!",
