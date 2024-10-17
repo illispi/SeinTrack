@@ -79,7 +79,7 @@ const TodoPanel: Component = () => {
 								Make changes to your profile here. Click save when you're done.
 							</DialogDescription>
 						</DialogHeader>
-						<Show when={tagsActive.data}>
+						<Show when={tagsActive.data} fallback="No tags found">
 							{(tags) => (
 								<Combobox
 									options={massageTagsAndGroupsToArr(tags())}
@@ -111,7 +111,7 @@ const TodoPanel: Component = () => {
 								</Combobox>
 							)}
 						</Show>
-						<Show when={tagGroupsActive.data}>
+						<Show when={tagGroupsActive.data} fallback="No tag groups found">
 							{(tagGroups) => (
 								<Combobox
 									options={massageTagsAndGroupsToArr(tagGroups())}
