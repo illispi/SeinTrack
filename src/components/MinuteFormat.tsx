@@ -8,7 +8,7 @@ const MinuteFormat: Component<{ hours: number | null }> = (props) => {
 				when={props.hours}
 				fallback={
 					<svg
-						class="mt-1 h-4 w-4 lg:mt-2"
+						class="mt-1 size-4 lg:mt-2"
 						fill="currentColor"
 						stroke-width="0"
 						xmlns="http://www.w3.org/2000/svg"
