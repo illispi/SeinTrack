@@ -39,9 +39,11 @@ const DayEditor: Component<{
 		<div>
 			<Show when={props.selectedDate} fallback="No date selected">
 				{(date) => (
-					<div class="flex flex-col gap-4 text-lg">
-						{date().toDateString()}
-						<div class="flex w-full flex-col items-center justify-center gap-4">
+					<div class="flex flex-col gap-8 text-lg">
+						<h4 class="text-xl underline underline-offset-2">
+							{date().toDateString()}
+						</h4>
+						<div class="flex w-full flex-col items-center justify-center gap-8">
 							<AddTime
 								hours={addHours()}
 								minutes={addMinutes()}
@@ -50,7 +52,8 @@ const DayEditor: Component<{
 							/>
 
 							<Button
-								variant={"outline"}
+								class="w-full "
+								variant={"secondary"}
 								type="button"
 								onClick={() => {
 									if (props.selectedDate) {
