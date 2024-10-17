@@ -1,4 +1,6 @@
-import { createSignal, type Component } from "solid-js";
+import { type Component, createSignal } from "solid-js";
+import { trpc } from "~/utils/trpc";
+import { Button } from "./ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -9,8 +11,6 @@ import {
 	DialogTrigger,
 } from "./ui/dialog";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
-import { Button } from "./ui/button";
-import { trpc } from "~/utils/trpc";
 
 const NewProject: Component = (props) => {
 	const utils = trpc.useContext();

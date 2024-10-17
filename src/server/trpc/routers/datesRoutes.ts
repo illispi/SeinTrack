@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
-import { publicProcedure } from "../initTrpc";
 import * as v from "valibot";
+import { publicProcedure } from "../initTrpc";
 
 export const getHoursOfDay = publicProcedure
 	.input(

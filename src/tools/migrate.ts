@@ -2,15 +2,15 @@ import * as path from "node:path";
 import PG from "pg";
 const Pool = PG.Pool;
 import { promises as fs } from "node:fs";
+import { fileURLToPath } from "node:url";
+// import { Database } from "./dbTypes";
+import * as dotenv from "dotenv";
 import {
+	FileMigrationProvider,
 	Kysely,
 	Migrator,
 	PostgresDialect,
-	FileMigrationProvider,
 } from "kysely";
-// import { Database } from "./dbTypes";
-import * as dotenv from "dotenv";
-import { fileURLToPath } from "node:url";
 // import { env } from "./env";
 
 const __dirname = fileURLToPath(new URL("../", import.meta.url));

@@ -1,14 +1,14 @@
 import { sql } from "kysely";
 
-import * as v from "valibot";
 import { TRPCError } from "@trpc/server";
+import * as v from "valibot";
 import { publicProcedure, router } from "../initTrpc";
-import { allProjects, editProject } from "./projectRoutes";
 import {
 	changeDayHours,
 	getFirstAndLastDate,
 	getHoursOfDay,
 } from "./datesRoutes";
+import { allProjects, editProject } from "./projectRoutes";
 
 export const appRouter = router({
 	test: publicProcedure.query(() => {

@@ -1,4 +1,4 @@
-import { Show, type Component } from "solid-js";
+import { type Component, Show } from "solid-js";
 import { hoursToFormat } from "~/utils/functionsAndVariables";
 
 const MinuteFormat: Component<{ hours: number | null }> = (props) => {

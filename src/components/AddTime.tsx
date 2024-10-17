@@ -1,4 +1,4 @@
-import { For, type Component, type Setter } from "solid-js";
+import { type Component, For, type Setter } from "solid-js";
 import { Button } from "./ui/button";
 
 const AddTime: Component<{

@@ -1,5 +1,5 @@
 import { A } from "@solidjs/router";
-import { createSignal, Show, Suspense } from "solid-js";
+import { Show, Suspense, createSignal } from "solid-js";
 import DayEditor from "~/components/DayEditor";
 import ListMonth from "~/components/ListMonth";
 import NewProject from "~/components/NewProject";

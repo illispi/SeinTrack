@@ -1,11 +1,11 @@
 // utils/trpc.ts
 import { QueryClient } from "@tanstack/solid-query";
 
+import { createTRPCSolidStart } from "@solid-mediakit/trpc";
 import { httpBatchLink } from "@trpc/client";
 import { getRequestEvent, isServer } from "solid-js/web";
-import { createTRPCSolidStart } from "@solid-mediakit/trpc";
-import type { IAppRouter } from "~/server/trpc/routers/mainRouter";
 import superjson from "superjson";
+import type { IAppRouter } from "~/server/trpc/routers/mainRouter";
 
 const getBaseUrl = () => {
 	if (typeof window !== "undefined") return "";

@@ -1,5 +1,5 @@
-import { publicProcedure } from "../initTrpc";
 import * as v from "valibot";
+import { publicProcedure } from "../initTrpc";
 
 export const editProject = publicProcedure
 	.input(v.parser(v.object({ name: v.string(), hoursTarget: v.number() })))

@@ -1,7 +1,7 @@
 import { A } from "@solidjs/router";
-import { ErrorBoundary, For, Show, Suspense, type Component } from "solid-js";
+import { type Component, ErrorBoundary, For, Show, Suspense } from "solid-js";
 import { dayAdjust } from "~/components/ListMonth";
-import {  trpc } from "~/utils/trpc";
+import { trpc } from "~/utils/trpc";
 
 const test: Component = (props) => {
 	const test = trpc.test.createQuery();

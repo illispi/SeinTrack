@@ -1,17 +1,15 @@
+import clsx from "clsx";
 import {
-	createEffect,
-	createSignal,
+	type Component,
 	ErrorBoundary,
 	For,
-	Setter,
+	type Setter,
 	Show,
 	Suspense,
-	type Component,
+	createEffect,
+	createSignal,
 } from "solid-js";
-import { trpc } from "~/utils/trpc";
-import clsx from "clsx";
-import { Button } from "./ui/button";
-import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
+import { createStore } from "solid-js/store";
 import {
 	adjustDateByOne,
 	firstDateFunc,
@@ -19,8 +17,10 @@ import {
 	weekdaysArr,
 	weekdaysShortHandArr,
 } from "~/utils/functionsAndVariables";
-import { createStore } from "solid-js/store";
+import { trpc } from "~/utils/trpc";
 import MinuteFormat from "./MinuteFormat";
+import { Button } from "./ui/button";
+import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
 
 export const dayAdjust = (month: number, year: number) => {
 	const adjustYearPos = adjustDateByOne(year, month, true);
