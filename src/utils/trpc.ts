@@ -1,5 +1,5 @@
 // utils/trpc.ts
-import { QueryClient } from "@tanstack/solid-query";
+import { MutationCache, QueryClient } from "@tanstack/solid-query";
 
 import { createTRPCSolidStart } from "@solid-mediakit/trpc";
 import { httpBatchLink } from "@trpc/client";
@@ -45,4 +45,9 @@ export const queryClient = new QueryClient({
 			experimental_prefetchInRender: true,
 		},
 	},
+	mutationCache: new MutationCache({
+		onSuccess: () => {
+			queryClient.invalidateQueries();
+		},
+	}),
 });

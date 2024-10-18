@@ -198,26 +198,34 @@ const TodoPanel: Component = () => {
 						</DialogTrigger>
 						<DialogContent>
 							<DialogHeader>
-								<DialogTitle>Add Tag</DialogTitle>
-								<DialogDescription>Add new tag or tag group</DialogDescription>
+								<DialogTitle>Add Tag/Group</DialogTitle>
 							</DialogHeader>
-							<TextField class="grid w-full max-w-sm items-center gap-1.5">
-								<TextFieldLabel for="tag">New Tag</TextFieldLabel>
-								<TextFieldInput type="text" id="tag" placeholder="Tag" />
-							</TextField>
-							<TextField class="grid w-full max-w-sm items-center gap-1.5">
-								<TextFieldLabel for="tagGroup">New Tag Group</TextFieldLabel>
-								<TextFieldInput
-									type="text"
-									id="tagGroup"
-									placeholder="Tag gruop"
-								/>
-							</TextField>
-							<DialogFooter>
-								<Button variant={"secondary"} type="submit">
-									Exit
-								</Button>
-							</DialogFooter>
+							<div class="flex items-center justify-start gap-4">
+								<TextField class="grid w-full items-center gap-1.5">
+									<TextFieldLabel for="tag">New Tag</TextFieldLabel>
+									<div class="flex items-center justify-start gap-4">
+										<TextFieldInput type="text" id="tag" placeholder="Tag" />
+										<Button class="flex-1" variant={"secondary"}>
+											Add
+										</Button>
+									</div>
+								</TextField>
+							</div>
+							<div class="flex items-center justify-start gap-4">
+								<TextField class="grid w-full items-center gap-1.5">
+									<TextFieldLabel for="tag">New Tag Group</TextFieldLabel>
+									<div class="flex items-center justify-start gap-4">
+										<TextFieldInput
+											type="text"
+											id="tagGroup"
+											placeholder="Tag Group"
+										/>
+										<Button class="flex-1" variant={"secondary"}>
+											Add
+										</Button>
+									</div>
+								</TextField>
+							</div>
 						</DialogContent>
 					</Dialog>
 				</div>
