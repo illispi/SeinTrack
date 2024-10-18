@@ -63,8 +63,16 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 	const [newTag, setNewTag] = createSignal("");
 	const [newTagGroup, setNewTagGroup] = createSignal("");
 
+	const [newTodo, setNewTodo] = createSignal("");
+
 	const unDoneTodos = trpc.getUnDoneTodos.createQuery(() => ({
 		projectId: props.curProjectId,
+	}));
+
+	const addTodo = trpc.AddTodo.createMutation(() => ({
+		onSuccess: () => {
+			setNewTodo("");
+		},
 	}));
 	const tagsActive = trpc.getTagsOrGroupsActiveOrNot.createQuery(() => ({
 		active: true,
@@ -118,9 +126,21 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 							<DialogHeader>
 								<DialogTitle>Add todo</DialogTitle>
 							</DialogHeader>
-							{/* <Show when={unDoneTodos.data} fallback="You have no todos to be done.">
-								You have no todos to be done.
-							</Show> */}
+							<div class="flex items-center justify-start gap-4">
+								<TextField
+									value={newTodo()}
+									onChange={setNewTodo}
+									class="grid w-full items-center gap-1.5"
+								>
+									<div class="flex items-center justify-start gap-4">
+										<TextFieldInput
+											type="text"
+											id="newTodo"
+											placeholder="New todo"
+										/>
+									</div>
+								</TextField>
+							</div>
 							<div class="grid grid-cols-2">
 								<h3 class="font-semibold">Tag:</h3>
 								<h3 class="font-semibold">Tag group:</h3>
@@ -245,7 +265,9 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 							</div>
 
 							<DialogFooter>
-								<Button type="submit">Save changes</Button>
+								<Button class="w-full p-0" variant={"secondary"} type="submit">
+									Add Todo
+								</Button>
 							</DialogFooter>
 						</DialogContent>
 					</Dialog>

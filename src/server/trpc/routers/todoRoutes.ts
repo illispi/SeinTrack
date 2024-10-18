@@ -19,6 +19,7 @@ export const AddTodo = publicProcedure
 		),
 	)
 	.mutation(async ({ input, ctx }) => {
+		//TODO swithc to id from input
 		const tagGroup = await ctx.db
 			.selectFrom("tagGroups")
 			.select(["id"])
