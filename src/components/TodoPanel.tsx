@@ -55,28 +55,38 @@ const massageTagsAndGroupsToArr = (
 	return arr;
 };
 
-const TodoPanel: Component = () => {
-	const utils = trpc.useContext();
-	const allProjects = trpc.allProjects.createQuery();
-
+const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 	const [selectedTag, setSelectedTag] = createSignal("none");
 	const [selectedTagGroup, setSelectedTagGroup] = createSignal("feature");
 
-	//TODO remove
-	const temp = allProjects.data ? allProjects.data[0] : null;
-	// const temp = { id: 1 };
+	const [newTag, setNewTag] = createSignal("");
+	const [newTagGroup, setNewTagGroup] = createSignal("");
+
 	const unDoneTodos = trpc.getUnDoneTodos.createQuery(() => ({
-		projectId: temp?.id,
+		projectId: props.curProjectId,
 	}));
 	const tagsActive = trpc.getTagsOrGroupsActiveOrNot.createQuery(() => ({
 		active: true,
-		projectId: temp?.id,
+		projectId: props.curProjectId,
 		switch: "tag",
 	}));
 	const tagGroupsActive = trpc.getTagsOrGroupsActiveOrNot.createQuery(() => ({
 		active: true,
-		projectId: temp?.id,
+		projectId: props.curProjectId,
 		switch: "tagGroup",
+	}));
+
+	const addTag = trpc.addTagOrGroup.createMutation(() => ({
+		onSuccess: () => {
+			setNewTag("");
+			setNewTagGroup("");
+		},
+	}));
+	const addTagGroup = trpc.addTagOrGroup.createMutation(() => ({
+		onSuccess: () => {
+			setNewTag("");
+			setNewTagGroup("");
+		},
 	}));
 	return (
 		<>
@@ -205,7 +215,17 @@ const TodoPanel: Component = () => {
 									<TextFieldLabel for="tag">New Tag</TextFieldLabel>
 									<div class="flex items-center justify-start gap-4">
 										<TextFieldInput type="text" id="tag" placeholder="Tag" />
-										<Button class="flex-1" variant={"secondary"}>
+										<Button
+											onClick={() =>
+												addTag.mutate({
+													nameOfTagOrGroup: newTag(),
+													projectId: props.curProjectId,
+													switch: "tag",
+												})
+											}
+											class="flex-1"
+											variant={"secondary"}
+										>
 											Add
 										</Button>
 									</div>
@@ -220,7 +240,17 @@ const TodoPanel: Component = () => {
 											id="tagGroup"
 											placeholder="Tag Group"
 										/>
-										<Button class="flex-1" variant={"secondary"}>
+										<Button
+											onClick={() =>
+												addTagGroup.mutate({
+													nameOfTagOrGroup: newTagGroup(),
+													projectId: props.curProjectId,
+													switch: "tagGroup",
+												})
+											}
+											class="flex-1"
+											variant={"secondary"}
+										>
 											Add
 										</Button>
 									</div>
