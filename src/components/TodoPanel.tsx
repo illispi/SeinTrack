@@ -121,7 +121,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 	return (
 		<>
 			<div class="m-4 hidden min-h-screen w-11/12 max-w-96 grow flex-col items-center rounded-xl border-t-4 border-green-500 shadow-lg xl:flex">
-				<h2 class="m-8 text-xl underline underline-offset-2">Todos</h2>
+				<h2 class="m-8 text-4xl font-light">Todos</h2>
 				<div class="flex w-full items-center justify-between gap-12 px-8">
 					<Dialog>
 						<DialogTrigger class="flex-1 p-0" as={Button<"button">}>
