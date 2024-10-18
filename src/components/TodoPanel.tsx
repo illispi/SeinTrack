@@ -1,4 +1,4 @@
-import { type Component, createSignal, Show } from "solid-js";
+import { type Component, createEffect, createSignal, Show } from "solid-js";
 import { Button } from "./ui/button";
 import {
 	Dialog,
@@ -33,6 +33,7 @@ import {
 	SelectValue,
 } from "./ui/select";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
+import { showToast, Toaster } from "./ui/toast";
 
 type RouterOutput = inferRouterOutputs<IAppRouter>;
 
@@ -88,6 +89,22 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 			setNewTagGroup("");
 		},
 	}));
+	createEffect(() => {
+		if (addTag.isError) {
+			showToast({
+				title: "ERROR!",
+				description: addTag.error?.message,
+				variant: "error",
+			});
+		}
+		if (addTagGroup.isError) {
+			showToast({
+				title: "ERROR!",
+				description: addTag.error?.message,
+				variant: "error",
+			});
+		}
+	});
 	return (
 		<>
 			<div class="m-4 hidden w-11/12 max-w-96 grow flex-col items-center rounded-xl border-t-4 border-green-500 shadow-lg xl:flex">
@@ -258,6 +275,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 							</div>
 						</DialogContent>
 					</Dialog>
+					<Toaster />
 				</div>
 			</div>
 			<div class="flex lg:hidden"></div>
