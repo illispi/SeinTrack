@@ -80,12 +80,10 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 	const addTag = trpc.addTagOrGroup.createMutation(() => ({
 		onSuccess: () => {
 			setNewTag("");
-			setNewTagGroup("");
 		},
 	}));
 	const addTagGroup = trpc.addTagOrGroup.createMutation(() => ({
 		onSuccess: () => {
-			setNewTag("");
 			setNewTagGroup("");
 		},
 	}));
@@ -100,7 +98,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 		if (addTagGroup.isError) {
 			showToast({
 				title: "ERROR!",
-				description: addTag.error?.message,
+				description: addTagGroup.error?.message,
 				variant: "error",
 			});
 		}
@@ -120,96 +118,131 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 							<DialogHeader>
 								<DialogTitle>Add todo</DialogTitle>
 							</DialogHeader>
-							<Show when={unDoneTodos.data} fallback="doesnt work">
+							{/* <Show when={unDoneTodos.data} fallback="You have no todos to be done.">
 								You have no todos to be done.
-							</Show>
-							<Show when={tagsActive.data} fallback="No tags found">
-								{(tags) => (
-									<>
-										<Select
-											class="flex lg:hidden"
-											defaultValue={"none"}
-											value={selectedTag()}
-											onChange={() => setSelectedTag}
-											options={["none", ...massageTagsAndGroupsToArr(tags())]}
-											placeholder="Select a tag"
-											itemComponent={(props) => (
-												<SelectItem item={props.item}>
-													{props.item.rawValue}
-												</SelectItem>
-											)}
-										>
-											<SelectTrigger aria-label="Tag" class="w-[180px]">
-												<SelectValue<string>>
-													{(state) => state.selectedOption()}
-												</SelectValue>
-											</SelectTrigger>
-											<SelectContent />
-										</Select>
-										<Combobox
-											class="hidden lg:flex"
-											options={massageTagsAndGroupsToArr(tags())}
-											// optionValue="value"
-											// optionTextValue="label"
-											// optionLabel="label"
-											// optionDisabled="disabled"
-											// optionGroupChildren="options"
-											placeholder="Select tag"
-											itemComponent={(props) => (
-												<ComboboxItem item={props.item}>
-													<ComboboxItemLabel>
+							</Show> */}
+							<div class="grid grid-cols-2">
+								<h3 class="font-semibold">Tag:</h3>
+								<h3 class="font-semibold">Tag group:</h3>
+								<Show when={tagsActive.data} fallback="No tags found">
+									{(tags) => (
+										<>
+											<Select
+												class="flex lg:hidden"
+												defaultValue={"none"}
+												value={selectedTag()}
+												//  NOTE on docs its just the setSelectedTag
+												onChange={() => setSelectedTag}
+												options={["none", ...massageTagsAndGroupsToArr(tags())]}
+												placeholder="Select a tag"
+												itemComponent={(props) => (
+													<SelectItem item={props.item}>
 														{props.item.rawValue}
-													</ComboboxItemLabel>
-													<ComboboxItemIndicator />
-												</ComboboxItem>
-											)}
-											sectionComponent={(props) => (
-												<ComboboxSection>
-													{props.section.rawValue}
-												</ComboboxSection>
-											)}
-										>
-											<ComboboxControl aria-label="Tag">
-												<ComboboxInput />
-												<ComboboxTrigger />
-											</ComboboxControl>
-											<ComboboxContent />
-										</Combobox>
-									</>
-								)}
-							</Show>
-							<Show when={tagGroupsActive.data} fallback="No tag groups found">
-								{(tagGroups) => (
-									<Combobox
-										options={massageTagsAndGroupsToArr(tagGroups())}
-										// optionValue="value"
-										// optionTextValue="label"
-										// optionLabel="label"
-										// optionDisabled="disabled"
-										// optionGroupChildren="options"
-										placeholder="Select tag group"
-										itemComponent={(props) => (
-											<ComboboxItem item={props.item}>
-												<ComboboxItemLabel>
-													{props.item.rawValue}
-												</ComboboxItemLabel>
-												<ComboboxItemIndicator />
-											</ComboboxItem>
-										)}
-										sectionComponent={(props) => (
-											<ComboboxSection>
-												{props.section.rawValue}
-											</ComboboxSection>
-										)}
-									>
-										<ComboboxControl aria-label="Tag group">
-											<ComboboxInput />
-											<ComboboxTrigger />
-										</ComboboxControl>
-										<ComboboxContent />
-									</Combobox>
-								)}
-							</Show>
+													</SelectItem>
+												)}
+											>
+												<SelectTrigger aria-label="Tag">
+													<SelectValue<string>>
+														{(state) => state.selectedOption()}
+													</SelectValue>
+												</SelectTrigger>
+												<SelectContent />
+											</Select>
+											<Combobox
+												class="hidden w-full lg:flex"
+												options={massageTagsAndGroupsToArr(tags())}
+												// optionValue="value"
+												// optionTextValue="label"
+												// optionLabel="label"
+												// optionDisabled="disabled"
+												// optionGroupChildren="options"
+												placeholder="Select tag"
+												itemComponent={(props) => (
+													<ComboboxItem item={props.item}>
+														<ComboboxItemLabel>
+															{props.item.rawValue}
+														</ComboboxItemLabel>
+														<ComboboxItemIndicator />
+													</ComboboxItem>
+												)}
+												sectionComponent={(props) => (
+													<ComboboxSection>
+														{props.section.rawValue}
+													</ComboboxSection>
+												)}
+											>
+												<ComboboxControl aria-label="Tag">
+													<ComboboxInput />
+													<ComboboxTrigger />
+												</ComboboxControl>
+												<ComboboxContent />
+											</Combobox>
+										</>
+									)}
+								</Show>
+								<Show
+									when={tagGroupsActive.data}
+									fallback="No tag groups found"
+								>
+									{(tagGroups) => (
+										<>
+											<Select
+												class="flex lg:hidden"
+												defaultValue={"none"}
+												value={selectedTag()}
+												//  NOTE on docs its just the setSelectedTag
+												onChange={() => setSelectedTag}
+												options={[
+													"none",
+													...massageTagsAndGroupsToArr(tagGroups()),
+												]}
+												placeholder="Select a tag"
+												itemComponent={(props) => (
+													<SelectItem item={props.item}>
+														{props.item.rawValue}
+													</SelectItem>
+												)}
+											>
+												<SelectTrigger aria-label="Tag">
+													<SelectValue<string>>
+														{(state) => state.selectedOption()}
+													</SelectValue>
+												</SelectTrigger>
+												<SelectContent />
+											</Select>
+											<Combobox
+												class="hidden w-full lg:flex"
+												options={massageTagsAndGroupsToArr(tagGroups())}
+												// optionValue="value"
+												// optionTextValue="label"
+												// optionLabel="label"
+												// optionDisabled="disabled"
+												// optionGroupChildren="options"
+												placeholder="Select tag group"
+												itemComponent={(props) => (
+													<ComboboxItem item={props.item}>
+														<ComboboxItemLabel>
+															{props.item.rawValue}
+														</ComboboxItemLabel>
+														<ComboboxItemIndicator />
+													</ComboboxItem>
+												)}
+												sectionComponent={(props) => (
+													<ComboboxSection>
+														{props.section.rawValue}
+													</ComboboxSection>
+												)}
+											>
+												<ComboboxControl aria-label="Tag group">
+													<ComboboxInput />
+													<ComboboxTrigger />
+												</ComboboxControl>
+												<ComboboxContent />
+											</Combobox>
+										</>
+									)}
+								</Show>
+							</div>
 
 							<DialogFooter>
 								<Button type="submit">Save changes</Button>
@@ -228,18 +261,22 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 								<DialogTitle>Add Tag/Group</DialogTitle>
 							</DialogHeader>
 							<div class="flex items-center justify-start gap-4">
-								<TextField class="grid w-full items-center gap-1.5">
+								<TextField
+									value={newTag()}
+									onChange={setNewTag}
+									class="grid w-full items-center gap-1.5"
+								>
 									<TextFieldLabel for="tag">New Tag</TextFieldLabel>
 									<div class="flex items-center justify-start gap-4">
 										<TextFieldInput type="text" id="tag" placeholder="Tag" />
 										<Button
-											onClick={() =>
+											onClick={() => {
 												addTag.mutate({
 													nameOfTagOrGroup: newTag(),
 													projectId: props.curProjectId,
 													switch: "tag",
-												})
-											}
+												});
+											}}
 											class="flex-1"
 											variant={"secondary"}
 										>
@@ -249,7 +286,11 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 								</TextField>
 							</div>
 							<div class="flex items-center justify-start gap-4">
-								<TextField class="grid w-full items-center gap-1.5">
+								<TextField
+									value={newTagGroup()}
+									onChange={setNewTagGroup}
+									class="grid w-full items-center gap-1.5"
+								>
 									<TextFieldLabel for="tag">New Tag Group</TextFieldLabel>
 									<div class="flex items-center justify-start gap-4">
 										<TextFieldInput

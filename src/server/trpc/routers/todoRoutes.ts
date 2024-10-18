@@ -110,7 +110,14 @@ export const addTagOrGroup = publicProcedure
 	.input(
 		v.parser(
 			v.object({
-				nameOfTagOrGroup: v.string(),
+				nameOfTagOrGroup: v.pipe(
+					v.string(),
+					v.trim(),
+					v.toLowerCase(),
+					v.nonEmpty(),
+					v.maxLength(50),
+					v.minLength(3),
+				),
 				switch: v.union([v.literal("tag"), v.literal("tagGroup")]),
 				projectId: v.number(),
 			}),
@@ -118,6 +125,19 @@ export const addTagOrGroup = publicProcedure
 	)
 	.mutation(async ({ input, ctx }) => {
 		if (input.switch === "tag") {
+			const existsAlready = await ctx.db
+				.selectFrom("tags")
+				.select("tag")
+				.where("tag", "=", input.nameOfTagOrGroup)
+				.where("projectId", "=", input.projectId)
+				.executeTakeFirst();
+
+			if (existsAlready) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: `Tag ${input.nameOfTagOrGroup} exists already`,
+				});
+			}
 			await ctx.db
 				.insertInto("tags")
 				.values({
