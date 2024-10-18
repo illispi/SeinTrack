@@ -148,7 +148,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 									{(tags) => (
 										<>
 											<Select
-												class="flex lg:hidden"
+												class="flex"
 												defaultValue={"none"}
 												value={selectedTag()}
 												//  NOTE on docs its just the setSelectedTag
@@ -168,35 +168,6 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 												</SelectTrigger>
 												<SelectContent />
 											</Select>
-											<Combobox
-												class="hidden w-full lg:flex"
-												options={massageTagsAndGroupsToArr(tags())}
-												// optionValue="value"
-												// optionTextValue="label"
-												// optionLabel="label"
-												// optionDisabled="disabled"
-												// optionGroupChildren="options"
-												placeholder="Select tag"
-												itemComponent={(props) => (
-													<ComboboxItem item={props.item}>
-														<ComboboxItemLabel>
-															{props.item.rawValue}
-														</ComboboxItemLabel>
-														<ComboboxItemIndicator />
-													</ComboboxItem>
-												)}
-												sectionComponent={(props) => (
-													<ComboboxSection>
-														{props.section.rawValue}
-													</ComboboxSection>
-												)}
-											>
-												<ComboboxControl aria-label="Tag">
-													<ComboboxInput />
-													<ComboboxTrigger />
-												</ComboboxControl>
-												<ComboboxContent />
-											</Combobox>
 										</>
 									)}
 								</Show>
@@ -207,7 +178,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 									{(tagGroups) => (
 										<>
 											<Select
-												class="flex lg:hidden"
+												class="flex"
 												defaultValue={"none"}
 												value={selectedTag()}
 												//  NOTE on docs its just the setSelectedTag
@@ -230,35 +201,6 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 												</SelectTrigger>
 												<SelectContent />
 											</Select>
-											<Combobox
-												class="hidden w-full lg:flex"
-												options={massageTagsAndGroupsToArr(tagGroups())}
-												// optionValue="value"
-												// optionTextValue="label"
-												// optionLabel="label"
-												// optionDisabled="disabled"
-												// optionGroupChildren="options"
-												placeholder="Select tag group"
-												itemComponent={(props) => (
-													<ComboboxItem item={props.item}>
-														<ComboboxItemLabel>
-															{props.item.rawValue}
-														</ComboboxItemLabel>
-														<ComboboxItemIndicator />
-													</ComboboxItem>
-												)}
-												sectionComponent={(props) => (
-													<ComboboxSection>
-														{props.section.rawValue}
-													</ComboboxSection>
-												)}
-											>
-												<ComboboxControl aria-label="Tag group">
-													<ComboboxInput />
-													<ComboboxTrigger />
-												</ComboboxControl>
-												<ComboboxContent />
-											</Combobox>
 										</>
 									)}
 								</Show>
