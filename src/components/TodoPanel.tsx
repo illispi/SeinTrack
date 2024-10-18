@@ -301,13 +301,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 					<Toaster />
 				</div>
 
-				<For each={unDoneTodos.data}>
-					{(e) => (
-						<div>
-							{e.todo} {console.log(unDoneTodos.data)}
-						</div>
-					)}
-				</For>
+				<For each={unDoneTodos.data}>{(e) => <div>{e.todo}</div>}</For>
 			</div>
 			<div class="flex lg:hidden"></div>
 		</>
