@@ -111,13 +111,13 @@ export const addTagOrGroup = publicProcedure
 		v.parser(
 			v.object({
 				nameOfTagOrGroup: v.string(),
-				switch: v.enum(Switch),
+				switch: v.union([v.literal("tag"), v.literal("tagGroup")]),
 				projectId: v.number(),
 			}),
 		),
 	)
 	.mutation(async ({ input, ctx }) => {
-		if (input.switch === Switch.tag) {
+		if (input.switch === "tag") {
 			await ctx.db
 				.insertInto("tags")
 				.values({
@@ -127,7 +127,7 @@ export const addTagOrGroup = publicProcedure
 				})
 				.executeTakeFirstOrThrow();
 		}
-		if (input.switch === Switch.tagGroup) {
+		if (input.switch === "tagGroup") {
 			await ctx.db
 				.insertInto("tagGroups")
 				.values({
@@ -143,13 +143,13 @@ export const toggleTagOrGroupActivation = publicProcedure
 		v.parser(
 			v.object({
 				enable: v.boolean(),
-				switch: v.enum(Switch),
+				switch: v.union([v.literal("tag"), v.literal("tagGroup")]),
 				projectId: v.number(),
 			}),
 		),
 	)
 	.mutation(async ({ input, ctx }) => {
-		if (input.switch === Switch.tag) {
+		if (input.switch === "tag") {
 			await ctx.db
 				.updateTable("tags")
 				.set({
@@ -158,7 +158,7 @@ export const toggleTagOrGroupActivation = publicProcedure
 				})
 				.executeTakeFirstOrThrow();
 		}
-		if (input.switch === Switch.tagGroup) {
+		if (input.switch === "tagGroup") {
 			await ctx.db
 				.updateTable("tagGroups")
 				.set({
@@ -247,7 +247,7 @@ export const getTagsOrGroupsActiveOrNot = publicProcedure
 		v.parser(
 			v.object({
 				projectId: v.nullish(v.number()),
-				switch: v.enum(Switch),
+				switch: v.union([v.literal("tag"), v.literal("tagGroup")]),
 				active: v.boolean(),
 			}),
 		),
@@ -256,7 +256,7 @@ export const getTagsOrGroupsActiveOrNot = publicProcedure
 		if (!input.projectId) {
 			throw new TRPCError({ code: "BAD_REQUEST" });
 		}
-		if (input.switch === Switch.tag) {
+		if (input.switch === "tag") {
 			const activeTags = await ctx.db
 				.selectFrom("tags")
 				.select(["id", "tag"])
@@ -270,7 +270,7 @@ export const getTagsOrGroupsActiveOrNot = publicProcedure
 			}
 			return activeTags;
 		}
-		if (input.switch === Switch.tagGroup) {
+		if (input.switch === "tagGroup") {
 			const activeTagGroups = await ctx.db
 				.selectFrom("tagGroups")
 				.select(["id", "tagGroup"])

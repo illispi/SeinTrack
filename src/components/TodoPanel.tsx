@@ -146,6 +146,7 @@ const TodoPanel: Component = () => {
 								</Combobox>
 							)}
 						</Show>
+						
 						<DialogFooter>
 							<Button type="submit">Save changes</Button>
 						</DialogFooter>
