@@ -1,30 +1,23 @@
-import { type Component, createEffect, createSignal, Show } from "solid-js";
+import {
+	type Component,
+	For,
+	Show,
+	createEffect,
+	createSignal,
+} from "solid-js";
 import { Button } from "./ui/button";
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from "./ui/dialog";
 
-import {
-	Combobox,
-	ComboboxContent,
-	ComboboxControl,
-	ComboboxInput,
-	ComboboxItem,
-	ComboboxItemIndicator,
-	ComboboxItemLabel,
-	ComboboxSection,
-	ComboboxTrigger,
-} from "./ui/combobox";
-import { trpc } from "~/utils/trpc";
-import { Switch } from "~/server/trpc/routers/todoRoutes";
-import type { IAppRouter } from "~/server/trpc/routers/mainRouter";
 import type { inferRouterOutputs } from "@trpc/server";
+import type { IAppRouter } from "~/server/trpc/routers/mainRouter";
+import { trpc } from "~/utils/trpc";
 import {
 	Select,
 	SelectContent,
@@ -33,7 +26,7 @@ import {
 	SelectValue,
 } from "./ui/select";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
-import { showToast, Toaster } from "./ui/toast";
+import { Toaster, showToast } from "./ui/toast";
 
 type RouterOutput = inferRouterOutputs<IAppRouter>;
 
@@ -58,7 +51,7 @@ const massageTagsAndGroupsToArr = (
 
 const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 	const [selectedTag, setSelectedTag] = createSignal("none");
-	const [selectedTagGroup, setSelectedTagGroup] = createSignal("feature");
+	const [selectedTagGroup, setSelectedTagGroup] = createSignal("bug fix");
 
 	const [newTag, setNewTag] = createSignal("");
 	const [newTagGroup, setNewTagGroup] = createSignal("");
@@ -71,7 +64,14 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 
 	const addTodo = trpc.AddTodo.createMutation(() => ({
 		onSuccess: () => {
+			showToast({
+				title: "Todo added:",
+				description: `${newTodo()}`,
+				variant: "success",
+			});
 			setNewTodo("");
+			setSelectedTag("none");
+			setSelectedTagGroup("bug fix");
 		},
 	}));
 	const tagsActive = trpc.getTagsOrGroupsActiveOrNot.createQuery(() => ({
@@ -96,6 +96,13 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 		},
 	}));
 	createEffect(() => {
+		if (addTodo.isError) {
+			showToast({
+				title: "ERROR!",
+				description: addTodo.error?.message,
+				variant: "error",
+			});
+		}
 		if (addTag.isError) {
 			showToast({
 				title: "ERROR!",
@@ -113,8 +120,8 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 	});
 	return (
 		<>
-			<div class="m-4 hidden w-11/12 max-w-96 grow flex-col items-center rounded-xl border-t-4 border-green-500 shadow-lg xl:flex">
-				<h2 class="m-6 text-xl underline underline-offset-2">Todos</h2>
+			<div class="m-4 hidden min-h-screen w-11/12 max-w-96 grow flex-col items-center rounded-xl border-t-4 border-green-500 shadow-lg xl:flex">
+				<h2 class="m-8 text-xl underline underline-offset-2">Todos</h2>
 				<div class="flex w-full items-center justify-between gap-12 px-8">
 					<Dialog>
 						<DialogTrigger class="flex-1 p-0" as={Button<"button">}>
@@ -151,8 +158,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 												class="flex"
 												defaultValue={"none"}
 												value={selectedTag()}
-												//  NOTE on docs its just the setSelectedTag
-												onChange={() => setSelectedTag}
+												onChange={setSelectedTag}
 												options={["none", ...massageTagsAndGroupsToArr(tags())]}
 												placeholder="Select a tag"
 												itemComponent={(props) => (
@@ -179,14 +185,9 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 										<>
 											<Select
 												class="flex"
-												defaultValue={"none"}
-												value={selectedTag()}
-												//  NOTE on docs its just the setSelectedTag
-												onChange={() => setSelectedTag}
-												options={[
-													"none",
-													...massageTagsAndGroupsToArr(tagGroups()),
-												]}
+												value={selectedTagGroup()}
+												onChange={setSelectedTagGroup}
+												options={[...massageTagsAndGroupsToArr(tagGroups())]}
 												placeholder="Select a tag"
 												itemComponent={(props) => (
 													<SelectItem item={props.item}>
@@ -207,7 +208,24 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 							</div>
 
 							<DialogFooter>
-								<Button class="w-full p-0" variant={"secondary"} type="submit">
+								<Button
+									onClick={() => {
+										addTodo.mutate({
+											projectId: props.curProjectId,
+											tagGroup: selectedTagGroup(),
+											todo: newTodo(),
+											tagId:
+												selectedTag() === "none"
+													? null
+													: tagsActive.data?.find(
+															(e) => e.tag === selectedTag(),
+														)?.id,
+										});
+									}}
+									class="w-full p-0"
+									variant={"secondary"}
+									type="submit"
+								>
 									Add Todo
 								</Button>
 							</DialogFooter>
@@ -282,6 +300,14 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 					</Dialog>
 					<Toaster />
 				</div>
+
+				<For each={unDoneTodos.data}>
+					{(e) => (
+						<div>
+							{e.todo} {console.log(unDoneTodos.data)}
+						</div>
+					)}
+				</For>
 			</div>
 			<div class="flex lg:hidden"></div>
 		</>
@@ -289,34 +315,3 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 };
 
 export default TodoPanel;
-
-//   interface Food {
-//     value: string
-//     label: string
-//     disabled: boolean
-//   }
-//   interface Category {
-//     label: string
-//     options: Food[]
-//   }
-//   const ALL_OPTIONS: Category[] = [
-//     {
-//       label: "Fruits",
-//       options: [
-//         { value: "apple", label: "Apple", disabled: false },
-//         { value: "banana", label: "Banana", disabled: false },
-//         { value: "blueberry", label: "Blueberry", disabled: false },
-//         { value: "grapes", label: "Grapes", disabled: true },
-//         { value: "pineapple", label: "Pineapple", disabled: false }
-//       ]
-//     },
-//     {
-//       label: "Meat",
-//       options: [
-//         { value: "beef", label: "Beef", disabled: false },
-//         { value: "chicken", label: "Chicken", disabled: false },
-//         { value: "lamb", label: "Lamb", disabled: false },
-//         { value: "pork", label: "Pork", disabled: false }
-//       ]
-//     }
-//   ]

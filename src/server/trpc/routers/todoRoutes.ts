@@ -11,7 +11,13 @@ export const AddTodo = publicProcedure
 	.input(
 		v.parser(
 			v.object({
-				todo: v.string(),
+				todo: v.pipe(
+					v.string(),
+					v.trim(),
+					v.maxLength(800),
+					v.minLength(3),
+					v.nonEmpty(),
+				),
 				tagId: v.nullish(v.number()),
 				tagGroup: v.string(),
 				projectId: v.number(),
@@ -203,11 +209,12 @@ export const getUnDoneTodos = publicProcedure
 		}
 		const unDoneTodos = await ctx.db
 			.selectFrom("todos")
-			.innerJoin("tagGroups", "tagGroups.id", "tagGroupId")
-			.innerJoin("tags", "tags.id", "tagId")
+			.innerJoin("tagGroups", "tagGroups.id", "todos.tagGroupId")
+			.leftJoin("tags", "tags.id", "todos.tagId")
 			.select([
 				"todos.id",
 				"todos.tagId",
+				"todos.todo",
 				"todos.dateId",
 				"tagGroups.tagGroup",
 				"tags.tag",

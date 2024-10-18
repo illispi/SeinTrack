@@ -19,7 +19,9 @@ export default function Home() {
 
 	return (
 		<>
-			<A href="/testing/test/">Testing</A>
+			<A class="fixed bottom-0 left-0" href="/testing/test/">
+				Testing
+			</A>
 			<main class="mx-auto flex w-full items-start justify-center lg:grid lg:grid-cols-[3fr_5fr_3fr]">
 				<Suspense>
 					<Show when={projects.data} fallback={<NewProject />}>
