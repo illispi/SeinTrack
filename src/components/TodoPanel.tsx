@@ -120,7 +120,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 	});
 	return (
 		<>
-			<div class="m-4 hidden min-h-screen w-11/12 max-w-lg grow flex-col items-center rounded-xl border border-t-4 border-gray-200 border-t-green-500 shadow-lg xl:flex">
+			<div class="m-4 hidden min-h-screen w-11/12 max-w-lg grow flex-col items-center rounded-xl border border-t-4 border-gray-200 border-t-green-500 bg-white shadow-lg xl:flex">
 				<h2 class="m-8 text-4xl font-light">Todos</h2>
 				<div class="flex w-full items-center justify-between gap-12 px-8">
 					<Dialog>
@@ -129,7 +129,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 								Add Todo
 							</Button>
 						</DialogTrigger>
-						<DialogContent class="sm:max-w-[425px]">
+						<DialogContent class="bg-white sm:max-w-[425px]">
 							<DialogHeader>
 								<DialogTitle>Add todo</DialogTitle>
 							</DialogHeader>
@@ -238,7 +238,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 								Add Tag
 							</Button>
 						</DialogTrigger>
-						<DialogContent>
+						<DialogContent class="bg-white">
 							<DialogHeader>
 								<DialogTitle>Add Tag/Group</DialogTitle>
 							</DialogHeader>
