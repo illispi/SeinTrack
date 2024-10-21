@@ -32,6 +32,7 @@ import { Portal } from "solid-js/web";
 import "flatpickr/dist/themes/light.css";
 import "../test.css";
 import AddTime from "./AddTime";
+import { formatFlickrDate } from "~/utils/functionsAndVariables";
 
 type RouterOutput = inferRouterOutputs<IAppRouter>;
 
@@ -72,9 +73,11 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 
 	const [datepicker, setDatepicker] = createSignal<HTMLDivElement>();
 
+	let datePickerInstance;
+
 	createEffect(() => {
 		if (datepicker()) {
-			flatpickr(datepicker(), {
+			datePickerInstance = flatpickr(datepicker(), {
 				onChange: (selectedDates, dateStr, instance) => {
 					setTodoDateCompleted(dateStr);
 				},
@@ -89,6 +92,16 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 			});
 		}
 	});
+
+	const completeTodo = trpc.completeTodo.createMutation(() => ({
+		onSuccess: () => {
+			setAddHours(0);
+			setAddMinutes(0);
+			datePickerInstance.setDate(new Date());
+
+			//TODO reset todoCompleted
+		},
+	}));
 
 	const unDoneTodos = trpc.getUnDoneTodos.createQuery(() => ({
 		projectId: props.curProjectId,
@@ -376,7 +389,19 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 													ref={setDatepicker}
 												></input>
 											</div>
-											<Button class="w-full max-w-64" variant={"secondary"}>
+											<Button
+												onClick={() =>
+													completeTodo.mutate({
+														date: formatFlickrDate(flatpickr.selectedDates[0]),
+														hoursWorked: Number(
+															Number(addHours() + addMinutes() / 60).toFixed(2),
+														),
+														todoId: e.id,
+													})
+												}
+												class="w-full max-w-64"
+												variant={"secondary"}
+											>
 												Complete
 											</Button>
 										</div>

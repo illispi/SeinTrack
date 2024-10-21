@@ -69,3 +69,9 @@ export const hoursToFormat = (hoursDec: number) => {
 
 	return { minutes, hours };
 };
+
+export const formatFlickrDate = (string: string) => {
+	const split = string.split("-");
+	console.log(split);
+	return new Date(Number(split[0]), Number(split[1]), Number(split[2]));
+};

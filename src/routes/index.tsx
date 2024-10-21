@@ -1,5 +1,5 @@
 import { A } from "@solidjs/router";
-import { Show, Suspense, createSignal } from "solid-js";
+import { For, Show, Suspense, createSignal } from "solid-js";
 import DayEditor from "~/components/DayEditor";
 import ListMonth from "~/components/ListMonth";
 import MenuPanel from "~/components/MenuPanel";
@@ -13,8 +13,13 @@ export default function Home() {
 	const [curMonth, setCurMonth] = createSignal(new Date().getMonth());
 	const [curYear, setCurYear] = createSignal(new Date().getFullYear());
 	const [curDate, setCurDate] = createSignal<null | Date>(new Date());
-
+	//TODO remove hard coding project id
 	const [curProjectId, setProjectId] = createSignal(1);
+	const completedTodos = trpc.getDoneTodosByMonth.createQuery(() => ({
+		month: curMonth(),
+		projectId: curProjectId(),
+		year: curYear(),
+	}));
 	const projects = trpc.allProjects.createQuery();
 
 	return (
@@ -76,6 +81,9 @@ export default function Home() {
 										selectedDate={curDate()}
 										projectName={data()[0].name}
 									/>
+									<For each={completedTodos.data}>
+										{(todoDone) => todoDone.todo}
+									</For>
 								</div>
 								<TodoPanel curProjectId={curProjectId()} />
 							</>
