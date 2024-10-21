@@ -30,6 +30,7 @@ import { Toaster, showToast } from "./ui/toast";
 import flatpickr from "flatpickr";
 import { Portal } from "solid-js/web";
 import "flatpickr/dist/themes/light.css";
+import "../test.css";
 
 type RouterOutput = inferRouterOutputs<IAppRouter>;
 
@@ -68,7 +69,6 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 	const [datepicker, setDatepicker] = createSignal<HTMLDivElement>();
 
 	createEffect(() => {
-		console.log(todoDateCompleted());
 		if (datepicker()) {
 			flatpickr(datepicker(), {
 				onChange: (selectedDates, dateStr, instance) => {
