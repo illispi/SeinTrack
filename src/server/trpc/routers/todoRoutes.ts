@@ -256,7 +256,6 @@ export const getDoneTodosByMonth = publicProcedure
 			.where("dateCompleted", "<", new Date(nextMonth.year, nextMonth.month, 1))
 			.execute();
 
-		console.log(doneTodos);
 		if (doneTodos.length === 0) {
 			return null;
 		}

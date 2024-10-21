@@ -98,8 +98,6 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 			setAddHours(0);
 			setAddMinutes(0);
 			datePickerInstance.setDate(new Date());
-
-			//TODO reset todoCompleted
 		},
 	}));
 
@@ -132,13 +130,22 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 
 	const addTag = trpc.addTagOrGroup.createMutation(() => ({
 		onSuccess: () => {
+			showToast({
+				title: "Tag added:",
+				description: `${newTag()}`,
+				variant: "success",
+			});
 			setNewTag("");
-			//TODO add added toast see addTodo above
 		},
 	}));
 	const addTagGroup = trpc.addTagOrGroup.createMutation(() => ({
 		onSuccess: () => {
-			setNewTagGroup(""); //TODO add added toast see addTodo above
+			showToast({
+				title: "Tag group added:",
+				description: `${newTagGroup()}`,
+				variant: "success",
+			});
+			setNewTagGroup("");
 		},
 	}));
 	createEffect(() => {
@@ -169,7 +176,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 	});
 	return (
 		<>
-			<div class="m-4 hidden min-h-screen w-11/12 max-w-lg grow flex-col items-center rounded-xl border border-t-4 border-gray-200 border-t-green-500   shadow-lg xl:flex">
+			<div class="m-4 hidden min-h-screen w-11/12 max-w-lg grow flex-col items-center rounded-xl border border-t-4 border-gray-200 border-t-green-500   shadow-md xl:flex">
 				<h2 class="m-8 text-4xl font-light">Todos</h2>
 				<div class="mb-4 flex w-11/12 items-center justify-between gap-12">
 					<Dialog>
@@ -353,7 +360,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 
 				<For each={unDoneTodos.data}>
 					{(e) => (
-						<div class="my-4 flex h-32 w-11/12 items-start justify-between rounded-lg border border-t-2 border-gray-200 p-4 shadow-lg">
+						<div class="my-4 flex h-32 w-11/12 items-start justify-between rounded-lg border border-t-2 border-gray-200 p-4 shadow-md">
 							<div class="flex h-full flex-col items-start justify-between">
 								<p class="text-wrap break-words">{e.todo}</p>
 								<p class="text-sm italic">{`tag: ${e.tag ? e.tag : "none"} || group: ${e.tagGroup}`}</p>
@@ -371,9 +378,13 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 												Complete Todo:
 											</DialogTitle>
 										</DialogHeader>
-										<div class="mx-auto flex w-full max-w-72 flex-col items-center justify-between gap-8">
-											<p class="mt-4">{e.todo}</p>
-											<div class="text-sm font-semibold">Hours spent:</div>
+										<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-8">
+											<p class="mt-4 w-full border-t border-t-green-500 pt-4">
+												{e.todo}
+											</p>
+											<div class="w-full border-t border-t-green-500 pt-4 text-sm font-semibold">
+												Hours spent:
+											</div>
 											<div>
 												<AddTime
 													hours={addHours()}
@@ -382,7 +393,9 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 													setMinutes={setAddMinutes}
 												/>
 											</div>
-											<div class="text-sm font-semibold">Date completed:</div>
+											<div class=" w-full border-t border-t-green-500 pt-4 text-sm font-semibold">
+												Date completed:
+											</div>
 											<div class="flex h-80 w-full items-center justify-center">
 												<input
 													class="w-full"

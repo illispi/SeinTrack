@@ -44,46 +44,53 @@ export default function Home() {
 											curDate={curDate()}
 										/>
 									</Suspense>
-									<div class="flex w-full items-center justify-center gap-8">
-										<Button
-											variant={"outline"}
-											onClick={() => {
-												const back = adjustDateByOne(
-													curYear(),
-													curMonth(),
-													false,
-												);
-												setCurMonth(back.month);
-												setCurYear(back.year);
-											}}
-										>
-											Back
-										</Button>
-										<Button
-											variant={"outline"}
-										>{`${curMonth() + 1}/${curYear()}`}</Button>
-										<Button
-											variant={"outline"}
-											onClick={() => {
-												const forward = adjustDateByOne(
-													curYear(),
-													curMonth(),
-													true,
-												);
-												setCurMonth(forward.month);
-												setCurYear(forward.year);
-											}}
-										>
-											Next
-										</Button>
+									<div class="flex w-11/12 max-w-96 flex-col gap-4">
+										<div class="flex w-full items-center justify-between gap-8">
+											<Button
+												class="flex-1"
+												variant={"outline"}
+												onClick={() => {
+													const back = adjustDateByOne(
+														curYear(),
+														curMonth(),
+														false,
+													);
+													setCurMonth(back.month);
+													setCurYear(back.year);
+												}}
+											>
+												Back
+											</Button>
+											<Button
+												class="flex-1"
+												variant={"outline"}
+											>{`${curMonth() + 1}/${curYear()}`}</Button>
+											<Button
+												class="flex-1"
+												variant={"outline"}
+												onClick={() => {
+													const forward = adjustDateByOne(
+														curYear(),
+														curMonth(),
+														true,
+													);
+													setCurMonth(forward.month);
+													setCurYear(forward.year);
+												}}
+											>
+												Next
+											</Button>
+										</div>
+										<DayEditor
+											selectedDate={curDate()}
+											projectName={data()[0].name}
+										/>
 									</div>
-									<DayEditor
-										selectedDate={curDate()}
-										projectName={data()[0].name}
-									/>
-									<For each={completedTodos.data}>
-										{(todoDone) => todoDone.todo}
-									</For>
+									<div class="flex flex-col items-start justify-start gap-4">
+										<For each={completedTodos.data}>
+											{(todoDone) => <p>{todoDone.todo}</p>}
+										</For>
+									</div>
 								</div>
 								<TodoPanel curProjectId={curProjectId()} />
 							</>
