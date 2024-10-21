@@ -86,9 +86,40 @@ export default function Home() {
 											projectName={data()[0].name}
 										/>
 									</div>
-									<div class="flex flex-col items-start justify-start gap-4">
+									<div class="flex w-11/12 flex-col items-center justify-center gap-4">
+										<h2 class="text-lg font-semibold">{`${monthsArr[curMonth()]} ${curYear()}`}</h2>
+										<p>Completed todos in a month</p>
 										<For each={completedTodos.data}>
-											{(todoDone) => <p>{todoDone.todo}</p>}
+											{(todoDone) => (
+												<div class="flex h-28 w-full items-start justify-between rounded-lg border border-t-2 border-gray-200 p-4 shadow-md">
+													<div class="flex h-full flex-col items-start justify-between">
+														<p class="text-wrap break-words">{todoDone.todo}</p>
+														<div class="flex items-end justify-start gap-4">
+															{/* TODO these links as new pages with params */}
+															<A
+																href="/TODO"
+																class="text-sm italic"
+															>{`tag: ${todoDone.tag ? todoDone.tag : "none"}`}</A>
+															<A
+																href="/TODO"
+																class="text-sm italic"
+															>{`group: ${todoDone.tagGroup}`}</A>
+														</div>
+													</div>
+													<div class="flex h-full items-center justify-center gap-8">
+														<div class="flex h-full flex-col items-start justify-between">
+															<p class="italic">
+																{todoDone.dateCompleted?.toDateString()}
+															</p>
+															<div class="flex items-center justify-start gap-2">
+																<p class="text-lg font-semibold">{`${todoDone.hoursWorked}`}</p>
+																<p>hours</p>
+															</div>
+														</div>
+														<Button variant={"outline"}>Edit</Button>
+													</div>
+												</div>
+											)}
 										</For>
 									</div>
 								</div>

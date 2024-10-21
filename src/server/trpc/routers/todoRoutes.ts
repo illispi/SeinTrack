@@ -249,6 +249,8 @@ export const getDoneTodosByMonth = publicProcedure
 				"todos.tagId",
 				"tagGroups.tagGroup",
 				"tags.tag",
+				"todos.hoursWorked",
+				"todos.dateCompleted",
 			])
 			.where("todos.completed", "=", true)
 			.where("todos.projectId", "=", input.projectId)
