@@ -34,6 +34,7 @@ const massageTagsAndGroupsToArr = (
 	data: RouterOutput["getTagsOrGroupsActiveOrNot"],
 ): string[] => {
 	const arr = [];
+
 	if (data) {
 		for (const el of data) {
 			if ("tag" in el) {
@@ -102,6 +103,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 				description: addTodo.error?.message,
 				variant: "error",
 			});
+			addTodo.reset();
 		}
 		if (addTag.isError) {
 			showToast({
@@ -109,6 +111,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 				description: addTag.error?.message,
 				variant: "error",
 			});
+			addTag.reset();
 		}
 		if (addTagGroup.isError) {
 			showToast({
@@ -116,13 +119,14 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 				description: addTagGroup.error?.message,
 				variant: "error",
 			});
+			addTagGroup.reset();
 		}
 	});
 	return (
 		<>
 			<div class="m-4 hidden min-h-screen w-11/12 max-w-lg grow flex-col items-center rounded-xl border border-t-4 border-gray-200 border-t-green-500   shadow-lg xl:flex">
 				<h2 class="m-8 text-4xl font-light">Todos</h2>
-				<div class="flex w-full items-center justify-between gap-12 px-8">
+				<div class="flex w-11/12 items-center justify-between gap-12 mb-4">
 					<Dialog>
 						<DialogTrigger class="flex-1 p-0" as={Button<"button">}>
 							<Button class="w-full" variant={"secondary"}>
@@ -156,6 +160,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 										<>
 											<Select
 												class="flex"
+												//NOTE issue on shadnc solid-ui?
 												defaultValue={"none"}
 												value={selectedTag()}
 												onChange={setSelectedTag}
@@ -301,7 +306,24 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 					<Toaster />
 				</div>
 
-				<For each={unDoneTodos.data}>{(e) => <div>{e.todo}</div>}</For>
+				<For each={unDoneTodos.data}>
+					{(e) => (
+						<div class="my-4 flex h-32 w-11/12 items-start justify-between rounded-lg border border-t-2 border-gray-200 p-4 shadow-lg">
+							<div class="flex h-full flex-col items-start justify-between">
+								<p class="text-wrap break-words">{e.todo}</p>
+								<p class="text-sm italic">{`tag: ${e.tag ? e.tag : "none"} || group: ${e.tagGroup}`}</p>
+							</div>
+							<div class="flex flex-col items-center justify-center gap-4">
+								<Button variant="secondary" class="w-16">
+									Done
+								</Button>
+								<Button variant="outline" class="w-16">
+									Edit
+								</Button>
+							</div>
+						</div>
+					)}
+				</For>
 			</div>
 			<div class="flex lg:hidden"></div>
 		</>
