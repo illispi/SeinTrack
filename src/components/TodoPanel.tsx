@@ -31,6 +31,7 @@ import flatpickr from "flatpickr";
 import { Portal } from "solid-js/web";
 import "flatpickr/dist/themes/light.css";
 import "../test.css";
+import AddTime from "./AddTime";
 
 type RouterOutput = inferRouterOutputs<IAppRouter>;
 
@@ -58,12 +59,15 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 	const [selectedTag, setSelectedTag] = createSignal("none");
 	const [selectedTagGroup, setSelectedTagGroup] = createSignal("bug fix");
 
+	const [addHours, setAddHours] = createSignal(0);
+	const [addMinutes, setAddMinutes] = createSignal(0);
+
 	const [newTag, setNewTag] = createSignal("");
 	const [newTagGroup, setNewTagGroup] = createSignal("");
 
 	const [newTodo, setNewTodo] = createSignal("");
 
-	const [todoDateCompleted, setTodoDateCompleted] = createSignal(new Date());
+	const [todoDateCompleted, setTodoDateCompleted] = createSignal<string>();
 	// let datepicker!: HTMLDivElement;
 
 	const [datepicker, setDatepicker] = createSignal<HTMLDivElement>();
@@ -77,7 +81,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 				static: true,
 				inline: true,
 				onReady: (selectedDates, dateStr, instance) => {
-					instance.setDate(todoDateCompleted());
+					instance.setDate(new Date());
 				},
 			});
 		}
@@ -346,10 +350,22 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 									</DialogTrigger>
 									<DialogContent>
 										<DialogHeader>
-											<DialogTitle>Mark todo as complete</DialogTitle>
+											<DialogTitle class="text-center">
+												Complete Todo:
+											</DialogTitle>
 										</DialogHeader>
-										<div class="flex w-full flex-col items-center justify-start">
-											<div>Hours to complete todo</div>
+										<div class="mx-auto flex w-full max-w-72 flex-col items-center justify-between gap-8">
+											<p class="mt-4">{e.todo}</p>
+											<div class="text-sm font-semibold">Hours spent:</div>
+											<div>
+												<AddTime
+													hours={addHours()}
+													minutes={addMinutes()}
+													setHours={setAddHours}
+													setMinutes={setAddMinutes}
+												/>
+											</div>
+											<div class="text-sm font-semibold">Date completed:</div>
 											<div class="flex h-80 w-full items-center justify-center">
 												<input
 													class="w-full"
@@ -357,6 +373,9 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 													ref={setDatepicker}
 												></input>
 											</div>
+											<Button class="w-full max-w-64" variant={"secondary"}>
+												Complete
+											</Button>
 										</div>
 									</DialogContent>
 								</Dialog>
