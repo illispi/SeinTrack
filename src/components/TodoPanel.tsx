@@ -341,7 +341,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 											onClick={() =>
 												addTagGroup.mutate({
 													nameOfTagOrGroup: newTagGroup(),
-													projectId: props.curProjectId,
+													projectId: prop.curProjectId,
 													switch: "tagGroup",
 												})
 											}
@@ -362,7 +362,9 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 					{(e) => (
 						<div class="my-4 flex h-32 w-11/12 items-start justify-between rounded-lg border border-t-2 border-gray-200 p-4 shadow-md">
 							<div class="flex h-full flex-col items-start justify-between">
-								<p class="text-wrap break-words">{e.todo}</p>
+								<p class="text-wrap break-words text-sm lg:text-base">
+									{e.todo}
+								</p>
 								<p class="text-sm italic">{`tag: ${e.tag ? e.tag : "none"} || group: ${e.tagGroup}`}</p>
 							</div>
 							<div class="flex flex-col items-center justify-center gap-4">

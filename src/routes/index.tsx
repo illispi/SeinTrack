@@ -98,6 +98,7 @@ export default function Home() {
 														</p>
 														<div class="flex items-end justify-start gap-4">
 															{/* TODO these links as new pages with params */}
+
 															<A
 																href="/TODO"
 																class="text-sm italic"
@@ -117,16 +118,13 @@ export default function Home() {
 																<p class="text-lg font-semibold">{`${todoDone.hoursWorked}`}</p>
 																<p>hours</p>
 																<Button
-																	class="flex h-8 w-12 items-center justify-center lg:hidden"
+																	class="flex h-8 w-12 items-center justify-center "
 																	variant={"outline"}
 																>
 																	Edit
 																</Button>
 															</div>
 														</div>
-														<Button class="hidden lg:flex" variant={"outline"}>
-															Edit
-														</Button>
 													</div>
 												</div>
 											)}
