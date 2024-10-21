@@ -76,17 +76,41 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 
 	const [searchParams, setSearchParams] = useSearchParams();
 
-	const [open, setOpen] = createSignal(false);
+	const [todoOrTag, setTodoOrTag] = createSignal<"todo" | "tag" | null>(null);
+
+	const [openFirst, setOpenFirst] = createSignal(false);
+
+	const [openSecond, setOpenSecond] = createSignal(false);
 
 	useBeforeLeave((event: BeforeLeaveEventArgs) => {
-		if (open() && Number.isInteger(event.to) && (event.to as number) < 0) {
-			setOpen(false);
+		if (
+			openFirst() &&
+			Number.isInteger(event.to) &&
+			(event.to as number) < 0 &&
+			!openSecond()
+		) {
+			setOpenFirst(false);
+		}
+		if (
+			openSecond() &&
+			Number.isInteger(event.to) &&
+			(event.to as number) < 0 &&
+			openFirst()
+		) {
+			setOpenSecond(false);
 		}
 	});
 
 	createEffect(() => {
-		if (open()) {
-			setSearchParams({ backHistory: (Number(searchParams.page) || 0) + 1 });
+		if (openFirst()) {
+			setSearchParams({ backHistoryFirst: true });
+		} else {
+			setSearchParams({ backHistoryFirst: null });
+		}
+		if (openSecond()) {
+			setSearchParams({ backHistorySecond: true });
+		} else {
+			setSearchParams({ backHistorySecond: null });
 		}
 	});
 
@@ -197,9 +221,9 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 		<>
 			<div class="fixed bottom-0 right-0 flex lg:hidden">
 				<Sheet
-					open={open()}
+					open={openFirst()}
 					onOpenChange={() => {
-						setOpen(!open());
+						setOpenFirst(!openFirst());
 					}}
 				>
 					<SheetTrigger>Todos</SheetTrigger>
@@ -207,7 +231,13 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 						<div class=" flex min-h-screen grow flex-col items-center">
 							<h2 class="m-8 text-4xl font-light">Todos</h2>
 							<div class="mb-4 flex w-11/12 items-center justify-between gap-12">
-								<Dialog>
+								<Dialog
+									open={openSecond() && todoOrTag() === "todo"}
+									onOpenChange={() => {
+										setTodoOrTag("todo");
+										setOpenSecond(!openSecond());
+									}}
+								>
 									<DialogTrigger class="flex-1 p-0" as={Button<"button">}>
 										<Button class="w-full" variant={"secondary"}>
 											Add Todo
@@ -322,7 +352,13 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 									</DialogContent>
 								</Dialog>
 
-								<Dialog>
+								<Dialog
+									open={openSecond() && todoOrTag() === "tag"}
+									onOpenChange={() => {
+										setTodoOrTag("tag");
+										setOpenSecond(!openSecond());
+									}}
+								>
 									<DialogTrigger class="flex-1 p-0" as={Button<"button">}>
 										<Button class="w-full" variant={"secondary"}>
 											Add Tag
