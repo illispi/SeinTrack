@@ -242,7 +242,7 @@ export const getDoneTodosByMonth = publicProcedure
 		const doneTodos = await ctx.db
 			.selectFrom("todos")
 			.innerJoin("tagGroups", "tagGroups.id", "todos.tagGroupId")
-			.innerJoin("tags", "tags.id", "todos.tagId")
+			.leftJoin("tags", "tags.id", "todos.tagId")
 			.select([
 				"todos.todo",
 				"todos.id",
@@ -256,6 +256,7 @@ export const getDoneTodosByMonth = publicProcedure
 			.where("dateCompleted", "<", new Date(nextMonth.year, nextMonth.month, 1))
 			.execute();
 
+		console.log(doneTodos);
 		if (doneTodos.length === 0) {
 			return null;
 		}
