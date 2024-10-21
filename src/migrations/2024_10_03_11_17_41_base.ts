@@ -7,6 +7,16 @@ export async function up(db: Kysely<any>): Promise<void> {
 		.addColumn("id", "serial", (col) => col.primaryKey())
 		.addColumn("name", "text", (col) => col.notNull().unique())
 		.addColumn("target_hours", "float4", (col) => col.defaultTo(3).notNull())
+
+		.execute();
+
+	await db.schema
+		.createTable("counted_days")
+		.addColumn("id", "serial", (col) => col.primaryKey())
+		.addColumn("day", "integer", (col) => col.notNull())
+		.addColumn("project_id", "integer", (col) =>
+			col.references("projects.id").onDelete("cascade").notNull(),
+		)
 		.execute();
 	await db.schema
 		.createTable("dates")
@@ -42,7 +52,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 		.addColumn("project_id", "integer", (col) =>
 			col.references("projects.id").onDelete("cascade").notNull(),
 		)
-		.addColumn("date_id", "integer", (col) => col.references("dates.id"))
+		.addColumn("date_completed", "timestamp")
 		.addColumn("tag_group_id", "integer", (col) =>
 			col.references("tag_groups.id").notNull(),
 		)
@@ -57,5 +67,6 @@ export async function down(db: Kysely<any>): Promise<void> {
 	await db.schema.dropTable("tags").ifExists().execute();
 	await db.schema.dropTable("tag_groups").ifExists().execute();
 	await db.schema.dropTable("dates").ifExists().execute();
+	await db.schema.dropTable("counted_days").ifExists().execute();
 	await db.schema.dropTable("projects").ifExists().execute();
 }

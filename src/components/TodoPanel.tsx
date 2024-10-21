@@ -83,6 +83,9 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 				onReady: (selectedDates, dateStr, instance) => {
 					instance.setDate(new Date());
 				},
+				altInput: true,
+				altFormat: "F j, Y",
+				dateFormat: "Y-m-d",
 			});
 		}
 	});

@@ -1,6 +1,7 @@
 import * as v from "valibot";
 import { publicProcedure } from "../initTrpc";
 import { TRPCError } from "@trpc/server";
+import { adjustDateByOne } from "~/utils/functionsAndVariables";
 
 export enum Switch {
 	tagGroup = 0,
@@ -44,7 +45,7 @@ export const AddTodo = publicProcedure
 				completed: false,
 				projectId: input.projectId,
 				todo: input.todo,
-				dateId: null,
+				dateCompleted: null,
 				hoursWorked: null,
 				tagId: input.tagId,
 				tagGroupId: tagGroup?.id,
@@ -59,7 +60,7 @@ export const completeTodo = publicProcedure
 			v.object({
 				todoId: v.number(),
 				hoursWorked: v.number(),
-				dateId: v.number(),
+				date: v.date(),
 			}),
 		),
 	)
@@ -69,7 +70,7 @@ export const completeTodo = publicProcedure
 			.set({
 				completed: true,
 				hoursWorked: input.hoursWorked,
-				dateId: input.dateId,
+				dateCompleted: input.date,
 			})
 			.where("id", "=", input.todoId)
 			.executeTakeFirstOrThrow();
@@ -83,7 +84,6 @@ export const editTodo = publicProcedure
 			v.object({
 				id: v.number(),
 				hoursWorked: v.number(),
-				dateId: v.number(),
 				todo: v.string(),
 				tagId: v.number(),
 				tagGroup: v.string(),
@@ -103,7 +103,6 @@ export const editTodo = publicProcedure
 			.set({
 				completed: input.completed,
 				hoursWorked: input.hoursWorked,
-				dateId: input.dateId,
 				tagGroupId: tagGroup?.id,
 				tagId: input.tagId,
 				todo: input.todo,
@@ -215,7 +214,6 @@ export const getUnDoneTodos = publicProcedure
 				"todos.id",
 				"todos.tagId",
 				"todos.todo",
-				"todos.dateId",
 				"tagGroups.tagGroup",
 				"tags.tag",
 			])
@@ -240,34 +238,29 @@ export const getDoneTodosByMonth = publicProcedure
 		),
 	)
 	.query(async ({ input, ctx }) => {
+		const nextMonth = adjustDateByOne(input.year, input.month, true);
 		const doneTodos = await ctx.db
 			.selectFrom("todos")
 			.innerJoin("tagGroups", "tagGroups.id", "todos.tagGroupId")
 			.innerJoin("tags", "tags.id", "todos.tagId")
-			.innerJoin("dates", "dates.id", "todos.dateId")
 			.select([
+				"todos.todo",
 				"todos.id",
 				"todos.tagId",
-				"todos.dateId",
 				"tagGroups.tagGroup",
 				"tags.tag",
-				"dates.date",
 			])
 			.where("todos.completed", "=", true)
 			.where("todos.projectId", "=", input.projectId)
+			.where("dateCompleted", ">=", new Date(input.year, input.month, 1))
+			.where("dateCompleted", "<", new Date(nextMonth.year, nextMonth.month, 1))
 			.execute();
 
 		if (doneTodos.length === 0) {
 			return null;
 		}
 
-		const monthsTodosDone = doneTodos.filter(
-			(e) =>
-				e.date?.getFullYear() === input.year &&
-				e.date.getMonth() === input.month,
-		);
-
-		return monthsTodosDone;
+		return doneTodos;
 	});
 
 export const getTagsOrGroupsActiveOrNot = publicProcedure
