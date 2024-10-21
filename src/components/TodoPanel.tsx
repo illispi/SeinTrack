@@ -27,6 +27,9 @@ import {
 } from "./ui/select";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
 import { Toaster, showToast } from "./ui/toast";
+import flatpickr from "flatpickr";
+import { Portal } from "solid-js/web";
+import "flatpickr/dist/themes/light.css";
 
 type RouterOutput = inferRouterOutputs<IAppRouter>;
 
@@ -58,6 +61,27 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 	const [newTagGroup, setNewTagGroup] = createSignal("");
 
 	const [newTodo, setNewTodo] = createSignal("");
+
+	const [todoDateCompleted, setTodoDateCompleted] = createSignal(new Date());
+	// let datepicker!: HTMLDivElement;
+
+	const [datepicker, setDatepicker] = createSignal<HTMLDivElement>();
+
+	createEffect(() => {
+		console.log(todoDateCompleted());
+		if (datepicker()) {
+			flatpickr(datepicker(), {
+				onChange: (selectedDates, dateStr, instance) => {
+					setTodoDateCompleted(dateStr);
+				},
+				static: true,
+				inline: true,
+				onReady: (selectedDates, dateStr, instance) => {
+					instance.setDate(todoDateCompleted());
+				},
+			});
+		}
+	});
 
 	const unDoneTodos = trpc.getUnDoneTodos.createQuery(() => ({
 		projectId: props.curProjectId,
@@ -126,7 +150,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 		<>
 			<div class="m-4 hidden min-h-screen w-11/12 max-w-lg grow flex-col items-center rounded-xl border border-t-4 border-gray-200 border-t-green-500   shadow-lg xl:flex">
 				<h2 class="m-8 text-4xl font-light">Todos</h2>
-				<div class="flex w-11/12 items-center justify-between gap-12 mb-4">
+				<div class="mb-4 flex w-11/12 items-center justify-between gap-12">
 					<Dialog>
 						<DialogTrigger class="flex-1 p-0" as={Button<"button">}>
 							<Button class="w-full" variant={"secondary"}>
@@ -314,9 +338,29 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 								<p class="text-sm italic">{`tag: ${e.tag ? e.tag : "none"} || group: ${e.tagGroup}`}</p>
 							</div>
 							<div class="flex flex-col items-center justify-center gap-4">
-								<Button variant="secondary" class="w-16">
-									Done
-								</Button>
+								<Dialog>
+									<DialogTrigger>
+										<Button variant="secondary" class="w-16">
+											Done
+										</Button>
+									</DialogTrigger>
+									<DialogContent>
+										<DialogHeader>
+											<DialogTitle>Mark todo as complete</DialogTitle>
+										</DialogHeader>
+										<div class="flex w-full flex-col items-center justify-start">
+											<div>Hours to complete todo</div>
+											<div class="flex h-80 w-full items-center justify-center">
+												<input
+													class="w-full"
+													type="text"
+													ref={setDatepicker}
+												></input>
+											</div>
+										</div>
+									</DialogContent>
+								</Dialog>
+
 								<Button variant="outline" class="w-16">
 									Edit
 								</Button>
@@ -325,6 +369,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 					)}
 				</For>
 			</div>
+
 			<div class="flex lg:hidden"></div>
 		</>
 	);
