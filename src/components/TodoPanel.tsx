@@ -68,7 +68,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 
 	const [newTodo, setNewTodo] = createSignal("");
 
-	const [todoDateCompleted, setTodoDateCompleted] = createSignal<string>();
+	// const [todoDateCompleted, setTodoDateCompleted] = createSignal<string>();
 	// let datepicker!: HTMLDivElement;
 
 	const [datepicker, setDatepicker] = createSignal<HTMLDivElement>();
@@ -78,9 +78,9 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 	createEffect(() => {
 		if (datepicker()) {
 			datePickerInstance = flatpickr(datepicker(), {
-				onChange: (selectedDates, dateStr, instance) => {
-					setTodoDateCompleted(dateStr);
-				},
+				// onChange: (selectedDates, dateStr, instance) => {
+				// 	setTodoDateCompleted(dateStr);
+				// },
 				static: true,
 				inline: true,
 				onReady: (selectedDates, dateStr, instance) => {
@@ -133,11 +133,12 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 	const addTag = trpc.addTagOrGroup.createMutation(() => ({
 		onSuccess: () => {
 			setNewTag("");
+			//TODO add added toast see addTodo above
 		},
 	}));
 	const addTagGroup = trpc.addTagOrGroup.createMutation(() => ({
 		onSuccess: () => {
-			setNewTagGroup("");
+			setNewTagGroup(""); //TODO add added toast see addTodo above
 		},
 	}));
 	createEffect(() => {
@@ -390,15 +391,15 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 												></input>
 											</div>
 											<Button
-												onClick={() =>
+												onClick={() => {
 													completeTodo.mutate({
-														date: formatFlickrDate(flatpickr.selectedDates[0]),
+														date: datePickerInstance.selectedDates[0],
 														hoursWorked: Number(
 															Number(addHours() + addMinutes() / 60).toFixed(2),
 														),
 														todoId: e.id,
-													})
-												}
+													});
+												}}
 												class="w-full max-w-64"
 												variant={"secondary"}
 											>
