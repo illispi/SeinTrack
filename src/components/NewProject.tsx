@@ -23,7 +23,7 @@ const NewProject: Component = (props) => {
 	return (
 		<Dialog>
 			<DialogTrigger as={Button<"button">}>Edit Profile</DialogTrigger>
-			<DialogContent class="bg-white sm:max-w-[425px]">
+			<DialogContent class="  sm:max-w-[425px]">
 				<DialogHeader>
 					<DialogTitle>Create project</DialogTitle>
 					<DialogDescription>Create new project</DialogDescription>
