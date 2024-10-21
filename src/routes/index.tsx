@@ -93,7 +93,9 @@ export default function Home() {
 											{(todoDone) => (
 												<div class="flex h-28 w-full items-start justify-between rounded-lg border border-t-2 border-gray-200 p-4 shadow-md">
 													<div class="flex h-full flex-col items-start justify-between">
-														<p class="text-wrap break-words">{todoDone.todo}</p>
+														<p class="text-wrap break-words text-left text-sm lg:text-base">
+															{todoDone.todo}
+														</p>
 														<div class="flex items-end justify-start gap-4">
 															{/* TODO these links as new pages with params */}
 															<A
@@ -108,15 +110,23 @@ export default function Home() {
 													</div>
 													<div class="flex h-full items-center justify-center gap-8">
 														<div class="flex h-full flex-col items-start justify-between">
-															<p class="italic">
+															<p class="text-sm italic">
 																{todoDone.dateCompleted?.toDateString()}
 															</p>
 															<div class="flex items-center justify-start gap-2">
 																<p class="text-lg font-semibold">{`${todoDone.hoursWorked}`}</p>
 																<p>hours</p>
+																<Button
+																	class="flex h-8 w-12 items-center justify-center lg:hidden"
+																	variant={"outline"}
+																>
+																	Edit
+																</Button>
 															</div>
 														</div>
-														<Button variant={"outline"}>Edit</Button>
+														<Button class="hidden lg:flex" variant={"outline"}>
+															Edit
+														</Button>
 													</div>
 												</div>
 											)}
