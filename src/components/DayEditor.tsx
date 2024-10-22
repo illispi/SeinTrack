@@ -49,43 +49,39 @@ const DayEditor: Component<{
 
 	return (
 		<div>
-			<Show when={props.selectedDate} fallback="No date selected">
-				{(date) => (
-					<div class="mx-auto flex w-full max-w-72 flex-col items-center justify-start gap-6">
-						<h4 class="text-3xl font-light">{date().toDateString()}</h4>
-						<h3>{`Current hours: ${hours.data?.hoursWorked || 0}`}</h3>
-						<div class="flex w-full flex-col items-center justify-center gap-8">
-							<AddTime
-								hours={addHours()}
-								minutes={addMinutes()}
-								setHours={setAddHours}
-								setMinutes={setAddMinutes}
-							/>
+			<div class="mx-auto flex w-full max-w-72 flex-col items-center justify-start gap-6">
+				<h4 class="text-3xl font-light">{props.selectedDate.toDateString()}</h4>
+				<h3>{`Current hours: ${hours.data?.hoursWorked || 0}`}</h3>
+				<div class="flex w-full flex-col items-center justify-center gap-8">
+					<AddTime
+						hours={addHours()}
+						minutes={addMinutes()}
+						setHours={setAddHours}
+						setMinutes={setAddMinutes}
+					/>
 
-							<Button
-								class="w-full "
-								variant={"secondary"}
-								type="button"
-								onClick={() => {
-									if (props.selectedDate) {
-										changeHours.mutate({
-											date: props.selectedDate,
-											hours: Number(
-												Number(addHours() + addMinutes() / 60).toFixed(2),
-											),
-											projectId: props.projectId,
-										});
-									}
-								}}
-							>
-								Add time
-							</Button>
+					<Button
+						class="w-full "
+						variant={"secondary"}
+						type="button"
+						onClick={() => {
+							if (props.selectedDate) {
+								changeHours.mutate({
+									date: props.selectedDate,
+									hours: Number(
+										Number(addHours() + addMinutes() / 60).toFixed(2),
+									),
+									projectId: props.projectId,
+								});
+							}
+						}}
+					>
+						Add time
+					</Button>
 
-							<Toaster />
-						</div>
-					</div>
-				)}
-			</Show>
+					<Toaster />
+				</div>
+			</div>
 		</div>
 	);
 };

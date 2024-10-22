@@ -138,7 +138,7 @@ export default function Home() {
 											open={dayEditorOpen()}
 											onOpenChange={setDayEditorOpen}
 										>
-											<DialogTrigger class="hidden">Open</DialogTrigger>
+											<DialogTrigger></DialogTrigger>
 											<DialogContent>
 												<DayEditor
 													selectedDate={curDate()}
