@@ -92,7 +92,7 @@ export default function Home() {
 											setDayEditorOpen={setDayEditorOpen}
 											month={curMonth()}
 											year={curYear()}
-											projectName={data()[0].name}
+											projectId={data()[0].id}
 											setCurDate={setCurDate}
 											curDate={curDate()}
 										/>
@@ -142,7 +142,7 @@ export default function Home() {
 											<DialogContent>
 												<DayEditor
 													selectedDate={curDate()}
-													projectName={data()[0].name}
+													projectId={data()[0].id}
 												/>
 											</DialogContent>
 										</Dialog>

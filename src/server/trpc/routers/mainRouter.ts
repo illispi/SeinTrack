@@ -2,6 +2,7 @@ import { publicProcedure, router } from "../initTrpc";
 import {
 	changeDayHours,
 	getFirstAndLastDate,
+	getHoursForDate,
 	getHoursOfDay,
 } from "./datesRoutes";
 import { allProjects, editProject } from "./projectRoutes";
@@ -34,6 +35,7 @@ export const appRouter = router({
 	getUnDoneTodos: getUnDoneTodos,
 	getDoneTodosByMonth: getDoneTodosByMonth,
 	getTagsOrGroupsActiveOrNot: getTagsOrGroupsActiveOrNot,
+	getHoursForDate: getHoursForDate,
 });
 
 export type IAppRouter = typeof appRouter;

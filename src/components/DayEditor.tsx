@@ -3,11 +3,11 @@ import { trpc } from "~/utils/trpc";
 import AddTime from "./AddTime";
 import { Button } from "./ui/button";
 import { Toaster, showToast } from "./ui/toast";
+import { dayAdjust } from "./ListMonth";
 
 const DayEditor: Component<{
 	selectedDate: Date | null;
-	projectName: string;
-	
+	projectId: number;
 }> = (props) => {
 	const [addHours, setAddHours] = createSignal(0);
 	const [addMinutes, setAddMinutes] = createSignal(0);
@@ -25,23 +25,36 @@ const DayEditor: Component<{
 				description: changeHours.error?.message,
 				variant: "error",
 			});
+			changeHours.reset();
+		}
+		if (hours.isError) {
+			showToast({
+				title: "ERROR!",
+				description: hours.error?.message,
+				variant: "error",
+			});
 		}
 	});
 
-	const utils = trpc.useContext();
 	const changeHours = trpc.changeDayHours.createMutation(() => ({
 		onSuccess: () => {
-			utils.invalidate();
 			setAddHours(0);
 			setAddMinutes(0);
 		},
 	}));
+
+	const hours = trpc.getHoursForDate.createQuery(() => ({
+		date: props.selectedDate,
+		projectId: props.projectId,
+	}));
+
 	return (
-		<div class="">
+		<div>
 			<Show when={props.selectedDate} fallback="No date selected">
 				{(date) => (
-					<>
+					<div class="mx-auto flex w-full max-w-72 flex-col items-center justify-start gap-6">
 						<h4 class="text-3xl font-light">{date().toDateString()}</h4>
+						<h3>{`Current hours: ${hours.data}`}</h3>
 						<div class="flex w-full flex-col items-center justify-center gap-8">
 							<AddTime
 								hours={addHours()}
@@ -71,7 +84,7 @@ const DayEditor: Component<{
 
 							<Toaster />
 						</div>
-					</>
+					</div>
 				)}
 			</Show>
 		</div>

@@ -93,7 +93,7 @@ const colorPicker = (
 const ListMonth: Component<{
 	month: number;
 	year: number;
-	projectName: string;
+	projectId: number;
 	setCurDate: Setter<Date | null>;
 	curDate: Date | null;
 	setDayEditorOpen: Setter<boolean>;
@@ -101,7 +101,7 @@ const ListMonth: Component<{
 	const [countedDays, setCountedDays] = createStore([1, 2, 3, 4, 5]);
 
 	const firstAndLastDate = trpc.getFirstAndLastDate.createQuery(
-		() => props.projectName,
+		() => props.projectId,
 	);
 
 	createEffect(() => {
@@ -114,7 +114,7 @@ const ListMonth: Component<{
 
 	const hours = trpc.getHoursOfDay.createQuery(() => ({
 		dates: dayAdjust(props.month, props.year),
-		projectName: props.projectName,
+		projectId: props.projectId,
 	}));
 
 	return (

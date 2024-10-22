@@ -4,25 +4,17 @@ import { publicProcedure } from "../initTrpc";
 
 export const getHoursOfDay = publicProcedure
 	.input(
-		v.parser(v.object({ dates: v.array(v.date()), projectName: v.string() })),
+		v.parser(v.object({ dates: v.array(v.date()), projectId: v.number() })),
 	)
 	.query(async ({ input, ctx }) => {
-		const projectId = await ctx.db
-			.selectFrom("projects")
-			.select(["id"])
-			.where("name", "=", input.projectName)
-			.executeTakeFirst();
-		if (!projectId) {
-			return null;
-		}
 		const hoursArr = [];
 		for (let index = 0; index < input.dates.length; index++) {
 			const hours = await ctx.db
 				.selectFrom("dates")
 				.select("hoursWorked")
-				.where("projectId", "=", projectId?.id)
+				.where("projectId", "=", input.projectId)
 				.where("date", "=", input.dates[index])
-				.executeTakeFirst();
+				.executeTakeFirstOrThrow();
 
 			if (!hours) {
 				hoursArr.push({ date: input.dates[index], hours: null });
@@ -33,6 +25,20 @@ export const getHoursOfDay = publicProcedure
 
 		return hoursArr;
 	});
+
+export const getHoursForDate = publicProcedure
+	.input(v.parser(v.object({ date: v.date(), projectId: v.number() })))
+	.query(async ({ input, ctx }) => {
+		const hours = await ctx.db
+			.selectFrom("dates")
+			.select("hoursWorked")
+			.where("projectId", "=", input.projectId)
+			.where("date", "=", input.date)
+			.executeTakeFirstOrThrow();
+
+		return hours;
+	});
+
 export const changeDayHours = publicProcedure
 	.input(
 		v.parser(
