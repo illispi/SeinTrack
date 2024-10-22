@@ -145,9 +145,12 @@ const ListMonth: Component<{
 											countedDays,
 										),
 
-										index() === 0 ? "border-t" : "",
+										index() === 0 ? "rounded-ss-lg border-t" : "",
 										index() < 7 && index() > 0 ? "border-t" : "",
 										index() % 7 === 0 ? "border-l" : "",
+										index() !== 6 || "rounded-se-lg",
+										index() !== 41 || "rounded-ee-lg",
+										index() !== 35 || "rounded-es-lg",
 										"flex h-16 w-full flex-col items-center justify-around border-b border-r border-black transition-all duration-300 hover:bg-slate-300",
 									)}
 								>
