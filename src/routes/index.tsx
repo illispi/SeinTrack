@@ -6,6 +6,7 @@ import MenuPanel from "~/components/MenuPanel";
 import NewProject from "~/components/NewProject";
 import TodoPanel from "~/components/TodoPanel";
 import { Button } from "~/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
 import { adjustDateByOne, monthsArr } from "~/utils/functionsAndVariables";
 import { trpc } from "~/utils/trpc";
 
@@ -14,6 +15,8 @@ export default function Home() {
 	const [curYear, setCurYear] = createSignal(new Date().getFullYear());
 	const [curDate, setCurDate] = createSignal<null | Date>(new Date());
 	const [openFirst, setOpenFirst] = createSignal(false);
+
+	const [dayEditorOpen, setDayEditorOpen] = createSignal(false);
 	//TODO remove hard coding project id
 	const [curProjectId, setProjectId] = createSignal(1);
 	const completedTodos = trpc.getDoneTodosByMonth.createQuery(() => ({
@@ -30,7 +33,7 @@ export default function Home() {
 			</A>
 			<div class="sticky top-0 mx-auto flex h-12 w-full items-center justify-between bg-gradient-to-t from-green-500 to-green-400">
 				<div class="flex-1"></div>
-				<div class="flex divide-x-4 divide-green-400 overflow-hidden rounded-full lg:hidden">
+				<div class="flex divide-x-8 divide-green-400 overflow-hidden rounded-full lg:hidden">
 					<Button class="rounded-none bg-white">
 						<svg
 							fill="none"
@@ -86,6 +89,7 @@ export default function Home() {
 									<h2 class="text-lg font-semibold">{`${monthsArr[curMonth()]} ${curYear()}`}</h2>
 									<Suspense>
 										<ListMonth
+											setDayEditorOpen={setDayEditorOpen}
 											month={curMonth()}
 											year={curYear()}
 											projectName={data()[0].name}
@@ -130,10 +134,18 @@ export default function Home() {
 												Next
 											</Button>
 										</div>
-										<DayEditor
-											selectedDate={curDate()}
-											projectName={data()[0].name}
-										/>
+										<Dialog
+											open={dayEditorOpen()}
+											onOpenChange={setDayEditorOpen}
+										>
+											<DialogTrigger class="hidden">Open</DialogTrigger>
+											<DialogContent>
+												<DayEditor
+													selectedDate={curDate()}
+													projectName={data()[0].name}
+												/>
+											</DialogContent>
+										</Dialog>
 									</div>
 									<div class="flex w-11/12 flex-col items-center justify-center gap-4">
 										<h2 class="text-lg font-semibold">{`${monthsArr[curMonth()]} ${curYear()}`}</h2>

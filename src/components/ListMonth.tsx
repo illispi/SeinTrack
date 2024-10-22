@@ -105,6 +105,7 @@ const ListMonth: Component<{
 	projectName: string;
 	setCurDate: Setter<Date | null>;
 	curDate: Date | null;
+	setDayEditorOpen: Setter<boolean>;
 }> = (props) => {
 	const [countedDays, setCountedDays] = createStore([1, 2, 3, 4, 5]);
 
@@ -145,6 +146,8 @@ const ListMonth: Component<{
 										selectedDate() === data()[index()].date
 											? setSelectedDate(null)
 											: setSelectedDate(data()[index()].date);
+
+										props.setDayEditorOpen(true);
 									}}
 									class={clsx(
 										colorPicker(
