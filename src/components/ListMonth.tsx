@@ -78,15 +78,6 @@ const colorPicker = (
 	hours: number,
 	countedDays: number[],
 ) => {
-	if (
-		new Date().toDateString() === iterDate.toDateString() &&
-		selectedDate?.toDateString() !== iterDate?.toDateString()
-	) {
-		return "bg-sky-400";
-	}
-	if (selectedDate?.toDateString() === iterDate?.toDateString()) {
-		return "bg-amber-300";
-	}
 	if (isCountedDay(iterDate, lastDate, firstDate, countedDays) || hours > 0) {
 		if (
 			hours >= 3 ||
@@ -142,10 +133,7 @@ const ListMonth: Component<{
 								<button
 									type="button"
 									onClick={() => {
-										// eslint-disable-next-line @typescript-eslint/no-unused-expressions
-										selectedDate() === data()[index()].date
-											? setSelectedDate(null)
-											: setSelectedDate(data()[index()].date);
+										setSelectedDate(data()[index()].date);
 
 										props.setDayEditorOpen(true);
 									}}
@@ -162,11 +150,19 @@ const ListMonth: Component<{
 										index() === 0 ? "border-t" : "",
 										index() < 7 && index() > 0 ? "border-t" : "",
 										index() % 7 === 0 ? "border-l" : "",
-										"flex h-16 w-full flex-col items-center justify-around border-b border-r border-black transition-all duration-300 hover:bg-amber-300",
+										"flex h-16 w-full flex-col items-center justify-around border-b border-r border-black transition-all duration-300 hover:bg-slate-300",
 									)}
 								>
 									<div class="flex size-full flex-col items-center justify-start">
-										<h5>{date.getDate()}</h5>
+										<h5
+											class={clsx(
+												date.getDate() === new Date().getDate()
+													? "w-8 rounded-full bg-black text-white"
+													: "",
+											)}
+										>
+											{date.getDate()}
+										</h5>
 
 										<Suspense fallback={<div class="size-full" />}>
 											<div>
