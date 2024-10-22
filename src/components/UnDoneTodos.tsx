@@ -112,7 +112,7 @@ const UnDoneTodos: Component<{
 	return (
 		<>
 			<h2 class="m-8 text-4xl font-light">Todos</h2>
-			<div class="mb-4 flex w-11/12 items-center justify-between gap-12">
+			<div class="mb-4 flex w-11/12 items-center justify-between gap-12 bg-white">
 				<Dialog
 					open={props.openSecond && props.todoOrTag === "todo"}
 					onOpenChange={() => {

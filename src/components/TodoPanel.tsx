@@ -161,7 +161,7 @@ const TodoPanel: Component<{
 				>
 					<SheetTrigger class="hidden">Todos</SheetTrigger>
 					<SheetContent class="w-full max-w-96 p-0">
-						<div class=" flex min-h-screen grow flex-col items-center">
+						<div class=" flex min-h-screen grow flex-col items-center bg-white">
 							<UnDoneTodos
 								newTag={newTag()}
 								newTagGroup={newTagGroup()}
@@ -213,7 +213,7 @@ const TodoPanel: Component<{
 					</SheetContent>
 				</Sheet>
 			</div>
-			<div class="m-4 hidden min-h-screen w-11/12 max-w-lg grow flex-col items-center rounded-xl border border-t-4 border-gray-200 border-t-green-500 shadow-md xl:flex">
+			<div class="m-4 hidden min-h-screen w-11/12 max-w-lg grow flex-col items-center rounded-xl border border-t-4 border-gray-200 border-t-green-500 bg-white shadow-md xl:flex">
 				<UnDoneTodos
 					newTag={newTag()}
 					newTagGroup={newTagGroup()}
