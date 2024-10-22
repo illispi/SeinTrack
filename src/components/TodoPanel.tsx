@@ -1,4 +1,9 @@
-import { type Component, createEffect, createSignal } from "solid-js";
+import {
+	type Component,
+	createEffect,
+	createSignal,
+	type Setter,
+} from "solid-js";
 
 import {
 	type BeforeLeaveEventArgs,
@@ -12,7 +17,11 @@ import UnDoneTodos from "./UnDoneTodos";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { showToast } from "./ui/toast";
 
-const TodoPanel: Component<{ curProjectId: number }> = (props) => {
+const TodoPanel: Component<{
+	curProjectId: number;
+	openFirst: boolean;
+	setOpenFirst: Setter<boolean>;
+}> = (props) => {
 	const [selectedTag, setSelectedTag] = createSignal("none");
 	const [selectedTagGroup, setSelectedTagGroup] = createSignal("bug fix");
 
@@ -28,21 +37,19 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 
 	const [todoOrTag, setTodoOrTag] = createSignal<"todo" | "tag" | null>(null);
 
-	const [openFirst, setOpenFirst] = createSignal(false);
-
 	const [openSecond, setOpenSecond] = createSignal(false);
 
 	useBeforeLeave((event: BeforeLeaveEventArgs) => {
 		//BUG on brave, try prevent default and event.retry at start and end of function
 		//TODO test this more on mobile as well
 		if (
-			openFirst() &&
+			props.openFirst &&
 			Number.isInteger(event.to) &&
 			(event.to as number) < 0 &&
 			!openSecond()
 		) {
 			console.log("close first");
-			setOpenFirst(false);
+			props.setOpenFirst(false);
 		}
 		if (
 			openSecond() &&
@@ -57,7 +64,7 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 	});
 
 	createEffect(() => {
-		if (openFirst()) {
+		if (props.openFirst) {
 			setSearchParams({ backHistoryFirst: true });
 		} else {
 			setSearchParams({ backHistoryFirst: null });
@@ -146,13 +153,13 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 		<>
 			<div class="fixed bottom-0 right-0 flex lg:hidden">
 				<Sheet
-					open={openFirst()}
+					open={props.openFirst}
 					//TODO might work like (bool) => setopenfirst(bool)
 					onOpenChange={() => {
-						setOpenFirst(!openFirst());
+						props.setOpenFirst(!props.openFirst);
 					}}
 				>
-					<SheetTrigger>Todos</SheetTrigger>
+					<SheetTrigger class="hidden">Todos</SheetTrigger>
 					<SheetContent class="w-full max-w-96 p-0">
 						<div class=" flex min-h-screen grow flex-col items-center">
 							<UnDoneTodos
