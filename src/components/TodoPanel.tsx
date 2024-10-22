@@ -34,19 +34,23 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 
 	useBeforeLeave((event: BeforeLeaveEventArgs) => {
 		//BUG on brave, try prevent default and event.retry at start and end of function
+		//TODO test this more on mobile as well
 		if (
 			openFirst() &&
 			Number.isInteger(event.to) &&
 			(event.to as number) < 0 &&
 			!openSecond()
 		) {
+			console.log("close first");
 			setOpenFirst(false);
 		}
 		if (
 			openSecond() &&
 			Number.isInteger(event.to) &&
-			(event.to as number) < 0 &&
-			openFirst()
+			(event.to as number) < 0
+			//NOTE commenting this fixed chrome but not brave
+			//  &&
+			// openFirst()
 		) {
 			setOpenSecond(false);
 		}
@@ -64,7 +68,6 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 			setSearchParams({ backHistorySecond: null });
 		}
 	});
-
 
 	const unDoneTodos = trpc.getUnDoneTodos.createQuery(() => ({
 		projectId: props.curProjectId,
