@@ -14,7 +14,7 @@ export const getHoursOfDay = publicProcedure
 				.select("hoursWorked")
 				.where("projectId", "=", input.projectId)
 				.where("date", "=", input.dates[index])
-				.executeTakeFirstOrThrow();
+				.executeTakeFirst();
 
 			if (!hours) {
 				hoursArr.push({ date: input.dates[index], hours: null });
@@ -22,7 +22,6 @@ export const getHoursOfDay = publicProcedure
 				hoursArr.push({ date: input.dates[index], hours: hours.hoursWorked });
 			}
 		}
-
 		return hoursArr;
 	});
 
@@ -98,22 +97,13 @@ export const changeDayHours = publicProcedure
 		return;
 	});
 export const getFirstAndLastDate = publicProcedure
-	.input(v.parser(v.string()))
+	.input(v.parser(v.object({ projectId: v.number() })))
 	.query(async ({ input, ctx }) => {
-		const projectId = await ctx.db
-			.selectFrom("projects")
-			.select(["id"])
-			.where("name", "=", input)
-			.executeTakeFirst();
-
-		if (!projectId) {
-			return null;
-		}
 		const dates = await ctx.db
 			.selectFrom("dates")
 			.select(["date"])
 			.where("hoursWorked", "is not", null)
-			.where("projectId", "=", projectId?.id)
+			.where("projectId", "=", input.projectId)
 			.orderBy("date asc")
 			.execute();
 

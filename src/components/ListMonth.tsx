@@ -100,9 +100,9 @@ const ListMonth: Component<{
 }> = (props) => {
 	const [countedDays, setCountedDays] = createStore([1, 2, 3, 4, 5]);
 
-	const firstAndLastDate = trpc.getFirstAndLastDate.createQuery(
-		() => props.projectId,
-	);
+	const firstAndLastDate = trpc.getFirstAndLastDate.createQuery(() => ({
+		projectId: props.projectId,
+	}));
 
 	createEffect(() => {
 		props.setCurDate(selectedDate());
