@@ -12,7 +12,7 @@ import {
 } from "@solidjs/router";
 import "flatpickr/dist/themes/light.css";
 import { trpc } from "~/utils/trpc";
-import "../test.css";
+
 import UnDoneTodos from "./UnDoneTodos";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { showToast } from "./ui/toast";

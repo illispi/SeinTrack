@@ -179,7 +179,7 @@ export default function Home() {
 										<p>Completed todos in a month</p>
 										<For each={completedTodos.data}>
 											{(todoDone) => (
-												<div class="flex h-28 w-full items-start justify-between rounded-lg border border-t-2 border-gray-200 p-4 shadow-md">
+												<div class="flex h-28 w-full items-start justify-between rounded-lg border border-t-2 border-gray-200 bg-white p-4 shadow-md">
 													<div class="flex h-full flex-col items-start justify-between">
 														<p class="text-wrap break-words text-left text-sm lg:text-base">
 															{todoDone.todo}

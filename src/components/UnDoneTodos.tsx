@@ -31,6 +31,7 @@ import type { inferRouterOutputs } from "@trpc/server";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/themes/light.css";
 import { trpc } from "~/utils/trpc";
+import "../test.css";
 
 type RouterOutput = inferRouterOutputs<IAppRouter>;
 
@@ -278,7 +279,7 @@ const UnDoneTodos: Component<{
 
 			<For each={props.unDoneTodos}>
 				{(unDoneTodo) => (
-					<div class="my-4 flex h-32 w-11/12 items-start justify-between rounded-lg border border-t-2 border-gray-200 p-4 shadow-md">
+					<div class="my-4 flex h-32 w-11/12 items-start justify-between rounded-lg border border-t-2 border-gray-200 bg-white p-4 shadow-md">
 						<div class="flex h-full flex-col items-start justify-between">
 							<p class="text-wrap break-words text-sm lg:text-base">
 								{unDoneTodo.todo}
