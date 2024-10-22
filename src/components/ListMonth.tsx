@@ -151,7 +151,7 @@ const ListMonth: Component<{
 										index() !== 6 || "rounded-se-lg",
 										index() !== 41 || "rounded-ee-lg",
 										index() !== 35 || "rounded-es-lg",
-										"flex h-16 w-full flex-col items-center justify-around border-b border-r border-black transition-all duration-300 hover:bg-slate-300",
+										"flex h-16 w-full flex-col items-center justify-around border-b border-r border-gray-600 transition-all duration-300 hover:bg-slate-300",
 									)}
 								>
 									<div class="flex size-full flex-col items-center justify-start">
