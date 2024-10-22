@@ -28,10 +28,10 @@ export default function Home() {
 			<A class="fixed bottom-0 left-0" href="/testing/test/">
 				Testing
 			</A>
-			<div class="sticky top-0 mx-auto flex h-12 w-full items-center justify-between bg-gradient-to-t from-green-600 to-green-400">
+			<div class="sticky top-0 mx-auto flex h-12 w-full items-center justify-between bg-gradient-to-t from-green-500 to-green-400">
 				<div class="flex-1"></div>
-				<div class="flex overflow-hidden rounded-full lg:hidden">
-					<Button class="bg-green-400">
+				<div class="flex divide-x-4 divide-green-400 overflow-hidden rounded-full lg:hidden">
+					<Button class="rounded-none bg-white">
 						<svg
 							fill="none"
 							stroke-width="2"
@@ -50,7 +50,7 @@ export default function Home() {
 						</svg>
 					</Button>
 					<Button
-						class="bg-green-400"
+						class="rounded-none bg-white"
 						onClick={() => {
 							setOpenFirst(!openFirst());
 						}}
