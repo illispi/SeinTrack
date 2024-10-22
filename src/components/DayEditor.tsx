@@ -3,10 +3,9 @@ import { trpc } from "~/utils/trpc";
 import AddTime from "./AddTime";
 import { Button } from "./ui/button";
 import { Toaster, showToast } from "./ui/toast";
-import { dayAdjust } from "./ListMonth";
 
 const DayEditor: Component<{
-	selectedDate: Date | null;
+	selectedDate: Date;
 	projectId: number;
 }> = (props) => {
 	const [addHours, setAddHours] = createSignal(0);
@@ -54,7 +53,7 @@ const DayEditor: Component<{
 				{(date) => (
 					<div class="mx-auto flex w-full max-w-72 flex-col items-center justify-start gap-6">
 						<h4 class="text-3xl font-light">{date().toDateString()}</h4>
-						<h3>{`Current hours: ${hours.data}`}</h3>
+						<h3>{`Current hours: ${hours.data?.hoursWorked || 0}`}</h3>
 						<div class="flex w-full flex-col items-center justify-center gap-8">
 							<AddTime
 								hours={addHours()}
@@ -74,7 +73,7 @@ const DayEditor: Component<{
 											hours: Number(
 												Number(addHours() + addMinutes() / 60).toFixed(2),
 											),
-											projectName: props.projectName,
+											projectId: props.projectId,
 										});
 									}
 								}}

@@ -33,7 +33,10 @@ export const getHoursForDate = publicProcedure
 			.select("hoursWorked")
 			.where("projectId", "=", input.projectId)
 			.where("date", "=", input.date)
-			.executeTakeFirstOrThrow();
+			.executeTakeFirst();
+		if (!hours) {
+			return null;
+		}
 
 		return hours;
 	});
@@ -44,20 +47,11 @@ export const changeDayHours = publicProcedure
 			v.object({
 				date: v.date(),
 				hours: v.number(),
-				projectName: v.string(),
+				projectId: v.number(),
 			}),
 		),
 	)
 	.mutation(async ({ input, ctx }) => {
-		const projectId = await ctx.db
-			.selectFrom("projects")
-			.select(["id"])
-			.where("name", "=", input.projectName)
-			.executeTakeFirst();
-
-		if (!projectId) {
-			return null;
-		}
 		const exists = await ctx.db
 			.selectFrom("dates")
 			.select(["date", "dates.hoursWorked"])
@@ -90,7 +84,7 @@ export const changeDayHours = publicProcedure
 				.values({
 					date: input.date,
 					hoursWorked: input.hours,
-					projectId: projectId?.id,
+					projectId: input.projectId,
 				})
 				.execute();
 		}

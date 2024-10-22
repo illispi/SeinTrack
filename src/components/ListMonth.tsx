@@ -94,8 +94,8 @@ const ListMonth: Component<{
 	month: number;
 	year: number;
 	projectId: number;
-	setCurDate: Setter<Date | null>;
-	curDate: Date | null;
+	setCurDate: Setter<Date>;
+	curDate: Date;
 	setDayEditorOpen: Setter<boolean>;
 }> = (props) => {
 	const [countedDays, setCountedDays] = createStore([1, 2, 3, 4, 5]);
@@ -108,9 +108,7 @@ const ListMonth: Component<{
 		props.setCurDate(selectedDate());
 	});
 
-	const [selectedDate, setSelectedDate] = createSignal<Date | null>(
-		props.curDate,
-	);
+	const [selectedDate, setSelectedDate] = createSignal<Date>(props.curDate);
 
 	const hours = trpc.getHoursOfDay.createQuery(() => ({
 		dates: dayAdjust(props.month, props.year),
