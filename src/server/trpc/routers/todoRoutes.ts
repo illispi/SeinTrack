@@ -256,6 +256,7 @@ export const getDoneTodosByMonth = publicProcedure
 			.where("todos.projectId", "=", input.projectId)
 			.where("dateCompleted", ">=", new Date(input.year, input.month, 1))
 			.where("dateCompleted", "<", new Date(nextMonth.year, nextMonth.month, 1))
+			.orderBy("todos.dateCompleted")
 			.execute();
 
 		if (doneTodos.length === 0) {
