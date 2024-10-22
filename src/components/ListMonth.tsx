@@ -154,7 +154,7 @@ const ListMonth: Component<{
 									<div class="flex size-full flex-col items-center justify-start">
 										<h5
 											class={clsx(
-												date.getDate() === new Date().getDate()
+												date.toDateString() === new Date().toDateString()
 													? "w-8 rounded-full bg-black text-white"
 													: "",
 											)}
