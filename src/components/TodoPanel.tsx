@@ -34,6 +34,8 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 	const [openSecond, setOpenSecond] = createSignal(false);
 
 	useBeforeLeave((event: BeforeLeaveEventArgs) => {
+
+		//BUG on brave, try prevent default and event.retry at start and end of function
 		if (
 			openFirst() &&
 			Number.isInteger(event.to) &&
