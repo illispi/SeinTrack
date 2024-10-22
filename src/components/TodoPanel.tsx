@@ -5,7 +5,6 @@ import {
 	useBeforeLeave,
 	useSearchParams,
 } from "@solidjs/router";
-import flatpickr from "flatpickr";
 import "flatpickr/dist/themes/light.css";
 import { trpc } from "~/utils/trpc";
 import "../test.css";

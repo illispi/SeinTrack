@@ -79,13 +79,8 @@ const UnDoneTodos: Component<{
 	setAddHours: Setter<number>;
 	setAddMinutes: Setter<number>;
 	setDatepicker: Setter<HTMLDivElement | undefined>;
-	datePickerInstance: any;
-	completeTodoOnClick: (
-		e: RouterOutput["getUnDoneTodos"],
-		instance,
-	) => undefined;
+
 	setSelectedTagGroup: Setter<string>;
-	completeTodo: any;
 }> = (props) => {
 	let datePickerInstance;
 	const [datePickerRef, setDatePickerRef] = createSignal();
@@ -102,7 +97,6 @@ const UnDoneTodos: Component<{
 				altFormat: "F j, Y",
 				dateFormat: "Y-m-d",
 			});
-			console.log(datePickerInstance);
 		}
 	});
 
