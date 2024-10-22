@@ -1,5 +1,10 @@
-import { A } from "@solidjs/router";
-import { For, Show, Suspense, createSignal } from "solid-js";
+import {
+	A,
+	type BeforeLeaveEventArgs,
+	useBeforeLeave,
+	useSearchParams,
+} from "@solidjs/router";
+import { For, Show, Suspense, createEffect, createSignal } from "solid-js";
 import DayEditor from "~/components/DayEditor";
 import ListMonth from "~/components/ListMonth";
 import MenuPanel from "~/components/MenuPanel";
@@ -25,6 +30,28 @@ export default function Home() {
 		year: curYear(),
 	}));
 	const projects = trpc.allProjects.createQuery();
+
+	const [searchParams, setSearchParams] = useSearchParams();
+
+	useBeforeLeave((event: BeforeLeaveEventArgs) => {
+		//BUG on brave, try prevent default and event.retry at start and end of function
+		//TODO test this more on mobile as well
+		if (
+			dayEditorOpen() &&
+			Number.isInteger(event.to) &&
+			(event.to as number) < 0
+		) {
+			setDayEditorOpen(false);
+		}
+	});
+
+	createEffect(() => {
+		if (dayEditorOpen()) {
+			setSearchParams({ backHistoryFirstEditor: true });
+		} else {
+			setSearchParams({ backHistoryFirstEditor: null });
+		}
+	});
 
 	return (
 		<>
@@ -136,7 +163,7 @@ export default function Home() {
 										</div>
 										<Dialog
 											open={dayEditorOpen()}
-											onOpenChange={setDayEditorOpen}
+											onOpenChange={() => setDayEditorOpen(!dayEditorOpen())}
 										>
 											<DialogTrigger></DialogTrigger>
 											<DialogContent>
