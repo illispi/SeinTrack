@@ -3,6 +3,5 @@
 @layer base {
 	.flatpickr-day.selected {
 		@apply bg-green-400 border-green-400 hover:bg-green-500 hover:border-green-500;
-
 	}
 }

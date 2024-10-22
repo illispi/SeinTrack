@@ -16,6 +16,8 @@ import {
 } from "./ui/dialog";
 
 import type { inferRouterOutputs } from "@trpc/server";
+import flatpickr from "flatpickr";
+import { Portal } from "solid-js/web";
 import type { IAppRouter } from "~/server/trpc/routers/mainRouter";
 import { trpc } from "~/utils/trpc";
 import {
@@ -27,18 +29,16 @@ import {
 } from "./ui/select";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
 import { Toaster, showToast } from "./ui/toast";
-import flatpickr from "flatpickr";
-import { Portal } from "solid-js/web";
 import "flatpickr/dist/themes/light.css";
 import "../test.css";
-import AddTime from "./AddTime";
-import { formatFlickrDate } from "~/utils/functionsAndVariables";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import {
 	type BeforeLeaveEventArgs,
 	useBeforeLeave,
 	useSearchParams,
 } from "@solidjs/router";
+import { formatFlickrDate } from "~/utils/functionsAndVariables";
+import AddTime from "./AddTime";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 type RouterOutput = inferRouterOutputs<IAppRouter>;
 
