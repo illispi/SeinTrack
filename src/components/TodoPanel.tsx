@@ -34,7 +34,6 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 	const [openSecond, setOpenSecond] = createSignal(false);
 
 	useBeforeLeave((event: BeforeLeaveEventArgs) => {
-
 		//BUG on brave, try prevent default and event.retry at start and end of function
 		if (
 			openFirst() &&
@@ -67,35 +66,6 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 		}
 	});
 
-	const [datepicker, setDatepicker] = createSignal<HTMLDivElement>();
-
-	let datePickerInstance;
-
-	createEffect(() => {
-		if (datepicker()) {
-			datePickerInstance = flatpickr(datepicker(), {
-				// onChange: (selectedDates, dateStr, instance) => {
-				// 	setTodoDateCompleted(dateStr);
-				// },
-				static: true,
-				inline: true,
-				onReady: (selectedDates, dateStr, instance) => {
-					instance.setDate(new Date());
-				},
-				altInput: true,
-				altFormat: "F j, Y",
-				dateFormat: "Y-m-d",
-			});
-		}
-	});
-
-	const completeTodo = trpc.completeTodo.createMutation(() => ({
-		onSuccess: () => {
-			setAddHours(0);
-			setAddMinutes(0);
-			datePickerInstance.setDate(new Date());
-		},
-	}));
 
 	const unDoneTodos = trpc.getUnDoneTodos.createQuery(() => ({
 		projectId: props.curProjectId,
@@ -184,7 +154,6 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 					<SheetContent class="w-full max-w-96 p-0">
 						<div class=" flex min-h-screen grow flex-col items-center">
 							<UnDoneTodos
-								datePickerInstance={datePickerInstance}
 								newTag={newTag()}
 								newTagGroup={newTagGroup()}
 								newTodo={newTodo()}
@@ -193,7 +162,6 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 								selectedTagGroup={selectedTagGroup()}
 								setAddHours={setAddHours}
 								setAddMinutes={setAddMinutes}
-								setDatepicker={setDatepicker}
 								setNewTag={setNewTag}
 								setNewTagGroup={setNewTagGroup}
 								setNewTodo={setNewTodo}
@@ -219,15 +187,6 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 										switch: "tag",
 									});
 								}}
-								completeTodoOnClick={(e) => {
-									completeTodo.mutate({
-										date: datePickerInstance.selectedDates[0],
-										hoursWorked: Number(
-											Number(addHours() + addMinutes() / 60).toFixed(2),
-										),
-										todoId: e.id,
-									});
-								}}
 								addTodoOnClick={() => {
 									addTodo.mutate({
 										projectId: props.curProjectId,
@@ -247,7 +206,6 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 			</div>
 			<div class="m-4 hidden min-h-screen w-11/12 max-w-lg grow flex-col items-center rounded-xl border border-t-4 border-gray-200 border-t-green-500 shadow-md xl:flex">
 				<UnDoneTodos
-					datePickerInstance={datePickerInstance}
 					newTag={newTag()}
 					newTagGroup={newTagGroup()}
 					newTodo={newTodo()}
@@ -256,7 +214,6 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 					selectedTagGroup={selectedTagGroup()}
 					setAddHours={setAddHours}
 					setAddMinutes={setAddMinutes}
-					setDatepicker={setDatepicker}
 					setNewTag={setNewTag}
 					setNewTagGroup={setNewTagGroup}
 					setNewTodo={setNewTodo}
@@ -280,15 +237,6 @@ const TodoPanel: Component<{ curProjectId: number }> = (props) => {
 							nameOfTagOrGroup: newTag(),
 							projectId: props.curProjectId,
 							switch: "tag",
-						});
-					}}
-					completeTodoOnClick={(e) => {
-						completeTodo.mutate({
-							date: datePickerInstance.selectedDates[0],
-							hoursWorked: Number(
-								Number(addHours() + addMinutes() / 60).toFixed(2),
-							),
-							todoId: e.id,
 						});
 					}}
 					addTodoOnClick={() => {

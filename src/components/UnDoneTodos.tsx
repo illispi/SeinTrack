@@ -1,4 +1,11 @@
-import { For, type Setter, Show, type Component } from "solid-js";
+import {
+	For,
+	type Setter,
+	Show,
+	type Component,
+	createEffect,
+	createSignal,
+} from "solid-js";
 import { completeTodo } from "~/server/trpc/routers/todoRoutes";
 import AddTime from "./AddTime";
 import {
@@ -21,6 +28,9 @@ import { Toaster } from "./ui/toast";
 import { Button } from "./ui/button";
 import type { IAppRouter } from "~/server/trpc/routers/mainRouter";
 import type { inferRouterOutputs } from "@trpc/server";
+import flatpickr from "flatpickr";
+import "flatpickr/dist/themes/light.css";
+import { trpc } from "~/utils/trpc";
 
 type RouterOutput = inferRouterOutputs<IAppRouter>;
 
@@ -70,9 +80,40 @@ const UnDoneTodos: Component<{
 	setAddMinutes: Setter<number>;
 	setDatepicker: Setter<HTMLDivElement | undefined>;
 	datePickerInstance: any;
-	completeTodoOnClick: (e: RouterOutput["getUnDoneTodos"]) => undefined;
+	completeTodoOnClick: (
+		e: RouterOutput["getUnDoneTodos"],
+		instance,
+	) => undefined;
 	setSelectedTagGroup: Setter<string>;
+	completeTodo: any;
 }> = (props) => {
+	let datePickerInstance;
+	const [datePickerRef, setDatePickerRef] = createSignal();
+
+	createEffect(() => {
+		if (datePickerRef()) {
+			datePickerInstance = flatpickr(datePickerRef(), {
+				static: true,
+				inline: true,
+				onReady: (selectedDates, dateStr, instance) => {
+					instance.setDate(new Date());
+				},
+				altInput: true,
+				altFormat: "F j, Y",
+				dateFormat: "Y-m-d",
+			});
+			console.log(datePickerInstance);
+		}
+	});
+
+	const completeTodo = trpc.completeTodo.createMutation(() => ({
+		onSuccess: () => {
+			props.setAddHours(0);
+			props.setAddMinutes(0);
+			datePickerInstance.setDate(new Date());
+		},
+	}));
+
 	return (
 		<>
 			<h2 class="m-8 text-4xl font-light">Todos</h2>
@@ -285,11 +326,21 @@ const UnDoneTodos: Component<{
 											<input
 												class="w-full"
 												type="text"
-												ref={props.setDatepicker}
+												ref={setDatePickerRef}
 											></input>
 										</div>
 										<Button
-											onClick={props.completeTodoOnClick(unDoneTodo)}
+											onClick={() =>
+												completeTodo.mutate({
+													date: datePickerInstance.selectedDates[0],
+													hoursWorked: Number(
+														Number(
+															props.addHours + props.addMinutes / 60,
+														).toFixed(2),
+													),
+													todoId: unDoneTodo.id,
+												})
+											}
 											class="w-full max-w-64"
 											variant={"secondary"}
 										>
