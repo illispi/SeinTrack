@@ -112,8 +112,9 @@ const UnDoneTodos: Component<{
 		//BUG on brave, try prevent default and event.retry at start and end of function
 		//TODO test this more on mobile as well
 		if (
-			editOpen() ||
-			(doneOpen() && Number.isInteger(event.to) && (event.to as number) < 0)
+			(editOpen() || doneOpen()) &&
+			Number.isInteger(event.to) &&
+			(event.to as number) < 0
 		) {
 			setEditOpen(false);
 			setDoneOpen(false);
