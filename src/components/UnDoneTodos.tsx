@@ -84,7 +84,7 @@ const UnDoneTodos: Component<{
 
 	setSelectedTagGroup: Setter<string>;
 }> = (props) => {
-	let datePickerInstance: Instance | Instance[];
+	let datePickerInstance: Instance;
 	const [datePickerRef, setDatePickerRef] = createSignal("");
 
 	createEffect(() => {
@@ -98,7 +98,7 @@ const UnDoneTodos: Component<{
 				altInput: true,
 				altFormat: "F j, Y",
 				dateFormat: "Y-m-d",
-			});
+			}) as Instance;
 		}
 	});
 
@@ -109,6 +109,8 @@ const UnDoneTodos: Component<{
 			datePickerInstance.setDate(new Date());
 		},
 	}));
+
+	const editTodo = trpc.editTodo.createMutation(() => ({}));
 
 	return (
 		<>
@@ -343,10 +345,59 @@ const UnDoneTodos: Component<{
 									</div>
 								</DialogContent>
 							</Dialog>
-
-							<Button variant="outline" class="w-16">
-								Edit
-							</Button>
+							<Dialog>
+								<DialogTrigger>
+									<Button variant="secondary" class="w-16">
+										Edit
+									</Button>
+								</DialogTrigger>
+								<DialogContent>
+									<DialogHeader>
+										<DialogTitle class="text-center">Edit Todo:</DialogTitle>
+									</DialogHeader>
+									<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-12">
+										<p class="mt-4 w-full  ">{unDoneTodo.todo}</p>
+										<div class="w-full   text-sm font-semibold">
+											Hours spent:
+										</div>
+										<div>
+											<AddTime
+												hours={props.addHours}
+												minutes={props.addMinutes}
+												setHours={props.setAddHours}
+												setMinutes={props.setAddMinutes}
+											/>
+										</div>
+										<div class=" w-full   text-sm font-semibold">
+											Date completed:
+										</div>
+										<div class="flex h-80 w-full items-center justify-center">
+											<input
+												class="w-full"
+												type="text"
+												ref={setDatePickerRef}
+											></input>
+										</div>
+										<Button
+											onClick={() =>
+												editTodo.mutate({
+													dateCompleted: null,
+													hoursWorked: null,
+													todoId: unDoneTodo.id,
+													completed: null,
+													tagId: SIGNAL,
+													todo: SIGNAL,
+													tagGroup: SIGNAL,
+												})
+											}
+											class="w-full"
+											variant={"secondary"}
+										>
+											Complete
+										</Button>
+									</div>
+								</DialogContent>
+							</Dialog>
 						</div>
 					</div>
 				)}

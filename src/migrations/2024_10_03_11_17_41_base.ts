@@ -58,7 +58,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 		)
 		.addColumn("todo", "text", (col) => col.notNull())
 		.addColumn("hours_worked", "float4")
-		.addColumn("completed", "boolean")
+		.addColumn("completed", "boolean", (col) => col.notNull().defaultTo(false))
 		.execute();
 }
 

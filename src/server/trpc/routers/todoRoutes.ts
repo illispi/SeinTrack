@@ -3,11 +3,6 @@ import * as v from "valibot";
 import { adjustDateByOne } from "~/utils/functionsAndVariables";
 import { publicProcedure } from "../initTrpc";
 
-export enum Switch {
-	tagGroup = 0,
-	tag = 1,
-}
-
 export const AddTodo = publicProcedure
 	.input(
 		v.parser(
@@ -20,25 +15,12 @@ export const AddTodo = publicProcedure
 					v.nonEmpty(),
 				),
 				tagId: v.nullish(v.number()),
-				tagGroup: v.string(),
+				tagGroupId: v.number(),
 				projectId: v.number(),
 			}),
 		),
 	)
 	.mutation(async ({ input, ctx }) => {
-		//TODO swithc to id from input
-		const tagGroup = await ctx.db
-			.selectFrom("tagGroups")
-			.select(["id"])
-			.where("tagGroup", "=", input.tagGroup)
-			.executeTakeFirst();
-
-		if (!tagGroup) {
-			throw new TRPCError({
-				code: "BAD_REQUEST",
-				message: `Tag group ${input.tagGroup} not found`,
-			});
-		}
 		await ctx.db
 			.insertInto("todos")
 			.values({
@@ -48,7 +30,7 @@ export const AddTodo = publicProcedure
 				dateCompleted: null,
 				hoursWorked: null,
 				tagId: input.tagId,
-				tagGroupId: tagGroup?.id,
+				tagGroupId: input.tagGroupId,
 			})
 			.executeTakeFirstOrThrow();
 
@@ -82,32 +64,34 @@ export const editTodo = publicProcedure
 	.input(
 		v.parser(
 			v.object({
-				id: v.number(),
-				hoursWorked: v.number(),
-				todo: v.string(),
-				tagId: v.number(),
-				tagGroup: v.string(),
-				completed: v.boolean(),
+				todoId: v.number(),
+				hoursWorked: v.nullish(v.number()),
+				todo: v.pipe(
+					v.string(),
+					v.trim(),
+					v.maxLength(800),
+					v.minLength(3),
+					v.nonEmpty(),
+				),
+				tagId: v.nullish(v.number()),
+				tagGroupId: v.number(),
+				completed: v.nullish(v.boolean()),
+				dateCompleted: v.nullish(v.date()),
 			}),
 		),
 	)
 	.mutation(async ({ input, ctx }) => {
-		const tagGroup = await ctx.db
-			.selectFrom("tagGroups")
-			.select(["id"])
-			.where("tagGroup", "=", input.tagGroup)
-			.executeTakeFirst();
-
 		await ctx.db
 			.updateTable("todos")
 			.set({
 				completed: input.completed,
 				hoursWorked: input.hoursWorked,
-				tagGroupId: tagGroup?.id,
+				tagGroupId: input.tagGroupId,
 				tagId: input.tagId,
 				todo: input.todo,
+				dateCompleted: input.dateCompleted,
 			})
-			.where("id", "=", input.id)
+			.where("id", "=", input.todoId)
 			.executeTakeFirstOrThrow();
 
 		return;
@@ -306,4 +290,41 @@ export const getTagsOrGroupsActiveOrNot = publicProcedure
 			}
 			return activeTagGroups;
 		}
+	});
+
+//TODO edit tag or group name
+
+export const EditTagOrGroupName = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				name: v.pipe(
+					v.string(),
+					v.trim(),
+					v.maxLength(800),
+					v.minLength(3),
+					v.nonEmpty(),
+				),
+				switch: v.union([v.literal("tag"), v.literal("tagGroup")]),
+				tagId: v.nullish(v.number()),
+				tagGroupId: v.nullish(v.number()),
+			}),
+		),
+	)
+	.mutation(async ({ input, ctx }) => {
+		if (input.switch === "tag" && input.tagId) {
+			await ctx.db
+				.updateTable("tags")
+				.set({ tag: input.name })
+				.where("id", "=", input.tagId)
+				.executeTakeFirstOrThrow();
+		} else if (input.switch === "tagGroup" && input.tagGroupId) {
+			await ctx.db
+				.updateTable("tagGroups")
+				.set({ tagGroup: input.name })
+				.where("id", "=", input.tagGroupId)
+				.executeTakeFirstOrThrow();
+		}
+
+		return;
 	});
