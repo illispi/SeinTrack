@@ -55,7 +55,7 @@ const DayEditor: Component<{
 	}));
 
 	return (
-		<Suspense fallback="fkwaåpofwaopåfkawf">
+		<Suspense>
 			<div class="mx-auto flex w-full max-w-72 flex-col items-center justify-start gap-6">
 				<h4 class="text-3xl font-light">{props.selectedDate.toDateString()}</h4>
 				<h3>{`Current hours: ${hours.data?.hoursWorked || 0}`}</h3>
