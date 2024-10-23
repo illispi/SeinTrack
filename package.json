@@ -5,10 +5,10 @@
 		"dev": "vinxi dev --host",
 		"build": "vinxi build",
 		"start": "vinxi start --host",
-		"sql": "bun kysely-codegen --dialect postgres --camel-case",
-		"migrate:latest": "bun ./src/tools/migrate.ts",
-		"migrate:down": "bun ./src/tools/migrate.ts down",
-		"migrate:new": "bun ./src/tools/migrationFile.ts",
+		"sql": "tsx kysely-codegen --dialect postgres --camel-case",
+		"migrate:latest": "tsx ./src/tools/migrate.ts",
+		"migrate:down": "tsx ./src/tools/migrate.ts down",
+		"migrate:new": "tsx ./src/tools/migrationFile.ts",
 		"check": "biome check"
 	},
 	"dependencies": {
@@ -30,12 +30,13 @@
 		"kysely": "^0.27.4",
 		"pg": "^8.13.0",
 		"postcss": "^8.4.47",
-		"solid-js": "^1.9.2",
+		"solid-js": "^1.9.3",
 		"superjson": "^2.2.1",
 		"tailwind-merge": "^2.5.4",
 		"tailwindcss": "^3.4.14",
 		"tailwindcss-animate": "^1.0.7",
-		"valibot": "^1.0.0-beta.0",
+		"tsx": "^4.19.1",
+		"valibot": "1.0.0-beta.1",
 		"vinxi": "^0.4.3"
 	},
 	"engines": {
@@ -43,7 +44,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"@types/node": "^22.7.8",
+		"@types/node": "^22.7.9",
 		"@types/pg": "^8.11.10",
 		"eslint": "^9.13.0",
 		"eslint-plugin-readable-tailwind": "^1.8.1",
