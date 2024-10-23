@@ -298,15 +298,11 @@ const UnDoneTodos: Component<{
 								</DialogTrigger>
 								<DialogContent>
 									<DialogHeader>
-										<DialogTitle class="text-center">
-											Complete Todo:
-										</DialogTitle>
+										<DialogTitle class="text-center">Complete Todo</DialogTitle>
 									</DialogHeader>
-									<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-12">
+									<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-6">
 										<p class="mt-4 w-full  ">{unDoneTodo.todo}</p>
-										<div class="w-full   text-sm font-semibold">
-											Hours spent:
-										</div>
+										<div class="w-full text-lg font-semibold">Hours spent:</div>
 										<div>
 											<AddTime
 												hours={props.addHours}
@@ -315,7 +311,7 @@ const UnDoneTodos: Component<{
 												setMinutes={props.setAddMinutes}
 											/>
 										</div>
-										<div class=" w-full   text-sm font-semibold">
+										<div class=" w-full text-lg font-semibold">
 											Date completed:
 										</div>
 										<div class="flex h-80 w-full items-center justify-center">
@@ -347,7 +343,15 @@ const UnDoneTodos: Component<{
 							</Dialog>
 							<Dialog>
 								<DialogTrigger>
-									<Button variant="outline" class="w-16">
+									<Button
+										onclick={() => {
+											props.setSelectedTag(unDoneTodo.tag || "none");
+											props.setSelectedTagGroup(unDoneTodo.tagGroup);
+											setEditTodoText(unDoneTodo.todo);
+										}}
+										variant="outline"
+										class="w-16"
+									>
 										Edit
 									</Button>
 								</DialogTrigger>
@@ -356,13 +360,11 @@ const UnDoneTodos: Component<{
 										<DialogTitle class="text-center">Edit Todo:</DialogTitle>
 									</DialogHeader>
 									<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-12">
-										<p class="mt-4 w-full  ">{unDoneTodo.todo}</p>
 										<TextField
 											value={editTodoText()}
 											onChange={setEditTodoText}
 											class="grid w-full items-center gap-1.5"
 										>
-											<TextFieldLabel for="editTodo">Edit Todo</TextFieldLabel>
 											<div class="flex items-center justify-start gap-4">
 												<TextFieldInput
 													type="text"
