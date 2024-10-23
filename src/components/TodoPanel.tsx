@@ -166,6 +166,8 @@ const TodoPanel: Component<{
 								newTagGroup={newTagGroup()}
 								newTodo={newTodo()}
 								openSecond={openSecond()}
+								setSelectedTag={setSelectedTag}
+								setSelectedTagGroup={setSelectedTagGroup}
 								selectedTag={selectedTag()}
 								selectedTagGroup={selectedTagGroup()}
 								setAddHours={setAddHours}
@@ -178,7 +180,7 @@ const TodoPanel: Component<{
 								tagsActive={tagsActive.data}
 								tagGroupsActive={tagGroupsActive.data}
 								todoOrTag={todoOrTag()}
-								unDoneTodos={unDoneTodos.data}
+								unDoneTodos={unDoneTodos.data!}
 								addHours={addHours()}
 								addMinutes={addMinutes()}
 								addTagGroupOnClick={() =>
@@ -222,6 +224,8 @@ const TodoPanel: Component<{
 					openSecond={openSecond()}
 					selectedTag={selectedTag()}
 					selectedTagGroup={selectedTagGroup()}
+					setSelectedTag={setSelectedTag}
+					setSelectedTagGroup={setSelectedTagGroup}
 					setAddHours={setAddHours}
 					setAddMinutes={setAddMinutes}
 					setNewTag={setNewTag}
@@ -232,7 +236,7 @@ const TodoPanel: Component<{
 					tagsActive={tagsActive.data}
 					tagGroupsActive={tagGroupsActive.data}
 					todoOrTag={todoOrTag()}
-					unDoneTodos={unDoneTodos.data}
+					unDoneTodos={unDoneTodos.data!}
 					addHours={addHours()}
 					addMinutes={addMinutes()}
 					addTagGroupOnClick={() =>

@@ -68,7 +68,7 @@ const UnDoneTodos: Component<{
 	tagGroupsActive: RouterOutput["getTagsOrGroupsActiveOrNot"];
 	selectedTag: string;
 	selectedTagGroup: string;
-	addTodoOnClick: (e: any) => void;
+	addTodoOnClick: () => void;
 	addTagOnClick: () => void;
 	addTagGroupOnClick: () => void;
 	newTag: string;
@@ -80,7 +80,6 @@ const UnDoneTodos: Component<{
 	addMinutes: number;
 	setAddHours: Setter<number>;
 	setAddMinutes: Setter<number>;
-	setDatepicker: Setter<HTMLDivElement | undefined>;
 
 	setSelectedTagGroup: Setter<string>;
 }> = (props) => {
@@ -100,6 +99,7 @@ const UnDoneTodos: Component<{
 				dateFormat: "Y-m-d",
 			}) as Instance;
 		}
+		console.log(props.selectedTag);
 	});
 
 	const completeTodo = trpc.completeTodo.createMutation(() => ({
@@ -157,7 +157,6 @@ const UnDoneTodos: Component<{
 									<>
 										<Select
 											class="flex"
-											//NOTE issue on shadnc solid-ui?
 											defaultValue={"none"}
 											value={props.selectedTag}
 											onChange={props.setSelectedTag}
@@ -187,14 +186,14 @@ const UnDoneTodos: Component<{
 											value={props.selectedTagGroup}
 											onChange={props.setSelectedTagGroup}
 											options={[...massageTagsAndGroupsToArr(tagGroups())]}
-											placeholder="Select a tag"
+											placeholder="Select a tag group"
 											itemComponent={(props) => (
 												<SelectItem item={props.item}>
 													{props.item.rawValue}
 												</SelectItem>
 											)}
 										>
-											<SelectTrigger aria-label="Tag">
+											<SelectTrigger aria-label="TagGroup">
 												<SelectValue<string>>
 													{(state) => state.selectedOption()}
 												</SelectValue>
