@@ -105,26 +105,28 @@ const UnDoneTodos: Component<{
 		}
 	});
 	const [searchParams, setSearchParams] = useSearchParams();
-	const [editOrDoneOpen, setEditOrDoneOpen] = createSignal(false);
+	const [editOpen, setEditOpen] = createSignal(false);
+	const [doneOpen, setDoneOpen] = createSignal(false);
 
 	useBeforeLeave((event: BeforeLeaveEventArgs) => {
 		//BUG on brave, try prevent default and event.retry at start and end of function
 		//TODO test this more on mobile as well
 		if (
-			editOrDoneOpen() &&
-			Number.isInteger(event.to) &&
-			(event.to as number) < 0
+			editOpen() ||
+			(doneOpen() && Number.isInteger(event.to) && (event.to as number) < 0)
 		) {
-			setEditOrDoneOpen(false);
-			document.body.removeAttribute('style');
+			setEditOpen(false);
+			setDoneOpen(false);
 		}
 	});
 
 	createEffect(() => {
-		if (editOrDoneOpen()) {
+		if (editOpen() || doneOpen()) {
 			setSearchParams({ editOrDoneOpen: true });
 		} else {
 			setSearchParams({ editOrDoneOpen: null });
+			//NOTE is this necessary anymore
+			document.body.removeAttribute("style");
 		}
 	});
 
@@ -317,7 +319,7 @@ const UnDoneTodos: Component<{
 							<p class="text-sm italic">{`tag: ${unDoneTodo.tag ? unDoneTodo.tag : "none"} || group: ${unDoneTodo.tagGroup}`}</p>
 						</div>
 						<div class="flex flex-col items-center justify-center gap-4">
-							<Dialog open={editOrDoneOpen()} onOpenChange={setEditOrDoneOpen}>
+							<Dialog open={doneOpen()} onOpenChange={setDoneOpen}>
 								<DialogTrigger>
 									<Button variant="secondary" class="w-16">
 										Done
@@ -368,7 +370,7 @@ const UnDoneTodos: Component<{
 									</div>
 								</DialogContent>
 							</Dialog>
-							<Dialog open={editOrDoneOpen()} onOpenChange={setEditOrDoneOpen}>
+							<Dialog open={editOpen()} onOpenChange={setEditOpen}>
 								<DialogTrigger>
 									<Button
 										onclick={() => {

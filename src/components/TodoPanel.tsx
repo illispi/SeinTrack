@@ -48,18 +48,17 @@ const TodoPanel: Component<{
 			!openSecond()
 		) {
 			props.setOpenFirst(false);
-			document.body.removeAttribute('style');
-		}
-		if (
-			openSecond() &&
-			Number.isInteger(event.to) &&
-			(event.to as number) < 0
-			//NOTE commenting this fixed chrome but not brave
-			//  &&
-			// openFirst()
-		) {
-			setOpenSecond(false);
-			document.body.removeAttribute('style');
+
+			if (
+				openSecond() &&
+				Number.isInteger(event.to) &&
+				(event.to as number) < 0
+				//NOTE commenting this fixed chrome but not brave
+				//  &&
+				// openFirst()
+			) {
+				setOpenSecond(false);
+			}
 		}
 	});
 
@@ -68,11 +67,13 @@ const TodoPanel: Component<{
 			setSearchParams({ backHistoryFirst: true });
 		} else {
 			setSearchParams({ backHistoryFirst: null });
+			document.body.removeAttribute("style");
 		}
 		if (openSecond()) {
 			setSearchParams({ backHistorySecond: true });
 		} else {
 			setSearchParams({ backHistorySecond: null });
+			document.body.removeAttribute("style");
 		}
 	});
 

@@ -42,7 +42,6 @@ export default function Home() {
 			(event.to as number) < 0
 		) {
 			setDayEditorOpen(false);
-			document.body.removeAttribute("style");
 		}
 	});
 
@@ -51,6 +50,7 @@ export default function Home() {
 			setSearchParams({ backHistoryFirstEditor: true });
 		} else {
 			setSearchParams({ backHistoryFirstEditor: null });
+			document.body.removeAttribute("style");
 		}
 	});
 
