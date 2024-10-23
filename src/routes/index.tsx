@@ -30,6 +30,10 @@ export default function Home() {
 		year: curYear(),
 	}));
 	const projects = trpc.allProjects.createQuery();
+	const hours = trpc.getHoursForDate.createQuery(() => ({
+		date: curDate(),
+		projectId: 1,
+	}));
 
 	const [searchParams, setSearchParams] = useSearchParams();
 
@@ -169,6 +173,8 @@ export default function Home() {
 											<DialogTrigger></DialogTrigger>
 											<DialogContent>
 												<DayEditor
+													hoursWorkedPrev={hours.data?.hoursWorked}
+													setDayEditorOpen={setDayEditorOpen}
 													selectedDate={curDate()}
 													projectId={data()[0].id}
 												/>
