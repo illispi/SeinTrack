@@ -32,8 +32,7 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/themes/light.css";
 import { trpc } from "~/utils/trpc";
 import "../test.css";
-
-
+import type { Instance } from "flatpickr/dist/types/instance";
 
 type RouterOutput = inferRouterOutputs<IAppRouter>;
 
@@ -85,11 +84,11 @@ const UnDoneTodos: Component<{
 
 	setSelectedTagGroup: Setter<string>;
 }> = (props) => {
-	let datePickerInstance;
-	const [datePickerRef, setDatePickerRef] = createSignal();
+	let datePickerInstance: Instance | Instance[];
+	const [datePickerRef, setDatePickerRef] = createSignal("");
 
 	createEffect(() => {
-		if (datePickerRef()) {
+		if (datePickerRef() !== "") {
 			datePickerInstance = flatpickr(datePickerRef(), {
 				static: true,
 				inline: true,

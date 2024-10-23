@@ -28,7 +28,7 @@
 		"rules": {
 			"recommended": true,
 			"a11y": { "noSvgWithoutTitle": "off" },
-			"style": { "useSelfClosingElements": "off" }
+			"style": { "useSelfClosingElements": "off", "noNonNullAssertion": "warn" }
 		}
 	},
 	"javascript": {
