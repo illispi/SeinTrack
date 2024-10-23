@@ -330,6 +330,7 @@ const UnDoneTodos: Component<{
 						<div class="flex flex-col items-center justify-center gap-4">
 							<Button
 								onClick={() => {
+									setCurUndoneTodo(unDoneTodo);
 									setDoneOpen(true);
 								}}
 								variant="secondary"
