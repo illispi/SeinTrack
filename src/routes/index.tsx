@@ -176,8 +176,6 @@ export default function Home() {
 										</Dialog>
 									</div>
 									<div class="flex w-11/12 flex-col items-center justify-center gap-4">
-										<h2 class="text-lg font-semibold">{`${monthsArr[curMonth()]} ${curYear()}`}</h2>
-										<p>Completed todos in a month</p>
 										<For each={completedTodos.data}>
 											{(todoDone) => (
 												<div class="flex h-28 w-full items-start justify-between rounded-lg border border-t-2 border-gray-200 bg-white p-4 shadow-md">
@@ -205,7 +203,7 @@ export default function Home() {
 															</p>
 															<div class="flex items-center justify-start gap-2">
 																<p class="text-lg font-semibold">{`${todoDone.hoursWorked}`}</p>
-																<p>hours</p>
+																<p class="text-sm">hours</p>
 																<Button
 																	class="flex h-8 w-12 items-center justify-center "
 																	variant={"outline"}

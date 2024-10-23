@@ -55,16 +55,12 @@ const TodoPanel: Component<{
 			openSecond() &&
 			Number.isInteger(event.to) &&
 			(event.to as number) < 0
-			//NOTE commenting this fixed chrome but not brave
-			//  &&
-			// openFirst()
 		) {
 			setOpenSecond(false);
 		}
 	});
 
 	createEffect(() => {
-		console.log(props.openFirst);
 		if (props.openFirst) {
 			setSearchParams({ backHistoryFirst: true });
 		} else {
