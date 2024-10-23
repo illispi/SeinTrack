@@ -116,7 +116,7 @@ const ListMonth: Component<{
 	}));
 
 	return (
-		<div class="flex w-11/12 max-w-5xl flex-col items-center justify-start shadow-md">
+		<div class="flex w-11/12 max-w-5xl flex-col items-center justify-start ">
 			<div class="grid w-full grid-cols-7 place-content-center place-items-center">
 				<For each={weekdaysArr}>
 					{(day) => <div class="hidden pb-6 lg:block">{day}</div>}
@@ -124,6 +124,8 @@ const ListMonth: Component<{
 				<For each={weekdaysShortHandArr}>
 					{(day) => <div class="block pb-6 lg:hidden">{day}</div>}
 				</For>
+			</div>
+			<div class="grid w-full grid-cols-7 place-content-center place-items-center shadow-md">
 				<For each={dayAdjust(props.month, props.year)}>
 					{(date, index) => (
 						<Show when={hours.data}>
