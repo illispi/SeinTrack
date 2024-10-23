@@ -42,6 +42,7 @@ export default function Home() {
 			(event.to as number) < 0
 		) {
 			setDayEditorOpen(false);
+			document.body.removeAttribute("style");
 		}
 	});
 

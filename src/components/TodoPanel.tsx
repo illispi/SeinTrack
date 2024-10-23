@@ -47,8 +47,8 @@ const TodoPanel: Component<{
 			(event.to as number) < 0 &&
 			!openSecond()
 		) {
-			console.log("close first");
 			props.setOpenFirst(false);
+			document.body.removeAttribute('style');
 		}
 		if (
 			openSecond() &&
@@ -59,6 +59,7 @@ const TodoPanel: Component<{
 			// openFirst()
 		) {
 			setOpenSecond(false);
+			document.body.removeAttribute('style');
 		}
 	});
 

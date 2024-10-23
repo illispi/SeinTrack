@@ -116,6 +116,7 @@ const UnDoneTodos: Component<{
 			(event.to as number) < 0
 		) {
 			setEditOrDoneOpen(false);
+			document.body.removeAttribute('style');
 		}
 	});
 
