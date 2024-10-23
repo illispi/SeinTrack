@@ -48,7 +48,7 @@ const DayEditor: Component<{
 		if (
 			hours.data?.hoursWorked &&
 			hours.data?.hoursWorked >= 3 &&
-			props.hoursWorkedPrev < 3
+			(props.hoursWorkedPrev < 3 || !props.hoursWorkedPrev)
 		) {
 			jsConfetti.addConfetti();
 		}
