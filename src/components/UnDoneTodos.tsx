@@ -1,38 +1,42 @@
 import {
-	For,
-	type Setter,
-	Show,
-	type Component,
-	createEffect,
-	createSignal,
-} from "solid-js";
-import { completeTodo } from "~/server/trpc/routers/todoRoutes";
-import AddTime from "./AddTime";
-import {
-	DialogTrigger,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogFooter,
-	Dialog,
-} from "./ui/dialog";
-import {
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-	SelectContent,
-	Select,
-} from "./ui/select";
-import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
-import { Toaster } from "./ui/toast";
-import { Button } from "./ui/button";
-import type { IAppRouter } from "~/server/trpc/routers/mainRouter";
+	type BeforeLeaveEventArgs,
+	useBeforeLeave,
+	useSearchParams,
+} from "@solidjs/router";
 import type { inferRouterOutputs } from "@trpc/server";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/themes/light.css";
+import type { Instance } from "flatpickr/dist/types/instance";
+import {
+	type Component,
+	For,
+	type Setter,
+	Show,
+	createEffect,
+	createSignal,
+} from "solid-js";
+import type { IAppRouter } from "~/server/trpc/routers/mainRouter";
 import { trpc } from "~/utils/trpc";
 import "../test.css";
-import type { Instance } from "flatpickr/dist/types/instance";
+import AddTime from "./AddTime";
+import { Button } from "./ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "./ui/dialog";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "./ui/select";
+import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
+import { Toaster } from "./ui/toast";
 
 type RouterOutput = inferRouterOutputs<IAppRouter>;
 
@@ -98,6 +102,28 @@ const UnDoneTodos: Component<{
 				altFormat: "F j, Y",
 				dateFormat: "Y-m-d",
 			}) as Instance;
+		}
+	});
+	const [searchParams, setSearchParams] = useSearchParams();
+	const [editOrDoneOpen, setEditOrDoneOpen] = createSignal(false);
+
+	useBeforeLeave((event: BeforeLeaveEventArgs) => {
+		//BUG on brave, try prevent default and event.retry at start and end of function
+		//TODO test this more on mobile as well
+		if (
+			editOrDoneOpen() &&
+			Number.isInteger(event.to) &&
+			(event.to as number) < 0
+		) {
+			setEditOrDoneOpen(false);
+		}
+	});
+
+	createEffect(() => {
+		if (editOrDoneOpen()) {
+			setSearchParams({ editOrDoneOpen: true });
+		} else {
+			setSearchParams({ editOrDoneOpen: null });
 		}
 	});
 
@@ -290,7 +316,7 @@ const UnDoneTodos: Component<{
 							<p class="text-sm italic">{`tag: ${unDoneTodo.tag ? unDoneTodo.tag : "none"} || group: ${unDoneTodo.tagGroup}`}</p>
 						</div>
 						<div class="flex flex-col items-center justify-center gap-4">
-							<Dialog>
+							<Dialog open={editOrDoneOpen()} onOpenChange={setEditOrDoneOpen}>
 								<DialogTrigger>
 									<Button variant="secondary" class="w-16">
 										Done
@@ -341,7 +367,7 @@ const UnDoneTodos: Component<{
 									</div>
 								</DialogContent>
 							</Dialog>
-							<Dialog>
+							<Dialog open={editOrDoneOpen()} onOpenChange={setEditOrDoneOpen}>
 								<DialogTrigger>
 									<Button
 										onclick={() => {
