@@ -75,12 +75,13 @@ export const editTodo = publicProcedure
 				),
 				tagId: v.nullish(v.number()),
 				tagGroupId: v.number(),
-				completed: v.nullish(v.boolean()),
+				completed: v.boolean(),
 				dateCompleted: v.nullish(v.date()),
 			}),
 		),
 	)
 	.mutation(async ({ input, ctx }) => {
+		console.log(input);
 		await ctx.db
 			.updateTable("todos")
 			.set({
@@ -203,6 +204,7 @@ export const getUnDoneTodos = publicProcedure
 			])
 			.where("todos.completed", "=", false)
 			.where("todos.projectId", "=", input.projectId)
+			.orderBy("id asc")
 			.execute();
 
 		if (unDoneTodos.length === 0) {

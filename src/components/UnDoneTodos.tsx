@@ -99,7 +99,6 @@ const UnDoneTodos: Component<{
 				dateFormat: "Y-m-d",
 			}) as Instance;
 		}
-		console.log(props.selectedTag);
 	});
 
 	const completeTodo = trpc.completeTodo.createMutation(() => ({
@@ -348,7 +347,7 @@ const UnDoneTodos: Component<{
 							</Dialog>
 							<Dialog>
 								<DialogTrigger>
-									<Button variant="secondary" class="w-16">
+									<Button variant="outline" class="w-16">
 										Edit
 									</Button>
 								</DialogTrigger>
@@ -412,7 +411,7 @@ const UnDoneTodos: Component<{
 													<>
 														<Select
 															class="flex"
-															defaultValue={unDoneTodo.tagGroup || "none"}
+															defaultValue={unDoneTodo.tagGroup}
 															value={props.selectedTagGroup}
 															onChange={props.setSelectedTagGroup}
 															options={[
@@ -442,15 +441,15 @@ const UnDoneTodos: Component<{
 													dateCompleted: null,
 													hoursWorked: null,
 													todoId: unDoneTodo.id,
-													completed: null,
+													completed: false,
 													tagId:
 														props.selectedTag === "none"
 															? null
-															: props.tagsActive.data?.find(
+															: props.tagsActive.find(
 																	(e) => e.tag === props.selectedTag,
 																)?.id,
-													todo: SIGNAL,
-													tagGroupId: props.tagGroupsActive.data?.find(
+													todo: editTodoText(),
+													tagGroupId: props.tagGroupsActive.find(
 														(e) => e.tagGroup === props.selectedTagGroup,
 													)?.id as number,
 												})
@@ -458,7 +457,7 @@ const UnDoneTodos: Component<{
 											class="w-full"
 											variant={"secondary"}
 										>
-											Complete
+											Edit
 										</Button>
 									</div>
 								</DialogContent>
