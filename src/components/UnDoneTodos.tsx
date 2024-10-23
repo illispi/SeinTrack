@@ -108,6 +108,14 @@ const UnDoneTodos: Component<{
 	const [editOpen, setEditOpen] = createSignal(false);
 	const [doneOpen, setDoneOpen] = createSignal(false);
 
+	const [curUndoneTodo, setCurUndoneTodo] = createSignal<{
+		tagGroup: string;
+		id: number;
+		todo: string;
+		tagId: number | null;
+		tag: string | null;
+	} | null>(null);
+
 	useBeforeLeave((event: BeforeLeaveEventArgs) => {
 		//BUG on brave, try prevent default and event.retry at start and end of function
 		//TODO test this more on mobile as well
@@ -320,184 +328,174 @@ const UnDoneTodos: Component<{
 							<p class="text-sm italic">{`tag: ${unDoneTodo.tag ? unDoneTodo.tag : "none"} || group: ${unDoneTodo.tagGroup}`}</p>
 						</div>
 						<div class="flex flex-col items-center justify-center gap-4">
-							<Dialog open={doneOpen()} onOpenChange={setDoneOpen}>
-								<DialogTrigger>
-									<Button variant="secondary" class="w-16">
-										Done
-									</Button>
-								</DialogTrigger>
-								<DialogContent>
-									<DialogHeader>
-										<DialogTitle class="text-center">Complete Todo</DialogTitle>
-									</DialogHeader>
-									<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-6">
-										<p class="mt-4 w-full  ">{unDoneTodo.todo}</p>
-										<div class="w-full text-lg font-semibold">Hours spent:</div>
-										<div>
-											<AddTime
-												hours={props.addHours}
-												minutes={props.addMinutes}
-												setHours={props.setAddHours}
-												setMinutes={props.setAddMinutes}
-											/>
-										</div>
-										<div class=" w-full text-lg font-semibold">
-											Date completed:
-										</div>
-										<div class="flex h-80 w-full items-center justify-center">
-											<input
-												class="w-full"
-												type="text"
-												ref={setDatePickerRef}
-											></input>
-										</div>
-										<Button
-											onClick={() =>
-												completeTodo.mutate({
-													date: datePickerInstance.selectedDates[0],
-													hoursWorked: Number(
-														Number(
-															props.addHours + props.addMinutes / 60,
-														).toFixed(2),
-													),
-													todoId: unDoneTodo.id,
-												})
-											}
-											class="w-full"
-											variant={"secondary"}
-										>
-											Complete
-										</Button>
-									</div>
-								</DialogContent>
-							</Dialog>
-							<Dialog open={editOpen()} onOpenChange={setEditOpen}>
-								<DialogTrigger>
-									<Button
-										onclick={() => {
-											props.setSelectedTag(unDoneTodo.tag || "none");
-											props.setSelectedTagGroup(unDoneTodo.tagGroup);
-											setEditTodoText(unDoneTodo.todo);
-										}}
-										variant="outline"
-										class="w-16"
-									>
-										Edit
-									</Button>
-								</DialogTrigger>
-								<DialogContent>
-									<DialogHeader>
-										<DialogTitle class="text-center">Edit Todo:</DialogTitle>
-									</DialogHeader>
-									<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-12">
-										<TextField
-											value={editTodoText()}
-											onChange={setEditTodoText}
-											class="grid w-full items-center gap-1.5"
-										>
-											<div class="flex items-center justify-start gap-4">
-												<TextFieldInput
-													type="text"
-													id="editTodo"
-													placeholder="editTodo"
-												/>
-											</div>
-										</TextField>
-										<div class="grid grid-cols-2">
-											<h3 class="font-semibold">Tag:</h3>
-											<h3 class="font-semibold">Tag group:</h3>
-											<Show when={props.tagsActive} fallback="No tags found">
-												{(tags) => (
-													<>
-														<Select
-															class="flex"
-															defaultValue={unDoneTodo.tag || "none"}
-															value={props.selectedTag}
-															onChange={props.setSelectedTag}
-															options={[
-																"none",
-																...massageTagsAndGroupsToArr(tags()),
-															]}
-															placeholder="Select a tag"
-															itemComponent={(props) => (
-																<SelectItem item={props.item}>
-																	{props.item.rawValue}
-																</SelectItem>
-															)}
-														>
-															<SelectTrigger aria-label="Tag">
-																<SelectValue<string>>
-																	{(state) => state.selectedOption()}
-																</SelectValue>
-															</SelectTrigger>
-															<SelectContent />
-														</Select>
-													</>
-												)}
-											</Show>
-											<Show
-												when={props.tagGroupsActive}
-												fallback="No tag groups found"
-											>
-												{(tagGroups) => (
-													<>
-														<Select
-															class="flex"
-															defaultValue={unDoneTodo.tagGroup}
-															value={props.selectedTagGroup}
-															onChange={props.setSelectedTagGroup}
-															options={[
-																...massageTagsAndGroupsToArr(tagGroups()),
-															]}
-															placeholder="Select a tag"
-															itemComponent={(props) => (
-																<SelectItem item={props.item}>
-																	{props.item.rawValue}
-																</SelectItem>
-															)}
-														>
-															<SelectTrigger aria-label="Tag">
-																<SelectValue<string>>
-																	{(state) => state.selectedOption()}
-																</SelectValue>
-															</SelectTrigger>
-															<SelectContent />
-														</Select>
-													</>
-												)}
-											</Show>
-										</div>
-										<Button
-											onClick={() =>
-												editTodo.mutate({
-													dateCompleted: null,
-													hoursWorked: null,
-													todoId: unDoneTodo.id,
-													completed: false,
-													tagId:
-														props.selectedTag === "none"
-															? null
-															: props.tagsActive.find(
-																	(e) => e.tag === props.selectedTag,
-																)?.id,
-													todo: editTodoText(),
-													tagGroupId: props.tagGroupsActive.find(
-														(e) => e.tagGroup === props.selectedTagGroup,
-													)?.id as number,
-												})
-											}
-											class="w-full"
-											variant={"secondary"}
-										>
-											Edit
-										</Button>
-									</div>
-								</DialogContent>
-							</Dialog>
+							<Button
+								onClick={() => {
+									setDoneOpen(true);
+								}}
+								variant="secondary"
+								class="w-16"
+							>
+								Done
+							</Button>
+							<Button
+								onclick={() => {
+									setCurUndoneTodo(unDoneTodo);
+									setEditOpen(true);
+									props.setSelectedTag(unDoneTodo.tag || "none");
+									props.setSelectedTagGroup(unDoneTodo.tagGroup);
+									setEditTodoText(unDoneTodo.todo);
+								}}
+								variant="outline"
+								class="w-16"
+							>
+								Edit
+							</Button>
 						</div>
 					</div>
 				)}
 			</For>
+			<Dialog open={doneOpen()} onOpenChange={setDoneOpen}>
+				<DialogTrigger></DialogTrigger>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle class="text-center">Complete Todo</DialogTitle>
+					</DialogHeader>
+					<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-6">
+						<p class="mt-4 w-full  ">{curUndoneTodo().todo}</p>
+						<div class="w-full text-lg font-semibold">Hours spent:</div>
+						<div>
+							<AddTime
+								hours={props.addHours}
+								minutes={props.addMinutes}
+								setHours={props.setAddHours}
+								setMinutes={props.setAddMinutes}
+							/>
+						</div>
+						<div class=" w-full text-lg font-semibold">Date completed:</div>
+						<div class="flex h-80 w-full items-center justify-center">
+							<input class="w-full" type="text" ref={setDatePickerRef}></input>
+						</div>
+						<Button
+							onClick={() =>
+								completeTodo.mutate({
+									date: datePickerInstance.selectedDates[0],
+									hoursWorked: Number(
+										Number(props.addHours + props.addMinutes / 60).toFixed(2),
+									),
+									todoId: curUndoneTodo().id,
+								})
+							}
+							class="w-full"
+							variant={"secondary"}
+						>
+							Complete
+						</Button>
+					</div>
+				</DialogContent>
+			</Dialog>
+			<Dialog open={editOpen()} onOpenChange={setEditOpen}>
+				<DialogTrigger></DialogTrigger>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle class="text-center">Edit Todo:</DialogTitle>
+					</DialogHeader>
+					<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-12">
+						<TextField
+							value={editTodoText()}
+							onChange={setEditTodoText}
+							class="grid w-full items-center gap-1.5"
+						>
+							<div class="flex items-center justify-start gap-4">
+								<TextFieldInput
+									type="text"
+									id="editTodo"
+									placeholder="editTodo"
+								/>
+							</div>
+						</TextField>
+						<div class="grid grid-cols-2">
+							<h3 class="font-semibold">Tag:</h3>
+							<h3 class="font-semibold">Tag group:</h3>
+							<Show when={props.tagsActive} fallback="No tags found">
+								{(tags) => (
+									<>
+										<Select
+											class="flex"
+											defaultValue={curUndoneTodo().tag || "none"}
+											value={props.selectedTag}
+											onChange={props.setSelectedTag}
+											options={["none", ...massageTagsAndGroupsToArr(tags())]}
+											placeholder="Select a tag"
+											itemComponent={(props) => (
+												<SelectItem item={props.item}>
+													{props.item.rawValue}
+												</SelectItem>
+											)}
+										>
+											<SelectTrigger aria-label="Tag">
+												<SelectValue<string>>
+													{(state) => state.selectedOption()}
+												</SelectValue>
+											</SelectTrigger>
+											<SelectContent />
+										</Select>
+									</>
+								)}
+							</Show>
+							<Show when={props.tagGroupsActive} fallback="No tag groups found">
+								{(tagGroups) => (
+									<>
+										<Select
+											class="flex"
+											defaultValue={curUndoneTodo().tagGroup}
+											value={props.selectedTagGroup}
+											onChange={props.setSelectedTagGroup}
+											options={[...massageTagsAndGroupsToArr(tagGroups())]}
+											placeholder="Select a tag"
+											itemComponent={(props) => (
+												<SelectItem item={props.item}>
+													{props.item.rawValue}
+												</SelectItem>
+											)}
+										>
+											<SelectTrigger aria-label="Tag">
+												<SelectValue<string>>
+													{(state) => state.selectedOption()}
+												</SelectValue>
+											</SelectTrigger>
+											<SelectContent />
+										</Select>
+									</>
+								)}
+							</Show>
+						</div>
+						<Button
+							onClick={() =>
+								editTodo.mutate({
+									dateCompleted: null,
+									hoursWorked: null,
+									todoId: curUndoneTodo().id,
+									completed: false,
+									tagId:
+										props.selectedTag === "none"
+											? null
+											: props.tagsActive.find(
+													(e) => e.tag === props.selectedTag,
+												)?.id,
+									todo: editTodoText(),
+									tagGroupId: props.tagGroupsActive.find(
+										(e) => e.tagGroup === props.selectedTagGroup,
+									)?.id as number,
+								})
+							}
+							class="w-full"
+							variant={"secondary"}
+						>
+							Edit
+						</Button>
+					</div>
+				</DialogContent>
+			</Dialog>
 		</>
 	);
 };
