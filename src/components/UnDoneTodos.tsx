@@ -112,6 +112,8 @@ const UnDoneTodos: Component<{
 
 	const editTodo = trpc.editTodo.createMutation(() => ({}));
 
+	const [editTodoText, setEditTodoText] = createSignal("");
+
 	return (
 		<>
 			<h2 class="m-8 text-4xl font-light">Todos</h2>
@@ -357,26 +359,83 @@ const UnDoneTodos: Component<{
 									</DialogHeader>
 									<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-12">
 										<p class="mt-4 w-full  ">{unDoneTodo.todo}</p>
-										<div class="w-full   text-sm font-semibold">
-											Hours spent:
-										</div>
-										<div>
-											<AddTime
-												hours={props.addHours}
-												minutes={props.addMinutes}
-												setHours={props.setAddHours}
-												setMinutes={props.setAddMinutes}
-											/>
-										</div>
-										<div class=" w-full   text-sm font-semibold">
-											Date completed:
-										</div>
-										<div class="flex h-80 w-full items-center justify-center">
-											<input
-												class="w-full"
-												type="text"
-												ref={setDatePickerRef}
-											></input>
+										<TextField
+											value={editTodoText()}
+											onChange={setEditTodoText}
+											class="grid w-full items-center gap-1.5"
+										>
+											<TextFieldLabel for="editTodo">Edit Todo</TextFieldLabel>
+											<div class="flex items-center justify-start gap-4">
+												<TextFieldInput
+													type="text"
+													id="editTodo"
+													placeholder="editTodo"
+												/>
+											</div>
+										</TextField>
+										<div class="grid grid-cols-2">
+											<h3 class="font-semibold">Tag:</h3>
+											<h3 class="font-semibold">Tag group:</h3>
+											<Show when={props.tagsActive} fallback="No tags found">
+												{(tags) => (
+													<>
+														<Select
+															class="flex"
+															defaultValue={unDoneTodo.tag || "none"}
+															value={props.selectedTag}
+															onChange={props.setSelectedTag}
+															options={[
+																"none",
+																...massageTagsAndGroupsToArr(tags()),
+															]}
+															placeholder="Select a tag"
+															itemComponent={(props) => (
+																<SelectItem item={props.item}>
+																	{props.item.rawValue}
+																</SelectItem>
+															)}
+														>
+															<SelectTrigger aria-label="Tag">
+																<SelectValue<string>>
+																	{(state) => state.selectedOption()}
+																</SelectValue>
+															</SelectTrigger>
+															<SelectContent />
+														</Select>
+													</>
+												)}
+											</Show>
+											<Show
+												when={props.tagGroupsActive}
+												fallback="No tag groups found"
+											>
+												{(tagGroups) => (
+													<>
+														<Select
+															class="flex"
+															defaultValue={unDoneTodo.tagGroup || "none"}
+															value={props.selectedTagGroup}
+															onChange={props.setSelectedTagGroup}
+															options={[
+																...massageTagsAndGroupsToArr(tagGroups()),
+															]}
+															placeholder="Select a tag"
+															itemComponent={(props) => (
+																<SelectItem item={props.item}>
+																	{props.item.rawValue}
+																</SelectItem>
+															)}
+														>
+															<SelectTrigger aria-label="Tag">
+																<SelectValue<string>>
+																	{(state) => state.selectedOption()}
+																</SelectValue>
+															</SelectTrigger>
+															<SelectContent />
+														</Select>
+													</>
+												)}
+											</Show>
 										</div>
 										<Button
 											onClick={() =>
@@ -385,9 +444,16 @@ const UnDoneTodos: Component<{
 													hoursWorked: null,
 													todoId: unDoneTodo.id,
 													completed: null,
-													tagId: SIGNAL,
+													tagId:
+														props.selectedTag === "none"
+															? null
+															: props.tagsActive.data?.find(
+																	(e) => e.tag === props.selectedTag,
+																)?.id,
 													todo: SIGNAL,
-													tagGroup: SIGNAL,
+													tagGroupId: props.tagGroupsActive.data?.find(
+														(e) => e.tagGroup === props.selectedTagGroup,
+													)?.id as number,
 												})
 											}
 											class="w-full"

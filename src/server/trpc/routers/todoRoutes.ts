@@ -292,8 +292,6 @@ export const getTagsOrGroupsActiveOrNot = publicProcedure
 		}
 	});
 
-//TODO edit tag or group name
-
 export const EditTagOrGroupName = publicProcedure
 	.input(
 		v.parser(

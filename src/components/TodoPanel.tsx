@@ -198,7 +198,9 @@ const TodoPanel: Component<{
 								addTodoOnClick={() => {
 									addTodo.mutate({
 										projectId: props.curProjectId,
-										tagGroup: selectedTagGroup(),
+										tagGroupId: tagGroupsActive.data?.find(
+											(e) => e.tagGroup === selectedTagGroup(),
+										)?.id as number,
 										todo: newTodo(),
 										tagId:
 											selectedTag() === "none"
@@ -250,7 +252,9 @@ const TodoPanel: Component<{
 					addTodoOnClick={() => {
 						addTodo.mutate({
 							projectId: props.curProjectId,
-							tagGroup: selectedTagGroup(),
+							tagGroupId: tagGroupsActive.data?.find(
+								(e) => e.tagGroup === selectedTagGroup(),
+							)?.id as number,
 							todo: newTodo(),
 							tagId:
 								selectedTag() === "none"

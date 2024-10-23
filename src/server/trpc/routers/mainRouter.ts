@@ -1,4 +1,4 @@
-import { publicProcedure, router } from "../initTrpc";
+import { router } from "../initTrpc";
 import {
 	changeDayHours,
 	getFirstAndLastDate,
@@ -8,6 +8,7 @@ import {
 import { allProjects, editProject } from "./projectRoutes";
 import {
 	AddTodo,
+	EditTagOrGroupName,
 	addTagOrGroup,
 	completeTodo,
 	editTodo,
@@ -18,10 +19,6 @@ import {
 } from "./todoRoutes";
 
 export const appRouter = router({
-	test: publicProcedure.query(() => {
-		// throw new TRPCError({ code: "NOT_FOUND" });
-		return "hello";
-	}),
 	getHoursOfDay: getHoursOfDay,
 	changeDayHours: changeDayHours,
 	createProject: editProject,
@@ -36,6 +33,7 @@ export const appRouter = router({
 	getDoneTodosByMonth: getDoneTodosByMonth,
 	getTagsOrGroupsActiveOrNot: getTagsOrGroupsActiveOrNot,
 	getHoursForDate: getHoursForDate,
+	EditTagOrGroupName: EditTagOrGroupName,
 });
 
 export type IAppRouter = typeof appRouter;
