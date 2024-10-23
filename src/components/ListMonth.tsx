@@ -158,8 +158,8 @@ const ListMonth: Component<{
 										<h5
 											class={clsx(
 												date.toDateString() === new Date().toDateString()
-													? "w-8 rounded-full bg-black text-white"
-													: "",
+													? "size-6 rounded-full bg-black text-center text-white"
+													: "size-6",
 											)}
 										>
 											{date.getDate()}

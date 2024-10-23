@@ -33,6 +33,8 @@ import "flatpickr/dist/themes/light.css";
 import { trpc } from "~/utils/trpc";
 import "../test.css";
 
+
+
 type RouterOutput = inferRouterOutputs<IAppRouter>;
 
 const massageTagsAndGroupsToArr = (
@@ -299,11 +301,9 @@ const UnDoneTodos: Component<{
 											Complete Todo:
 										</DialogTitle>
 									</DialogHeader>
-									<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-8">
-										<p class="mt-4 w-full border-t border-t-green-500 pt-4">
-											{unDoneTodo.todo}
-										</p>
-										<div class="w-full border-t border-t-green-500 pt-4 text-sm font-semibold">
+									<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-12">
+										<p class="mt-4 w-full  ">{unDoneTodo.todo}</p>
+										<div class="w-full   text-sm font-semibold">
 											Hours spent:
 										</div>
 										<div>
@@ -314,7 +314,7 @@ const UnDoneTodos: Component<{
 												setMinutes={props.setAddMinutes}
 											/>
 										</div>
-										<div class=" w-full border-t border-t-green-500 pt-4 text-sm font-semibold">
+										<div class=" w-full   text-sm font-semibold">
 											Date completed:
 										</div>
 										<div class="flex h-80 w-full items-center justify-center">
@@ -336,7 +336,7 @@ const UnDoneTodos: Component<{
 													todoId: unDoneTodo.id,
 												})
 											}
-											class="w-full max-w-64"
+											class="w-full"
 											variant={"secondary"}
 										>
 											Complete

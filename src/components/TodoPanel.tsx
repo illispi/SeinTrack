@@ -10,7 +10,6 @@ import {
 	useBeforeLeave,
 	useSearchParams,
 } from "@solidjs/router";
-import "flatpickr/dist/themes/light.css";
 import { trpc } from "~/utils/trpc";
 
 import UnDoneTodos from "./UnDoneTodos";
