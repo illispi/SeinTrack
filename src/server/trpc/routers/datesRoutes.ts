@@ -41,6 +41,43 @@ export const getHoursForDate = publicProcedure
 		return hours;
 	});
 
+export const zeroTimer = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				date: v.date(),
+				projectId: v.number(),
+			}),
+		),
+	)
+	.mutation(async ({ input, ctx }) => {
+		const exists = await ctx.db
+			.selectFrom("dates")
+			.select(["date", "dates.hoursWorked"])
+			.where("date", "=", input.date)
+			.executeTakeFirst();
+
+		console.log(exists);
+
+		if (exists) {
+			await ctx.db
+				.updateTable("dates")
+				.set({ hoursWorked: 0 })
+				.where("date", "=", input.date)
+				.executeTakeFirst();
+		} else {
+			await ctx.db
+				.insertInto("dates")
+				.values({
+					date: input.date,
+					hoursWorked: 0,
+					projectId: input.projectId,
+				})
+				.execute();
+		}
+		return;
+	});
+
 export const changeDayHours = publicProcedure
 	.input(
 		v.parser(
@@ -58,14 +95,6 @@ export const changeDayHours = publicProcedure
 			.where("date", "=", input.date)
 			.executeTakeFirst();
 		if (exists) {
-			if (input.hours === 0) {
-				await ctx.db
-					.updateTable("dates")
-					.set({ hoursWorked: 0 })
-					.where("date", "=", input.date)
-					.executeTakeFirst();
-				return;
-			}
 			if (!exists.hoursWorked) {
 				await ctx.db
 					.updateTable("dates")

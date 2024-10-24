@@ -62,6 +62,14 @@ const DayEditor: Component<{
 		},
 	}));
 
+	const zeroTimer = trpc.zeroTimer.createMutation(() => ({
+		onSuccess: () => {
+			setAddHours(0);
+			setAddMinutes(0);
+			props.setDayEditorOpen(false);
+		},
+	}));
+
 	const hours = trpc.getHoursForDate.createQuery(() => ({
 		date: props.selectedDate,
 		projectId: props.projectId,
@@ -73,9 +81,8 @@ const DayEditor: Component<{
 				type="button"
 				onClick={() => {
 					if (props.selectedDate) {
-						changeHours.mutate({
+						zeroTimer.mutate({
 							date: props.selectedDate,
-							hours: 0,
 							projectId: props.projectId,
 						});
 					}
