@@ -36,7 +36,7 @@ import {
 	SelectValue,
 } from "./ui/select";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
-import { Toaster } from "./ui/toast";
+import { showToast, Toast, Toaster } from "./ui/toast";
 
 type RouterOutput = inferRouterOutputs<IAppRouter>;
 
@@ -145,8 +145,24 @@ const UnDoneTodos: Component<{
 			props.setAddHours(0);
 			props.setAddMinutes(0);
 			datePickerInstance.setDate(new Date());
+			showToast({
+				title: "Todo completed!",
+				description: `${curUndoneTodo()?.todo}`,
+				variant: "success",
+			});
 		},
 	}));
+
+	createEffect(() => {
+		if (completeTodo.isError) {
+			showToast({
+				title: "Error!",
+				description: `${completeTodo.error.message}`,
+				variant: "error",
+			});
+			completeTodo.reset();
+		}
+	});
 
 	const editTodo = trpc.editTodo.createMutation(() => ({}));
 
