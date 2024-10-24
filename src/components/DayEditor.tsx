@@ -24,6 +24,7 @@ const DayEditor: Component<{
 	);
 
 	const jsConfetti = new JSConfetti();
+	const audio = new Audio("victory.wav");
 
 	createEffect(() => {
 		if (lastSelectedDate() !== props.selectedDate) {
@@ -51,6 +52,7 @@ const DayEditor: Component<{
 			(props.hoursWorkedPrev < 3 || !props.hoursWorkedPrev)
 		) {
 			jsConfetti.addConfetti();
+			audio.play();
 		}
 	});
 
@@ -87,7 +89,7 @@ const DayEditor: Component<{
 						});
 					}
 				}}
-				class="absolute left-3 top-3 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[expanded]:bg-accent data-[expanded]:text-muted-foreground"
+				class="absolute left-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[expanded]:bg-accent data-[expanded]:text-muted-foreground"
 			>
 				<svg
 					fill="currentColor"
