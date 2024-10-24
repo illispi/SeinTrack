@@ -360,7 +360,7 @@ const UnDoneTodos: Component<{
 							<p class="mr-2 text-wrap break-words text-sm lg:text-base">
 								{unDoneTodo.todo}
 							</p>
-							<p class="mt-2 text-sm italic">{`tag: ${unDoneTodo.tag ? unDoneTodo.tag : "none"} || group: ${unDoneTodo.tagGroup}`}</p>
+							<p class="mt-4 text-sm italic">{`tag: ${unDoneTodo.tag ? unDoneTodo.tag : "none"} || group: ${unDoneTodo.tagGroup}`}</p>
 						</div>
 						<div class="flex flex-col items-center justify-center gap-4">
 							<Button
