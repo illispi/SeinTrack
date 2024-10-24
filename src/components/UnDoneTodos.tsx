@@ -166,6 +166,11 @@ const UnDoneTodos: Component<{
 
 	const editTodo = trpc.editTodo.createMutation(() => ({
 		onSuccess: () => {
+			showToast({
+				title: "Todo edited",
+				description: `${editTodoText()}`,
+				variant: "success",
+			});
 			setEditOpen(false);
 		},
 	}));
