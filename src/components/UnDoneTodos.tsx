@@ -141,6 +141,7 @@ const UnDoneTodos: Component<{
 
 	const completeTodo = trpc.completeTodo.createMutation(() => ({
 		onSuccess: () => {
+			setDoneOpen(false);
 			props.setAddHours(0);
 			props.setAddMinutes(0);
 			datePickerInstance.setDate(new Date());
