@@ -173,7 +173,10 @@ const UnDoneTodos: Component<{
 							Add Todo
 						</Button>
 					</DialogTrigger>
-					<DialogContent class="  sm:max-w-[425px]">
+					<DialogContent
+						onOpenAutoFocus={(e) => e.preventDefault()}
+						class="  sm:max-w-[425px]"
+					>
 						<DialogHeader>
 							<DialogTitle>Add todo</DialogTitle>
 						</DialogHeader>
@@ -273,7 +276,7 @@ const UnDoneTodos: Component<{
 							Add Tag
 						</Button>
 					</DialogTrigger>
-					<DialogContent class=" ">
+					<DialogContent onOpenAutoFocus={(e) => e.preventDefault()} class=" ">
 						<DialogHeader>
 							<DialogTitle>Add Tag/Group</DialogTitle>
 						</DialogHeader>
@@ -363,7 +366,7 @@ const UnDoneTodos: Component<{
 			</For>
 			<Dialog open={doneOpen()} onOpenChange={setDoneOpen}>
 				<DialogTrigger></DialogTrigger>
-				<DialogContent>
+				<DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
 					<DialogHeader>
 						<DialogTitle class="text-center">Complete Todo</DialogTitle>
 					</DialogHeader>
@@ -402,7 +405,7 @@ const UnDoneTodos: Component<{
 			</Dialog>
 			<Dialog open={editOpen()} onOpenChange={setEditOpen}>
 				<DialogTrigger></DialogTrigger>
-				<DialogContent>
+				<DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
 					<DialogHeader>
 						<DialogTitle class="text-center">Edit Todo</DialogTitle>
 					</DialogHeader>
