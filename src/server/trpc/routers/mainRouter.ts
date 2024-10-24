@@ -11,6 +11,7 @@ import {
 	EditTagOrGroupName,
 	addTagOrGroup,
 	completeTodo,
+	deleteTodo,
 	editTodo,
 	getDoneTodosByMonth,
 	getTagsOrGroupsActiveOrNot,
@@ -34,6 +35,7 @@ export const appRouter = router({
 	getTagsOrGroupsActiveOrNot: getTagsOrGroupsActiveOrNot,
 	getHoursForDate: getHoursForDate,
 	EditTagOrGroupName: EditTagOrGroupName,
+	deleteTodo: deleteTodo,
 });
 
 export type IAppRouter = typeof appRouter;

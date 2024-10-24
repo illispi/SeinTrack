@@ -60,6 +60,23 @@ export const completeTodo = publicProcedure
 		return;
 	});
 
+export const deleteTodo = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				todoId: v.number(),
+			}),
+		),
+	)
+	.mutation(async ({ input, ctx }) => {
+		await ctx.db
+			.deleteFrom("todos")
+			.where("id", "=", input.todoId)
+			.executeTakeFirstOrThrow();
+
+		return;
+	});
+
 export const editTodo = publicProcedure
 	.input(
 		v.parser(
