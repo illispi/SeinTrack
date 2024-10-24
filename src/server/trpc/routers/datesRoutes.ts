@@ -58,6 +58,14 @@ export const changeDayHours = publicProcedure
 			.where("date", "=", input.date)
 			.executeTakeFirst();
 		if (exists) {
+			if (input.hours === 0) {
+				await ctx.db
+					.updateTable("dates")
+					.set({ hoursWorked: 0 })
+					.where("date", "=", input.date)
+					.executeTakeFirst();
+				return;
+			}
 			if (!exists.hoursWorked) {
 				await ctx.db
 					.updateTable("dates")
