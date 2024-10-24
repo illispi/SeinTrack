@@ -251,10 +251,12 @@ export const getDoneTodosByMonth = publicProcedure
 				"todos.id",
 				"todos.tagId",
 				"tagGroups.tagGroup",
+				"tagGroups.id",
 				"tags.tag",
 				"todos.hoursWorked",
 				"todos.dateCompleted",
 			])
+			.select("tagGroups.id as tagGroupId")
 			.where("todos.completed", "=", true)
 			.where("todos.projectId", "=", input.projectId)
 			.where("dateCompleted", ">=", new Date(input.year, input.month, 1))

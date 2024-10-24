@@ -40,7 +40,7 @@ import { showToast, Toast, Toaster } from "./ui/toast";
 
 type RouterOutput = inferRouterOutputs<IAppRouter>;
 
-const massageTagsAndGroupsToArr = (
+export const massageTagsAndGroupsToArr = (
 	data: RouterOutput["getTagsOrGroupsActiveOrNot"],
 ): string[] => {
 	const arr = [];
