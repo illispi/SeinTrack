@@ -184,9 +184,9 @@ export default function Home() {
 									<div class="flex w-11/12 flex-col items-center justify-center gap-4">
 										<For each={completedTodos.data}>
 											{(todoDone) => (
-												<div class="flex h-28 w-full items-start justify-between rounded-lg border border-t-2 border-gray-200 bg-white p-4 shadow-md">
-													<div class="flex h-full flex-col items-start justify-between">
-														<p class="text-wrap break-words text-left text-sm lg:text-base">
+												<div class="flex size-full min-h-28 items-start justify-between rounded-lg border border-t-2 border-gray-200 bg-white p-4 shadow-md">
+													<div class="flex min-h-24 flex-col items-start justify-between">
+														<p class="mr-2 text-wrap break-words text-left text-sm lg:text-base">
 															{todoDone.todo}
 														</p>
 														<div class="flex items-end justify-start gap-4">
@@ -202,8 +202,8 @@ export default function Home() {
 															>{`group: ${todoDone.tagGroup}`}</A>
 														</div>
 													</div>
-													<div class="flex h-full items-center justify-center gap-8">
-														<div class="flex h-full flex-col items-start justify-between">
+													<div class="flex items-center justify-center gap-8">
+														<div class="flex min-h-24  flex-col items-start justify-between">
 															<p class="text-sm italic">
 																{todoDone.dateCompleted?.toDateString()}
 															</p>
