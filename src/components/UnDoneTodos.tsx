@@ -350,12 +350,12 @@ const UnDoneTodos: Component<{
 
 			<For each={props.unDoneTodos}>
 				{(unDoneTodo) => (
-					<div class="my-4 flex h-32 w-11/12 items-start justify-between rounded-lg border border-t-2 border-gray-200 bg-white p-4 shadow-md">
-						<div class="flex h-full flex-col items-start justify-between">
+					<div class="my-4 flex min-h-28 w-11/12 items-start justify-between rounded-lg border border-t-2 border-gray-200 bg-white p-4 shadow-md">
+						<div class="flex min-h-24  flex-col items-start justify-between">
 							<p class="mr-2 text-wrap break-words text-sm lg:text-base">
 								{unDoneTodo.todo}
 							</p>
-							<p class="text-sm italic">{`tag: ${unDoneTodo.tag ? unDoneTodo.tag : "none"} || group: ${unDoneTodo.tagGroup}`}</p>
+							<p class="mt-2 text-sm italic">{`tag: ${unDoneTodo.tag ? unDoneTodo.tag : "none"} || group: ${unDoneTodo.tagGroup}`}</p>
 						</div>
 						<div class="flex flex-col items-center justify-center gap-4">
 							<Button
