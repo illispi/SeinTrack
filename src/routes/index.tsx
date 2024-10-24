@@ -48,7 +48,7 @@ export default function Home() {
 		tagGroup: string;
 		tag: string | null;
 		tagGroupId: number;
-	}>();
+	} | null>(null);
 	const [dayEditorOpen, setDayEditorOpen] = createSignal(false);
 	//TODO remove hard coding project id
 	const [curProjectId, setProjectId] = createSignal(1);
@@ -289,6 +289,8 @@ export default function Home() {
 																<Button
 																	onClick={() => {
 																		setTodo(todoDone);
+																		setSelectedTag(todoDone.tag || "none");
+																		setSelectedTagGroup(todoDone.tagGroup);
 																		setTodoText(todoDone.todo);
 																		setTodoEditOpen(true);
 																	}}
@@ -321,132 +323,143 @@ export default function Home() {
 												this todo, and create new one
 											</DialogDescription>
 										</DialogHeader>
-										<button
-											type="button"
-											onClick={() => {
-												deleteTodo.mutate({ todoId: todo().id });
-											}}
-											class="absolute left-3 top-3 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[expanded]:bg-accent data-[expanded]:text-muted-foreground"
-										>
-											<svg
-												fill="currentColor"
-												stroke-width="0"
-												xmlns="http://www.w3.org/2000/svg"
-												viewBox="0 0 1024 1024"
-												height="1em"
-												width="1em"
-												style="overflow: visible; color: currentcolor;"
-												class="size-6"
-											>
-												<path d="M864 256H736v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zm-200 0H360v-72h304v72z"></path>
-											</svg>
-										</button>
-										<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-12">
-											<TextField
-												value={todoText()}
-												onChange={setTodoText}
-												class="grid w-full items-center gap-1.5"
-											>
-												<div class="flex items-center justify-start gap-4">
-													<TextFieldInput
-														type="text"
-														id="editTodo"
-														placeholder="editTodo"
-													/>
-												</div>
-											</TextField>
-											<div class="grid w-full grid-cols-2">
-												<h3 class="font-semibold">Tag</h3>
-												<h3 class="font-semibold">Tag group</h3>
-												<Show when={tagsActive.data} fallback="No tags found">
-													{(tags) => (
-														<>
-															<Select
-																class="flex"
-																defaultValue={todo().tag || "none"}
-																value={selectedTag()}
-																onChange={setSelectedTag}
-																options={[
-																	"none",
-																	...massageTagsAndGroupsToArr(tags()),
-																]}
-																placeholder="Select a tag"
-																itemComponent={(props) => (
-																	<SelectItem item={props.item}>
-																		{props.item.rawValue}
-																	</SelectItem>
-																)}
+										<Show when={todo()}>
+											{(td) => (
+												<>
+													<button
+														type="button"
+														onClick={() => {
+															deleteTodo.mutate({ todoId: td().id });
+														}}
+														class="absolute left-3 top-3 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[expanded]:bg-accent data-[expanded]:text-muted-foreground"
+													>
+														<svg
+															fill="currentColor"
+															stroke-width="0"
+															xmlns="http://www.w3.org/2000/svg"
+															viewBox="0 0 1024 1024"
+															height="1em"
+															width="1em"
+															style="overflow: visible; color: currentcolor;"
+															class="size-6"
+														>
+															<path d="M864 256H736v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zm-200 0H360v-72h304v72z"></path>
+														</svg>
+													</button>
+													<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-12">
+														<TextField
+															value={todoText()}
+															onChange={setTodoText}
+															class="grid w-full items-center gap-1.5"
+														>
+															<div class="flex items-center justify-start gap-4">
+																<TextFieldInput
+																	type="text"
+																	id="editTodo"
+																	placeholder="editTodo"
+																/>
+															</div>
+														</TextField>
+														<div class="grid w-full grid-cols-2">
+															<h3 class="font-semibold">Tag</h3>
+															<h3 class="font-semibold">Tag group</h3>
+															<Show
+																when={tagsActive.data}
+																fallback="No tags found"
 															>
-																<SelectTrigger aria-label="Tag">
-																	<SelectValue<string>>
-																		{(state) => state.selectedOption()}
-																	</SelectValue>
-																</SelectTrigger>
-																<SelectContent />
-															</Select>
-														</>
-													)}
-												</Show>
-												<Show
-													when={tagGroupsActive.data}
-													fallback="No tag groups found"
-												>
-													{(tagGroups) => (
-														<>
-															<Select
-																class="flex"
-																defaultValue={todo().tagGroup}
-																value={selectedTagGroup()}
-																onChange={setSelectedTagGroup}
-																options={[
-																	...massageTagsAndGroupsToArr(tagGroups()),
-																]}
-																placeholder="Select a tag"
-																itemComponent={(props) => (
-																	<SelectItem item={props.item}>
-																		{props.item.rawValue}
-																	</SelectItem>
+																{(tags) => (
+																	<>
+																		<Select
+																			class="flex"
+																			defaultValue={td().tag || "none"}
+																			value={selectedTag()}
+																			onChange={setSelectedTag}
+																			options={[
+																				"none",
+																				...massageTagsAndGroupsToArr(tags()),
+																			]}
+																			placeholder="Select a tag"
+																			itemComponent={(props) => (
+																				<SelectItem item={props.item}>
+																					{props.item.rawValue}
+																				</SelectItem>
+																			)}
+																		>
+																			<SelectTrigger aria-label="Tag">
+																				<SelectValue<string>>
+																					{(state) => state.selectedOption()}
+																				</SelectValue>
+																			</SelectTrigger>
+																			<SelectContent />
+																		</Select>
+																	</>
 																)}
+															</Show>
+															<Show
+																when={tagGroupsActive.data}
+																fallback="No tag groups found"
 															>
-																<SelectTrigger aria-label="Tag">
-																	<SelectValue<string>>
-																		{(state) => state.selectedOption()}
-																	</SelectValue>
-																</SelectTrigger>
-																<SelectContent />
-															</Select>
-														</>
-													)}
-												</Show>
-											</div>
-										</div>
-										<DialogFooter>
-											{console.log(todoText())}
-											<Button
-												onClick={() => {
-													editTodo.mutate({
-														dateCompleted: todo().dateCompleted,
-														hoursWorked: todo().hoursWorked,
-														todoId: todo().id,
-														completed: todo().completed,
-														tagId:
-															selectedTag() === "none"
-																? null
-																: tagsActive.data.find(
-																		(e) => e.tag === selectedTag(),
-																	)?.id,
-														todo: todoText(),
-														tagGroupId: tagGroupsActive.data.find(
-															(e) => e.tagGroup === selectedTagGroup(),
-														)?.id as number,
-													});
-												}}
-												class="w-full"
-												variant={"secondary"}
-											>
-												Edit
-											</Button>
-										</DialogFooter>
+																{(tagGroups) => (
+																	<>
+																		<Select
+																			class="flex"
+																			defaultValue={td().tagGroup}
+																			value={selectedTagGroup()}
+																			onChange={setSelectedTagGroup}
+																			options={[
+																				...massageTagsAndGroupsToArr(
+																					tagGroups(),
+																				),
+																			]}
+																			placeholder="Select a tag"
+																			itemComponent={(props) => (
+																				<SelectItem item={props.item}>
+																					{props.item.rawValue}
+																				</SelectItem>
+																			)}
+																		>
+																			<SelectTrigger aria-label="Tag">
+																				<SelectValue<string>>
+																					{(state) => state.selectedOption()}
+																				</SelectValue>
+																			</SelectTrigger>
+																			<SelectContent />
+																		</Select>
+																	</>
+																)}
+															</Show>
+														</div>
+													</div>
+													<DialogFooter>
+														<Button
+															onClick={() => {
+																editTodo.mutate({
+																	dateCompleted: td().dateCompleted,
+																	hoursWorked: td().hoursWorked,
+																	todoId: td().id,
+																	completed: true,
+																	tagId:
+																		selectedTag() === "none"
+																			? null
+																			: tagsActive.data.find(
+																					(e) => e.tag === selectedTag(),
+																				)?.id,
+																	todo: todoText(),
+																	tagGroupId: tagGroupsActive.data.find(
+																		(e) => e.tagGroup === selectedTagGroup(),
+																	)?.id as number,
+																});
+																console.log(todoText(), todo());
+															}}
+															class="w-full"
+															variant={"secondary"}
+														>
+															Edit
+														</Button>
+													</DialogFooter>
+												</>
+											)}
+										</Show>
 									</DialogContent>
 								</Dialog>
 							</>
