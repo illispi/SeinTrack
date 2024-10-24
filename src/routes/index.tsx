@@ -194,11 +194,11 @@ export default function Home() {
 
 															<A
 																href="/TODO"
-																class="text-sm italic"
+																class="mt-2 text-sm italic"
 															>{`tag: ${todoDone.tag ? todoDone.tag : "none"}`}</A>
 															<A
 																href="/TODO"
-																class="text-sm italic"
+																class="mt-2 text-sm italic"
 															>{`group: ${todoDone.tagGroup}`}</A>
 														</div>
 													</div>
