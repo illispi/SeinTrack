@@ -64,6 +64,7 @@ export default function Home() {
 	}));
 
 	const [todoEditOpen, setTodoEditOpen] = createSignal(false);
+	const [menuOpen, setMenuOpen] = createSignal(false);
 
 	const [selectedTag, setSelectedTag] = createSignal("none");
 	const [selectedTagGroup, setSelectedTagGroup] = createSignal("bug fix");
@@ -142,7 +143,12 @@ export default function Home() {
 			<div class="sticky top-0 mx-auto flex h-12 w-full items-center justify-between bg-gradient-to-t from-green-500 to-green-400 shadow-md">
 				<div class="flex-1"></div>
 				<div class="flex h-12 items-center justify-center gap-6 rounded-s-full bg-white px-6 lg:hidden">
-					<Button class="size-10 rounded-full bg-green-400 shadow-lg hover:bg-green-500 active:bg-green-500">
+					<Button
+						onClick={() => {
+							setMenuOpen(!menuOpen());
+						}}
+						class="size-10 rounded-full bg-green-400 shadow-lg hover:bg-green-500 active:bg-green-500"
+					>
 						<svg
 							fill="none"
 							stroke-width="2"
@@ -189,7 +195,7 @@ export default function Home() {
 					<Show when={projects.data} fallback={<NewProject />}>
 						{(data) => (
 							<>
-								<MenuPanel />
+								<MenuPanel menuOpen={menuOpen()} setMenuOpen={setMenuOpen} />
 								<div
 									class="m-8 mx-auto flex w-full flex-col items-center justify-start 
 										   gap-6 text-center text-gray-700"
