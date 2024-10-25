@@ -62,15 +62,31 @@ export const allProjects = publicProcedure.query(async ({ ctx }) => {
 	return projects;
 });
 
-export const editActiveDays = publicProcedure.input(
-	v.parser(
-		v.object({
-			projectId: v.number(),
-			activeDays: v.pipe(
-				v.array(v.pipe(v.number(), v.minValue(0), v.maxValue(6))),
-				v.minLength(1),
-				v.maxLength(7),
-			),
-		}),
-	),
-);
+export const editActiveDays = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				projectId: v.number(),
+				activeDays: v.pipe(
+					v.array(v.pipe(v.number(), v.minValue(0), v.maxValue(6))),
+					v.minLength(1),
+					v.maxLength(7),
+				),
+			}),
+		),
+	)
+	.mutation(async ({ ctx, input }) => {
+		//NOTE does this delete all of them at once
+		await ctx.db
+			.deleteFrom("countedDays")
+			.where("projectId", "=", input.projectId)
+			.executeTakeFirstOrThrow();
+
+		for (const day of input.activeDays) {
+			await ctx.db
+				.insertInto("countedDays")
+				.values({ day: day, projectId: input.projectId })
+				.executeTakeFirstOrThrow();
+		}
+		return;
+	});
