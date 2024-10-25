@@ -50,7 +50,7 @@ export default function Home() {
 		tagGroupId: number;
 	} | null>(null);
 	const [dayEditorOpen, setDayEditorOpen] = createSignal(false);
-	//TODO remove hard coding project id
+	//TODO remove hard coding project id, maybe new table with default id
 	const [curProjectId, setProjectId] = createSignal(1);
 	const completedTodos = trpc.getDoneTodosByMonth.createQuery(() => ({
 		month: curMonth(),
@@ -68,6 +68,8 @@ export default function Home() {
 
 	const [selectedTag, setSelectedTag] = createSignal("none");
 	const [selectedTagGroup, setSelectedTagGroup] = createSignal("bug fix");
+
+	//TODO test that removing below error works
 
 	const [searchParams, setSearchParams] = useSearchParams();
 
@@ -195,7 +197,12 @@ export default function Home() {
 					<Show when={projects.data} fallback={<NewProject />}>
 						{(data) => (
 							<>
-								<MenuPanel menuOpen={menuOpen()} setMenuOpen={setMenuOpen} />
+								<MenuPanel
+									menuOpen={menuOpen()}
+									setMenuOpen={setMenuOpen}
+									selectedProjectId={curProjectId()}
+									setSelectedProjectId={setProjectId}
+								/>
 								<div
 									class="m-8 mx-auto flex w-full max-w-5xl flex-col items-center 
 										   justify-start gap-6 text-center text-gray-700"
