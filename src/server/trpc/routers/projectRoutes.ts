@@ -80,7 +80,7 @@ export const editActiveDays = publicProcedure
 		await ctx.db
 			.deleteFrom("countedDays")
 			.where("projectId", "=", input.projectId)
-			.executeTakeFirstOrThrow();
+			.execute();
 
 		for (const day of input.activeDays) {
 			await ctx.db

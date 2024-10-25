@@ -13,10 +13,7 @@ import {
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
 
 const NewProject: Component = (props) => {
-	const utils = trpc.useContext();
-	const projectsMut = trpc.createProject.createMutation(() => ({
-		onSuccess: () => utils.invalidate(),
-	}));
+	const projectsMut = trpc.newProject.createMutation(() => ({}));
 
 	const [hours, setHours] = createSignal(3);
 	const [name, setName] = createSignal("");

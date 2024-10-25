@@ -6,7 +6,7 @@ import {
 	getHoursOfDay,
 	zeroTimer,
 } from "./datesRoutes";
-import { allProjects, editProject } from "./projectRoutes";
+import { allProjects, editProject, newProject } from "./projectRoutes";
 import {
 	AddTodo,
 	EditTagOrGroupName,
@@ -23,7 +23,7 @@ import {
 export const appRouter = router({
 	getHoursOfDay: getHoursOfDay,
 	changeDayHours: changeDayHours,
-	createProject: editProject,
+	editProject: editProject,
 	allProjects: allProjects,
 	getFirstAndLastDate: getFirstAndLastDate,
 	AddTodo: AddTodo,
@@ -37,7 +37,8 @@ export const appRouter = router({
 	getHoursForDate: getHoursForDate,
 	EditTagOrGroupName: EditTagOrGroupName,
 	deleteTodo: deleteTodo,
-	zeroTimer: zeroTimer
+	zeroTimer: zeroTimer,
+	newProject: newProject,
 });
 
 export type IAppRouter = typeof appRouter;
