@@ -1,26 +1,53 @@
 import * as v from "valibot";
 import { publicProcedure } from "../initTrpc";
 
-export const editProject = publicProcedure
-	.input(v.parser(v.object({ name: v.string(), hoursTarget: v.number() })))
-	.mutation(async ({ input, ctx }) => {
-		const existsId = await ctx.db
+export const newProject = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				name: v.string(),
+				hoursTarget: v.number(),
+			}),
+		),
+	)
+	.mutation(async ({ ctx, input }) => {
+		await ctx.db
+			.insertInto("projects")
+			.values({ name: input.name, targetHours: input.hoursTarget })
+			.executeTakeFirstOrThrow();
+
+		const project = await ctx.db
 			.selectFrom("projects")
-			.select(["id"])
+			.select("id")
 			.where("projects.name", "=", input.name)
-			.executeTakeFirst();
-		if (!existsId) {
+			.executeTakeFirstOrThrow();
+
+		for (let index = 0; index < 5; index++) {
 			await ctx.db
-				.insertInto("projects")
-				.values({ name: input.name, targetHours: input.hoursTarget })
-				.execute();
-		} else {
-			await ctx.db
-				.updateTable("projects")
-				.where("id", "=", existsId.id)
-				.set({ name: input.name, targetHours: input.hoursTarget })
-				.execute();
+				.insertInto("countedDays")
+				.values({ day: index, projectId: project.id })
+				.executeTakeFirstOrThrow();
 		}
+
+		return;
+	});
+
+export const editProject = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				projectId: v.number(),
+				name: v.string(),
+				hoursTarget: v.number(),
+			}),
+		),
+	)
+	.mutation(async ({ input, ctx }) => {
+		await ctx.db
+			.updateTable("projects")
+			.where("id", "=", input.projectId)
+			.set({ name: input.name, targetHours: input.hoursTarget })
+			.executeTakeFirstOrThrow();
 		return;
 	});
 
@@ -34,3 +61,16 @@ export const allProjects = publicProcedure.query(async ({ ctx }) => {
 	}
 	return projects;
 });
+
+export const editActiveDays = publicProcedure.input(
+	v.parser(
+		v.object({
+			projectId: v.number(),
+			activeDays: v.pipe(
+				v.array(v.pipe(v.number(), v.minValue(0), v.maxValue(6))),
+				v.minLength(1),
+				v.maxLength(7),
+			),
+		}),
+	),
+);
