@@ -20,6 +20,7 @@ import { trpc } from "~/utils/trpc";
 import "../test.css";
 import AddTime from "./AddTime";
 import { Button } from "./ui/button";
+import { Link } from "@solidjs/meta";
 import {
 	Dialog,
 	DialogContent,
@@ -185,6 +186,7 @@ const UnDoneTodos: Component<{
 
 	return (
 		<>
+			<Link rel="icon" href="../test.css" />
 			<h2 class="m-8 text-4xl font-light">Todos</h2>
 			<div class="mb-4 flex w-11/12 items-center justify-between gap-12 bg-white">
 				<Dialog
