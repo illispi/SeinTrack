@@ -2,6 +2,7 @@
 import {
 	keepPreviousData,
 	MutationCache,
+	QueryCache,
 	QueryClient,
 } from "@tanstack/solid-query";
 
@@ -10,6 +11,7 @@ import { httpBatchLink } from "@trpc/client";
 import { getRequestEvent, isServer } from "solid-js/web";
 import superjson from "superjson";
 import type { IAppRouter } from "~/server/trpc/routers/mainRouter";
+import { showToast } from "~/components/ui/toast";
 
 const getBaseUrl = () => {
 	if (typeof window !== "undefined") return "";
@@ -55,4 +57,13 @@ export const queryClient = new QueryClient({
 			queryClient.invalidateQueries();
 		},
 	}),
+	queryCache: new QueryCache({
+		onError: (error) =>
+			showToast({
+				title: "Error!",
+				description: error.message,
+				variant: "error",
+			}),
+	}),
 });
+//NOTE test this query cache
