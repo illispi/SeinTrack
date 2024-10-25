@@ -90,3 +90,17 @@ export const editActiveDays = publicProcedure
 		}
 		return;
 	});
+
+export const getActiveDays = publicProcedure
+	.input(v.parser(v.number()))
+	.query(async ({ ctx, input }) => {
+		const activeDays = await ctx.db
+			.selectFrom("countedDays")
+			.select("countedDays.day")
+			.where("projectId", "=", input)
+			.execute();
+
+		//NOTE It cant be empty array so no check
+
+		return activeDays;
+	});
