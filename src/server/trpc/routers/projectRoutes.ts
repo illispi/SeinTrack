@@ -25,7 +25,7 @@ export const newProject = publicProcedure
 		for (let index = 0; index < 5; index++) {
 			await ctx.db
 				.insertInto("countedDays")
-				.values({ day: index, projectId: project.id })
+				.values({ day: index + 1, projectId: project.id })
 				.executeTakeFirstOrThrow();
 		}
 
