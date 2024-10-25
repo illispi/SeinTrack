@@ -1,11 +1,23 @@
-import { createSignal, For, Suspense, type Component } from "solid-js";
+import {
+	createSignal,
+	For,
+	type Setter,
+	Suspense,
+	type Component,
+} from "solid-js";
 import { Button } from "./ui/button";
 import { A } from "@solidjs/router";
 import { trpc } from "~/utils/trpc";
 
-const Menu: Component = (props) => {
+const Menu: Component<{
+	selectedProjectId: number;
+	setSelectedProjectId: Setter<number>;
+}> = (props) => {
 	const [projectTarget, setProjectTarget] = createSignal(0);
 	const projects = trpc.allProjects.createQuery();
+	const activeDays = trpc.getActiveDays.createQuery(
+		() => props.selectedProjectId,
+	);
 	return (
 		<>
 			<h2 class="m-8 text-4xl font-light">Menu</h2>
