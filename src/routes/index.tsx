@@ -190,15 +190,15 @@ export default function Home() {
 					</Button>
 				</div>
 			</div>
-			<main class="mx-auto flex w-full items-start justify-center lg:grid lg:grid-cols-[3fr_5fr_3fr]">
+			<main class="mx-auto w-full items-start justify-center lg:flex ">
 				<Suspense>
 					<Show when={projects.data} fallback={<NewProject />}>
 						{(data) => (
 							<>
 								<MenuPanel menuOpen={menuOpen()} setMenuOpen={setMenuOpen} />
 								<div
-									class="m-8 mx-auto flex w-full flex-col items-center justify-start 
-										   gap-6 text-center text-gray-700"
+									class="m-8 mx-auto flex w-full max-w-5xl flex-col items-center 
+										   justify-start gap-6 text-center text-gray-700"
 								>
 									<h2 class="text-lg font-semibold">{`${monthsArr[curMonth()]} ${curYear()}`}</h2>
 									<Suspense>

@@ -8,8 +8,10 @@ const MenuPanel: Component<{
 }> = (props) => {
 	return (
 		<>
-			<div class="hidden size-full min-h-screen min-w-72 grow items-start justify-end border-black lg:flex">
-				<Menu />
+			<div class="flex w-full justify-end">
+				<div class="my-8 hidden min-h-screen w-11/12 max-w-lg grow flex-col items-center rounded-xl border border-t-4 border-gray-200 border-t-green-500 bg-white shadow-md lg:flex">
+					<Menu />
+				</div>
 			</div>
 			<div class="flex lg:hidden">
 				<Sheet onOpenChange={props.setMenuOpen} open={props.menuOpen}>
