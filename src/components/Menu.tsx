@@ -101,13 +101,13 @@ const Menu: Component<{
 				</div>
 				<h3 class="text-xl">Toggle active days</h3>
 				<div class="flex flex-col gap-4">
-					<For each={projects.data}>
-						{(project) => (
+					<For each={activeDays.data}>
+						{(day) => (
 							<button
 								type="button"
 								class="ml-8 w-fit text-left hover:scale-105"
 							>
-								{project.name}
+								{day.day}
 							</button>
 						)}
 					</For>
