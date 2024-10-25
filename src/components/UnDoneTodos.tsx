@@ -398,7 +398,7 @@ const UnDoneTodos: Component<{
 					</DialogHeader>
 					<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-6">
 						<p class="mt-4 w-full  ">{curUndoneTodo().todo}</p>
-						<div class="w-full text-lg font-semibold">Hours spent:</div>
+						<div class="mx-auto text-lg font-semibold">Hours spent:</div>
 						<div>
 							<AddTime
 								hours={props.addHours}
@@ -407,7 +407,7 @@ const UnDoneTodos: Component<{
 								setMinutes={props.setAddMinutes}
 							/>
 						</div>
-						<div class=" w-full text-lg font-semibold">Date completed:</div>
+						<div class=" mx-auto text-lg font-semibold">Date completed:</div>
 						<div class="flex h-80 w-full items-center justify-center">
 							<input class="w-full" type="text" ref={setDatePickerRef}></input>
 						</div>
