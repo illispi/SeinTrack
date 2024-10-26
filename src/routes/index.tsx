@@ -1,10 +1,7 @@
 import {
-	A,
-	type BeforeLeaveEventArgs,
-	useBeforeLeave,
-	useSearchParams,
+	A
 } from "@solidjs/router";
-import { For, Show, Suspense, createEffect, createSignal } from "solid-js";
+import { For, Show, Suspense, createSignal } from "solid-js";
 import BackNav from "~/components/BackNav";
 import DayEditor from "~/components/DayEditor";
 import ListMonth from "~/components/ListMonth";

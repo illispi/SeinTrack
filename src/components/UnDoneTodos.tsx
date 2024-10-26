@@ -1,7 +1,6 @@
+import { Link } from "@solidjs/meta";
 import {
-	type BeforeLeaveEventArgs,
-	useBeforeLeave,
-	useSearchParams,
+	useSearchParams
 } from "@solidjs/router";
 import type { inferRouterOutputs } from "@trpc/server";
 import flatpickr from "flatpickr";
@@ -19,8 +18,8 @@ import type { IAppRouter } from "~/server/trpc/routers/mainRouter";
 import { trpc } from "~/utils/trpc";
 import "../test.css";
 import AddTime from "./AddTime";
+import BackNav from "./BackNav";
 import { Button } from "./ui/button";
-import { Link } from "@solidjs/meta";
 import {
 	Dialog,
 	DialogContent,
@@ -37,7 +36,7 @@ import {
 	SelectValue,
 } from "./ui/select";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
-import { showToast, Toast, Toaster } from "./ui/toast";
+import { Toaster, showToast } from "./ui/toast";
 
 type RouterOutput = inferRouterOutputs<IAppRouter>;
 
@@ -117,29 +116,6 @@ const UnDoneTodos: Component<{
 		tag: string | null;
 	} | null>(null);
 
-	useBeforeLeave((event: BeforeLeaveEventArgs) => {
-		//BUG on brave, try prevent default and event.retry at start and end of function
-		//TODO test this more on mobile as well
-		if (
-			(editOpen() || doneOpen()) &&
-			Number.isInteger(event.to) &&
-			(event.to as number) < 0
-		) {
-			setEditOpen(false);
-			setDoneOpen(false);
-		}
-	});
-
-	createEffect(() => {
-		if (editOpen() || doneOpen()) {
-			setSearchParams({ editOrDoneOpen: true });
-		} else {
-			setSearchParams({ editOrDoneOpen: null });
-			//NOTE is this necessary anymore
-			document.body.removeAttribute("style");
-		}
-	});
-
 	const completeTodo = trpc.completeTodo.createMutation(() => ({
 		onSuccess: () => {
 			setDoneOpen(false);
@@ -189,169 +165,178 @@ const UnDoneTodos: Component<{
 			<Link rel="icon" href="../test.css" />
 			<h2 class="m-8 text-4xl font-light">Todos</h2>
 			<div class="mb-4 flex w-11/12 items-center justify-between gap-12 bg-white">
-				<Dialog
-					open={props.openSecond && props.todoOrTag === "todo"}
-					onOpenChange={() => {
-						props.setTodoOrTag("todo");
-						props.setOpenSecond(!props.openSecond);
-					}}
-				>
-					<DialogTrigger class="flex-1 p-0" as={Button<"button">}>
-						<Button class="w-full" variant={"secondary"}>
-							Add Todo
-						</Button>
-					</DialogTrigger>
-					<DialogContent
-						onOpenAutoFocus={(e) => e.preventDefault()}
-						class="  sm:max-w-[425px]"
+				<BackNav setOpen={props.setOpenSecond} open={props.openSecond}>
+					<Dialog
+						open={props.openSecond && props.todoOrTag === "todo"}
+						onOpenChange={() => {
+							props.setTodoOrTag("todo");
+							props.setOpenSecond(!props.openSecond);
+						}}
 					>
-						<DialogHeader>
-							<DialogTitle>Add todo</DialogTitle>
-						</DialogHeader>
-						<div class="flex items-center justify-start gap-4">
-							<TextField
-								value={props.newTodo}
-								onChange={props.setNewTodo}
-								class="grid w-full items-center gap-1.5"
-							>
-								<div class="flex items-center justify-start gap-4">
-									<TextFieldInput
-										type="text"
-										id="newTodo"
-										placeholder="New todo"
-									/>
-								</div>
-							</TextField>
-						</div>
-						<div class="grid grid-cols-2">
-							<h3 class="font-semibold">Tag:</h3>
-							<h3 class="font-semibold">Tag group:</h3>
-							<Show when={props.tagsActive} fallback="No tags found">
-								{(tags) => (
-									<>
-										<Select
-											class="flex"
-											defaultValue={"none"}
-											value={props.selectedTag}
-											onChange={props.setSelectedTag}
-											options={["none", ...massageTagsAndGroupsToArr(tags())]}
-											placeholder="Select a tag"
-											itemComponent={(props) => (
-												<SelectItem item={props.item}>
-													{props.item.rawValue}
-												</SelectItem>
-											)}
-										>
-											<SelectTrigger aria-label="Tag">
-												<SelectValue<string>>
-													{(state) => state.selectedOption()}
-												</SelectValue>
-											</SelectTrigger>
-											<SelectContent />
-										</Select>
-									</>
-								)}
-							</Show>
-							<Show when={props.tagGroupsActive} fallback="No tag groups found">
-								{(tagGroups) => (
-									<>
-										<Select
-											class="flex"
-											value={props.selectedTagGroup}
-											onChange={props.setSelectedTagGroup}
-											options={[...massageTagsAndGroupsToArr(tagGroups())]}
-											placeholder="Select a tag group"
-											itemComponent={(props) => (
-												<SelectItem item={props.item}>
-													{props.item.rawValue}
-												</SelectItem>
-											)}
-										>
-											<SelectTrigger aria-label="TagGroup">
-												<SelectValue<string>>
-													{(state) => state.selectedOption()}
-												</SelectValue>
-											</SelectTrigger>
-											<SelectContent />
-										</Select>
-									</>
-								)}
-							</Show>
-						</div>
-
-						<DialogFooter>
-							<Button
-								onClick={props.addTodoOnClick}
-								class="w-full p-0"
-								variant={"secondary"}
-								type="submit"
-							>
+						<DialogTrigger class="flex-1 p-0" as={Button<"button">}>
+							<Button class="w-full" variant={"secondary"}>
 								Add Todo
 							</Button>
-						</DialogFooter>
-					</DialogContent>
-				</Dialog>
+						</DialogTrigger>
+						<DialogContent
+							onOpenAutoFocus={(e) => e.preventDefault()}
+							class="  sm:max-w-[425px]"
+						>
+							<DialogHeader>
+								<DialogTitle>Add todo</DialogTitle>
+							</DialogHeader>
+							<div class="flex items-center justify-start gap-4">
+								<TextField
+									value={props.newTodo}
+									onChange={props.setNewTodo}
+									class="grid w-full items-center gap-1.5"
+								>
+									<div class="flex items-center justify-start gap-4">
+										<TextFieldInput
+											type="text"
+											id="newTodo"
+											placeholder="New todo"
+										/>
+									</div>
+								</TextField>
+							</div>
+							<div class="grid grid-cols-2">
+								<h3 class="font-semibold">Tag:</h3>
+								<h3 class="font-semibold">Tag group:</h3>
+								<Show when={props.tagsActive} fallback="No tags found">
+									{(tags) => (
+										<>
+											<Select
+												class="flex"
+												defaultValue={"none"}
+												value={props.selectedTag}
+												onChange={props.setSelectedTag}
+												options={["none", ...massageTagsAndGroupsToArr(tags())]}
+												placeholder="Select a tag"
+												itemComponent={(props) => (
+													<SelectItem item={props.item}>
+														{props.item.rawValue}
+													</SelectItem>
+												)}
+											>
+												<SelectTrigger aria-label="Tag">
+													<SelectValue<string>>
+														{(state) => state.selectedOption()}
+													</SelectValue>
+												</SelectTrigger>
+												<SelectContent />
+											</Select>
+										</>
+									)}
+								</Show>
+								<Show
+									when={props.tagGroupsActive}
+									fallback="No tag groups found"
+								>
+									{(tagGroups) => (
+										<>
+											<Select
+												class="flex"
+												value={props.selectedTagGroup}
+												onChange={props.setSelectedTagGroup}
+												options={[...massageTagsAndGroupsToArr(tagGroups())]}
+												placeholder="Select a tag group"
+												itemComponent={(props) => (
+													<SelectItem item={props.item}>
+														{props.item.rawValue}
+													</SelectItem>
+												)}
+											>
+												<SelectTrigger aria-label="TagGroup">
+													<SelectValue<string>>
+														{(state) => state.selectedOption()}
+													</SelectValue>
+												</SelectTrigger>
+												<SelectContent />
+											</Select>
+										</>
+									)}
+								</Show>
+							</div>
 
-				<Dialog
-					open={props.openSecond && props.todoOrTag === "tag"}
-					onOpenChange={() => {
-						props.setTodoOrTag("tag");
-						props.setOpenSecond(!props.openSecond);
-					}}
-				>
-					<DialogTrigger class="flex-1 p-0" as={Button<"button">}>
-						<Button class="w-full" variant={"secondary"}>
-							Add Tag
-						</Button>
-					</DialogTrigger>
-					<DialogContent onOpenAutoFocus={(e) => e.preventDefault()} class=" ">
-						<DialogHeader>
-							<DialogTitle>Add Tag/Group</DialogTitle>
-						</DialogHeader>
-						<div class="flex items-center justify-start gap-4">
-							<TextField
-								value={props.newTag}
-								onChange={props.setNewTag}
-								class="grid w-full items-center gap-1.5"
-							>
-								<TextFieldLabel for="tag">New Tag</TextFieldLabel>
-								<div class="flex items-center justify-start gap-4">
-									<TextFieldInput type="text" id="tag" placeholder="Tag" />
-									<Button
-										onClick={props.addTagOnClick}
-										class="flex-1"
-										variant={"secondary"}
-									>
-										Add
-									</Button>
-								</div>
-							</TextField>
-						</div>
-						<div class="flex items-center justify-start gap-4">
-							<TextField
-								value={props.newTagGroup}
-								onChange={props.setNewTagGroup}
-								class="grid w-full items-center gap-1.5"
-							>
-								<TextFieldLabel for="tag">New Tag Group</TextFieldLabel>
-								<div class="flex items-center justify-start gap-4">
-									<TextFieldInput
-										type="text"
-										id="tagGroup"
-										placeholder="Tag Group"
-									/>
-									<Button
-										onClick={props.addTagGroupOnClick}
-										class="flex-1"
-										variant={"secondary"}
-									>
-										Add
-									</Button>
-								</div>
-							</TextField>
-						</div>
-					</DialogContent>
-				</Dialog>
+							<DialogFooter>
+								<Button
+									onClick={props.addTodoOnClick}
+									class="w-full p-0"
+									variant={"secondary"}
+									type="submit"
+								>
+									Add Todo
+								</Button>
+							</DialogFooter>
+						</DialogContent>
+					</Dialog>
+				</BackNav>
+				<BackNav setOpen={props.setOpenSecond} open={props.openSecond}>
+					<Dialog
+						open={props.openSecond && props.todoOrTag === "tag"}
+						onOpenChange={() => {
+							props.setTodoOrTag("tag");
+							props.setOpenSecond(!props.openSecond);
+						}}
+					>
+						<DialogTrigger class="flex-1 p-0" as={Button<"button">}>
+							<Button class="w-full" variant={"secondary"}>
+								Add Tag
+							</Button>
+						</DialogTrigger>
+						<DialogContent
+							onOpenAutoFocus={(e) => e.preventDefault()}
+							class=" "
+						>
+							<DialogHeader>
+								<DialogTitle>Add Tag/Group</DialogTitle>
+							</DialogHeader>
+							<div class="flex items-center justify-start gap-4">
+								<TextField
+									value={props.newTag}
+									onChange={props.setNewTag}
+									class="grid w-full items-center gap-1.5"
+								>
+									<TextFieldLabel for="tag">New Tag</TextFieldLabel>
+									<div class="flex items-center justify-start gap-4">
+										<TextFieldInput type="text" id="tag" placeholder="Tag" />
+										<Button
+											onClick={props.addTagOnClick}
+											class="flex-1"
+											variant={"secondary"}
+										>
+											Add
+										</Button>
+									</div>
+								</TextField>
+							</div>
+							<div class="flex items-center justify-start gap-4">
+								<TextField
+									value={props.newTagGroup}
+									onChange={props.setNewTagGroup}
+									class="grid w-full items-center gap-1.5"
+								>
+									<TextFieldLabel for="tag">New Tag Group</TextFieldLabel>
+									<div class="flex items-center justify-start gap-4">
+										<TextFieldInput
+											type="text"
+											id="tagGroup"
+											placeholder="Tag Group"
+										/>
+										<Button
+											onClick={props.addTagGroupOnClick}
+											class="flex-1"
+											variant={"secondary"}
+										>
+											Add
+										</Button>
+									</div>
+								</TextField>
+							</div>
+						</DialogContent>
+					</Dialog>
+				</BackNav>
 				<Toaster />
 			</div>
 
@@ -392,168 +377,179 @@ const UnDoneTodos: Component<{
 					</div>
 				)}
 			</For>
-			<Dialog open={doneOpen()} onOpenChange={setDoneOpen}>
-				<DialogTrigger></DialogTrigger>
-				<DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
-					<DialogHeader>
-						<DialogTitle class="text-center">Complete Todo</DialogTitle>
-					</DialogHeader>
-					<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-6">
-						<p class="mt-4 w-full  ">{curUndoneTodo().todo}</p>
-						<div class="mx-auto text-lg font-semibold">Hours spent:</div>
-						<div>
-							<AddTime
-								hours={props.addHours}
-								minutes={props.addMinutes}
-								setHours={props.setAddHours}
-								setMinutes={props.setAddMinutes}
-							/>
-						</div>
-						<div class=" mx-auto text-lg font-semibold">Date completed:</div>
-						<div class="flex h-80 w-full items-center justify-center">
-							<input class="w-full" type="text" ref={setDatePickerRef}></input>
-						</div>
-						<Button
-							onClick={() =>
-								completeTodo.mutate({
-									date: datePickerInstance.selectedDates[0],
-									hoursWorked: Number(
-										Number(props.addHours + props.addMinutes / 60).toFixed(2),
-									),
-									todoId: curUndoneTodo().id,
-								})
-							}
-							class="w-full"
-							variant={"secondary"}
-						>
-							Complete
-						</Button>
-					</div>
-				</DialogContent>
-			</Dialog>
-			<Dialog open={editOpen()} onOpenChange={setEditOpen}>
-				<DialogTrigger></DialogTrigger>
-				<DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
-					<DialogHeader>
-						<DialogTitle class="text-center">Edit Todo</DialogTitle>
-					</DialogHeader>
-					<button
-						type="button"
-						onClick={() => {
-							deleteTodo.mutate({ todoId: curUndoneTodo()?.id });
-						}}
-						class="absolute left-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[expanded]:bg-accent data-[expanded]:text-muted-foreground"
-					>
-						<svg
-							fill="currentColor"
-							stroke-width="0"
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 1024 1024"
-							height="1em"
-							width="1em"
-							style="overflow: visible; color: currentcolor;"
-							class="size-6"
-						>
-							<path d="M864 256H736v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zm-200 0H360v-72h304v72z"></path>
-						</svg>
-					</button>
-					<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-12">
-						<TextField
-							value={editTodoText()}
-							onChange={setEditTodoText}
-							class="grid w-full items-center gap-1.5"
-						>
-							<div class="flex items-center justify-start gap-4">
-								<TextFieldInput
-									type="text"
-									id="editTodo"
-									placeholder="editTodo"
+			<BackNav open={doneOpen()} setOpen={setDoneOpen}>
+				<Dialog open={doneOpen()} onOpenChange={setDoneOpen}>
+					<DialogTrigger></DialogTrigger>
+					<DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+						<DialogHeader>
+							<DialogTitle class="text-center">Complete Todo</DialogTitle>
+						</DialogHeader>
+						<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-6">
+							<p class="mt-4 w-full  ">{curUndoneTodo().todo}</p>
+							<div class="mx-auto text-lg font-semibold">Hours spent:</div>
+							<div>
+								<AddTime
+									hours={props.addHours}
+									minutes={props.addMinutes}
+									setHours={props.setAddHours}
+									setMinutes={props.setAddMinutes}
 								/>
 							</div>
-						</TextField>
-						<div class="grid w-full grid-cols-2">
-							<h3 class="font-semibold">Tag</h3>
-							<h3 class="font-semibold">Tag group</h3>
-							<Show when={props.tagsActive} fallback="No tags found">
-								{(tags) => (
-									<>
-										<Select
-											class="flex"
-											defaultValue={curUndoneTodo().tag || "none"}
-											value={props.selectedTag}
-											onChange={props.setSelectedTag}
-											options={["none", ...massageTagsAndGroupsToArr(tags())]}
-											placeholder="Select a tag"
-											itemComponent={(props) => (
-												<SelectItem item={props.item}>
-													{props.item.rawValue}
-												</SelectItem>
-											)}
-										>
-											<SelectTrigger aria-label="Tag">
-												<SelectValue<string>>
-													{(state) => state.selectedOption()}
-												</SelectValue>
-											</SelectTrigger>
-											<SelectContent />
-										</Select>
-									</>
-								)}
-							</Show>
-							<Show when={props.tagGroupsActive} fallback="No tag groups found">
-								{(tagGroups) => (
-									<>
-										<Select
-											class="flex"
-											defaultValue={curUndoneTodo().tagGroup}
-											value={props.selectedTagGroup}
-											onChange={props.setSelectedTagGroup}
-											options={[...massageTagsAndGroupsToArr(tagGroups())]}
-											placeholder="Select a tag"
-											itemComponent={(props) => (
-												<SelectItem item={props.item}>
-													{props.item.rawValue}
-												</SelectItem>
-											)}
-										>
-											<SelectTrigger aria-label="Tag">
-												<SelectValue<string>>
-													{(state) => state.selectedOption()}
-												</SelectValue>
-											</SelectTrigger>
-											<SelectContent />
-										</Select>
-									</>
-								)}
-							</Show>
+							<div class=" mx-auto text-lg font-semibold">Date completed:</div>
+							<div class="flex h-80 w-full items-center justify-center">
+								<input
+									class="w-full"
+									type="text"
+									ref={setDatePickerRef}
+								></input>
+							</div>
+							<Button
+								onClick={() =>
+									completeTodo.mutate({
+										date: datePickerInstance.selectedDates[0],
+										hoursWorked: Number(
+											Number(props.addHours + props.addMinutes / 60).toFixed(2),
+										),
+										todoId: curUndoneTodo().id,
+									})
+								}
+								class="w-full"
+								variant={"secondary"}
+							>
+								Complete
+							</Button>
 						</div>
-						<Button
-							onClick={() =>
-								editTodo.mutate({
-									dateCompleted: null,
-									hoursWorked: null,
-									todoId: curUndoneTodo().id,
-									completed: false,
-									tagId:
-										props.selectedTag === "none"
-											? null
-											: props.tagsActive.find(
-													(e) => e.tag === props.selectedTag,
-												)?.id,
-									todo: editTodoText(),
-									tagGroupId: props.tagGroupsActive.find(
-										(e) => e.tagGroup === props.selectedTagGroup,
-									)?.id as number,
-								})
-							}
-							class="w-full"
-							variant={"secondary"}
+					</DialogContent>
+				</Dialog>
+			</BackNav>
+			<BackNav open={editOpen()} setOpen={setEditOpen}>
+				<Dialog open={editOpen()} onOpenChange={setEditOpen}>
+					<DialogTrigger></DialogTrigger>
+					<DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+						<DialogHeader>
+							<DialogTitle class="text-center">Edit Todo</DialogTitle>
+						</DialogHeader>
+						<button
+							type="button"
+							onClick={() => {
+								deleteTodo.mutate({ todoId: curUndoneTodo()?.id });
+							}}
+							class="absolute left-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[expanded]:bg-accent data-[expanded]:text-muted-foreground"
 						>
-							Edit
-						</Button>
-					</div>
-				</DialogContent>
-			</Dialog>
+							<svg
+								fill="currentColor"
+								stroke-width="0"
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 1024 1024"
+								height="1em"
+								width="1em"
+								style="overflow: visible; color: currentcolor;"
+								class="size-6"
+							>
+								<path d="M864 256H736v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zm-200 0H360v-72h304v72z"></path>
+							</svg>
+						</button>
+						<div class="mx-auto flex w-full max-w-[310px] flex-col items-center justify-between gap-12">
+							<TextField
+								value={editTodoText()}
+								onChange={setEditTodoText}
+								class="grid w-full items-center gap-1.5"
+							>
+								<div class="flex items-center justify-start gap-4">
+									<TextFieldInput
+										type="text"
+										id="editTodo"
+										placeholder="editTodo"
+									/>
+								</div>
+							</TextField>
+							<div class="grid w-full grid-cols-2">
+								<h3 class="font-semibold">Tag</h3>
+								<h3 class="font-semibold">Tag group</h3>
+								<Show when={props.tagsActive} fallback="No tags found">
+									{(tags) => (
+										<>
+											<Select
+												class="flex"
+												defaultValue={curUndoneTodo().tag || "none"}
+												value={props.selectedTag}
+												onChange={props.setSelectedTag}
+												options={["none", ...massageTagsAndGroupsToArr(tags())]}
+												placeholder="Select a tag"
+												itemComponent={(props) => (
+													<SelectItem item={props.item}>
+														{props.item.rawValue}
+													</SelectItem>
+												)}
+											>
+												<SelectTrigger aria-label="Tag">
+													<SelectValue<string>>
+														{(state) => state.selectedOption()}
+													</SelectValue>
+												</SelectTrigger>
+												<SelectContent />
+											</Select>
+										</>
+									)}
+								</Show>
+								<Show
+									when={props.tagGroupsActive}
+									fallback="No tag groups found"
+								>
+									{(tagGroups) => (
+										<>
+											<Select
+												class="flex"
+												defaultValue={curUndoneTodo().tagGroup}
+												value={props.selectedTagGroup}
+												onChange={props.setSelectedTagGroup}
+												options={[...massageTagsAndGroupsToArr(tagGroups())]}
+												placeholder="Select a tag"
+												itemComponent={(props) => (
+													<SelectItem item={props.item}>
+														{props.item.rawValue}
+													</SelectItem>
+												)}
+											>
+												<SelectTrigger aria-label="Tag">
+													<SelectValue<string>>
+														{(state) => state.selectedOption()}
+													</SelectValue>
+												</SelectTrigger>
+												<SelectContent />
+											</Select>
+										</>
+									)}
+								</Show>
+							</div>
+							<Button
+								onClick={() =>
+									editTodo.mutate({
+										dateCompleted: null,
+										hoursWorked: null,
+										todoId: curUndoneTodo().id,
+										completed: false,
+										tagId:
+											props.selectedTag === "none"
+												? null
+												: props.tagsActive.find(
+														(e) => e.tag === props.selectedTag,
+													)?.id,
+										todo: editTodoText(),
+										tagGroupId: props.tagGroupsActive.find(
+											(e) => e.tagGroup === props.selectedTagGroup,
+										)?.id as number,
+									})
+								}
+								class="w-full"
+								variant={"secondary"}
+							>
+								Edit
+							</Button>
+						</div>
+					</DialogContent>
+				</Dialog>
+			</BackNav>
 		</>
 	);
 };

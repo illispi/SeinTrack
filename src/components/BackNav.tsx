@@ -28,6 +28,7 @@ const BackNav: ParentComponent<{ setOpen: Setter<boolean>; open: boolean }> = (
 				}
 			}
 		} else {
+      // document.body.removeAttribute("style");
 			setSearchParams({ [id]: null });
 			setPrev(false);
 		}
