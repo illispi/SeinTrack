@@ -5,6 +5,7 @@ import {
 	useSearchParams,
 } from "@solidjs/router";
 import { For, Show, Suspense, createEffect, createSignal } from "solid-js";
+import BackNav from "~/components/BackNav";
 import DayEditor from "~/components/DayEditor";
 import ListMonth from "~/components/ListMonth";
 import MenuPanel from "~/components/MenuPanel";
@@ -71,8 +72,6 @@ export default function Home() {
 
 	//TODO test that removing below error works
 
-	const [searchParams, setSearchParams] = useSearchParams();
-
 	const [todoText, setTodoText] = createSignal("");
 
 	const tagsActive = trpc.getTagsOrGroupsActiveOrNot.createQuery(() => ({
@@ -102,40 +101,6 @@ export default function Home() {
 			setTodoEditOpen(false);
 		},
 	}));
-
-	useBeforeLeave((event: BeforeLeaveEventArgs) => {
-		//BUG on brave, try prevent default and event.retry at start and end of function
-		//TODO test this more on mobile as well
-		if (
-			dayEditorOpen() &&
-			Number.isInteger(event.to) &&
-			(event.to as number) < 0
-		) {
-			setDayEditorOpen(false);
-		}
-		if (
-			todoEditOpen() &&
-			Number.isInteger(event.to) &&
-			(event.to as number) < 0
-		) {
-			setTodoEditOpen(false);
-		}
-	});
-
-	createEffect(() => {
-		if (dayEditorOpen()) {
-			setSearchParams({ backHistoryFirstEditor: true });
-		} else {
-			setSearchParams({ backHistoryFirstEditor: null });
-			document.body.removeAttribute("style");
-		}
-		if (todoEditOpen()) {
-			setSearchParams({ todoEditor: true });
-		} else {
-			setSearchParams({ todoEditor: null });
-			document.body.removeAttribute("style");
-		}
-	});
 
 	return (
 		<>
@@ -255,20 +220,22 @@ export default function Home() {
 												Next
 											</Button>
 										</div>
-										<Dialog
-											open={dayEditorOpen()}
-											onOpenChange={() => setDayEditorOpen(!dayEditorOpen())}
-										>
-											<DialogTrigger></DialogTrigger>
-											<DialogContent>
-												<DayEditor
-													hoursWorkedPrev={hours.data?.hoursWorked}
-													setDayEditorOpen={setDayEditorOpen}
-													selectedDate={curDate()}
-													projectId={data()[0].id}
-												/>
-											</DialogContent>
-										</Dialog>
+										<BackNav open={dayEditorOpen()} setOpen={setDayEditorOpen}>
+											<Dialog
+												open={dayEditorOpen()}
+												onOpenChange={() => setDayEditorOpen(!dayEditorOpen())}
+											>
+												<DialogTrigger></DialogTrigger>
+												<DialogContent>
+													<DayEditor
+														hoursWorkedPrev={hours.data?.hoursWorked}
+														setDayEditorOpen={setDayEditorOpen}
+														selectedDate={curDate()}
+														projectId={data()[0].id}
+													/>
+												</DialogContent>
+											</Dialog>
+										</BackNav>
 									</div>
 									<div class="flex w-11/12 flex-col items-center justify-center gap-4">
 										<For each={completedTodos.data}>
