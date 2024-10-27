@@ -59,6 +59,15 @@ app.use(
 	}),
 );
 
+if (process.env.DEMO) {
+	const test = CronJob.from({
+		cronTime: "0 * * * *",
+		onTick: () => {
+			console.log("You will see this message every hour");
+		},
+		timeZone: "America/Los_Angeles",
+	});
+
+	test.start();
+}
 export default app;
-
-
