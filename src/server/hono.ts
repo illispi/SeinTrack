@@ -1,7 +1,7 @@
 import { trpcServer } from "@hono/trpc-server";
+import { CronJob } from "cron";
 import { Hono } from "hono";
 import { db } from "./database/db";
-import { createContext } from "./trpc/context";
 import { appRouter } from "./trpc/routers/mainRouter";
 
 const app = new Hono();
@@ -60,3 +60,14 @@ app.use(
 );
 
 export default app;
+
+if (process.env.DEMO) {
+	const test = CronJob.from({
+		cronTime: "* * * * * *",
+		onTick: () => {
+			console.log("You will see this message every second");
+		},
+		start: true,
+		timeZone: "America/Los_Angeles",
+	});
+}

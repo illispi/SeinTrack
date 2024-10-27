@@ -16,7 +16,7 @@ importers:
         version: 0.13.7(solid-js@1.9.3)
       '@solid-mediakit/trpc':
         specifier: ^3.0.3
-        version: 3.0.3(@solidjs/router@0.14.10(solid-js@1.9.3))(@solidjs/start@1.0.9(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0))(vite@5.4.10(@types/node@22.7.9)(terser@5.36.0)))(@tanstack/solid-query@5.59.13(solid-js@1.9.3))(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0))
+        version: 3.0.3(@solidjs/router@0.14.10(solid-js@1.9.3))(@solidjs/start@1.0.9(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0))(vite@5.4.10(@types/node@22.7.9)(terser@5.36.0)))(@tanstack/solid-query@5.59.13(solid-js@1.9.3))(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0))
       '@solidjs/meta':
         specifier: ^0.29.4
         version: 0.29.4(solid-js@1.9.3)
@@ -25,7 +25,7 @@ importers:
         version: 0.14.10(solid-js@1.9.3)
       '@solidjs/start':
         specifier: ^1.0.9
-        version: 1.0.9(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0))(vite@5.4.10(@types/node@22.7.9)(terser@5.36.0))
+        version: 1.0.9(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0))(vite@5.4.10(@types/node@22.7.9)(terser@5.36.0))
       '@tanstack/solid-query':
         specifier: ^5.59.13
         version: 5.59.13(solid-js@1.9.3)
@@ -47,6 +47,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      cron:
+        specifier: ^3.1.7
+        version: 3.1.7
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -65,6 +68,9 @@ importers:
       kysely:
         specifier: ^0.27.4
         version: 0.27.4
+      node-cron:
+        specifier: ^3.0.3
+        version: 3.0.3
       pg:
         specifier: ^8.13.0
         version: 8.13.0
@@ -94,7 +100,7 @@ importers:
         version: 1.0.0-beta.1(typescript@5.6.3)
       vinxi:
         specifier: ^0.4.3
-        version: 0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0)
+        version: 0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0)
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -1236,6 +1242,9 @@ packages:
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
+  '@types/luxon@3.4.2':
+    resolution: {integrity: sha512-TifLZlFudklWlMBfhubvgqTXRzLDI5pCbGa4P8a3wPyUQSW+1xQ5eDsreP9DWHX3tjq1ke96uYG/nwundroWcA==}
+
   '@types/micromatch@4.0.9':
     resolution: {integrity: sha512-7V+8ncr22h4UoYRLnLXSpTxjQrNUXtWHGeMPRJt1nULXI57G9bIcpyrHlmrQ7QK24EyyuXvYcSSWAM8GA9nqCg==}
 
@@ -1640,6 +1649,9 @@ packages:
   crc32-stream@6.0.0:
     resolution: {integrity: sha512-piICUB6ei4IlTv1+653yq5+KoqfBYmj9bw6LqXoOneTMDXk5nM1qt12mFW1caG3LlJXEKW1Bp0WggEmIfQB34g==}
     engines: {node: '>= 14'}
+
+  cron@3.1.7:
+    resolution: {integrity: sha512-tlBg7ARsAMQLzgwqVxy8AZl/qlTc5nibqYwtNGoCrd+cV+ugI+tvZC1oT/8dFH8W455YrywGykx/KMmAqOr7Jw==}
 
   croner@8.1.2:
     resolution: {integrity: sha512-ypfPFcAXHuAZRCzo3vJL6ltENzniTjwe/qsLleH1V2/7SRDjgvRQyrLmumFTLmjFax4IuSxfGXEn79fozXcJog==}
@@ -2401,6 +2413,10 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
+  luxon@3.4.4:
+    resolution: {integrity: sha512-zobTr7akeGHnv7eBOXcRgMeCP6+uyYsczwmeRCauvpvaAltgNyTbLH/+VaEAPUeWBT+1GuNmz4wC/6jtQzbbVA==}
+    engines: {node: '>=12'}
+
   magic-string@0.30.12:
     resolution: {integrity: sha512-Ea8I3sQMVXr8JhN4z+H/d8zwo+tYDgHE9+5G4Wnrwhs0gaK9fXTKx0Tw5Xwsd/bCPTTZNRAdpyzvoeORe9LYpw==}
 
@@ -2516,6 +2532,10 @@ packages:
 
   node-addon-api@7.1.1:
     resolution: {integrity: sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==}
+
+  node-cron@3.0.3:
+    resolution: {integrity: sha512-dOal67//nohNgYWb+nWmg5dkFdIwDm8EpeGYMekPMrngV3637lqnX0lbUcCtgibHTz6SEz7DAIjKvKDFYCnO1A==}
+    engines: {node: '>=6.0.0'}
 
   node-fetch-native@1.6.4:
     resolution: {integrity: sha512-IhOigYzAKHd244OC0JIMIUrjzctirCmPkaIfhDeGcEETWof5zKYUW7e7MYvChGWh/4CJeXEgsRyGzuF334rOOQ==}
@@ -3354,6 +3374,10 @@ packages:
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
+
+  uuid@8.3.2:
+    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    hasBin: true
 
   valibot@1.0.0-beta.1:
     resolution: {integrity: sha512-lQGnVdicMX/G+gicL2aYZcqhn5brXmjx6UvB5wfPcoM0IOk8tzbrP/TQc6hSs156fTeklVd07+fnlirRgT2Tig==}
@@ -4251,15 +4275,15 @@ snapshots:
 
   '@sindresorhus/merge-streams@2.3.0': {}
 
-  '@solid-mediakit/trpc@3.0.3(@solidjs/router@0.14.10(solid-js@1.9.3))(@solidjs/start@1.0.9(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0))(vite@5.4.10(@types/node@22.7.9)(terser@5.36.0)))(@tanstack/solid-query@5.59.13(solid-js@1.9.3))(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0))':
+  '@solid-mediakit/trpc@3.0.3(@solidjs/router@0.14.10(solid-js@1.9.3))(@solidjs/start@1.0.9(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0))(vite@5.4.10(@types/node@22.7.9)(terser@5.36.0)))(@tanstack/solid-query@5.59.13(solid-js@1.9.3))(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0))':
     dependencies:
       '@solidjs/router': 0.14.10(solid-js@1.9.3)
-      '@solidjs/start': 1.0.9(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0))(vite@5.4.10(@types/node@22.7.9)(terser@5.36.0))
+      '@solidjs/start': 1.0.9(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0))(vite@5.4.10(@types/node@22.7.9)(terser@5.36.0))
       '@tanstack/solid-query': 5.59.13(solid-js@1.9.3)
       '@trpc/client': 10.45.2(@trpc/server@10.45.2)
       '@trpc/server': 10.45.2
       solid-js: 1.9.3
-      vinxi: 0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0)
+      vinxi: 0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0)
 
   '@solid-primitives/event-listener@2.3.3(solid-js@1.9.3)':
     dependencies:
@@ -4328,11 +4352,11 @@ snapshots:
     dependencies:
       solid-js: 1.9.3
 
-  '@solidjs/start@1.0.9(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0))(vite@5.4.10(@types/node@22.7.9)(terser@5.36.0))':
+  '@solidjs/start@1.0.9(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0))(vite@5.4.10(@types/node@22.7.9)(terser@5.36.0))':
     dependencies:
-      '@vinxi/plugin-directives': 0.4.3(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0))
-      '@vinxi/server-components': 0.4.3(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0))
-      '@vinxi/server-functions': 0.4.3(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0))
+      '@vinxi/plugin-directives': 0.4.3(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0))
+      '@vinxi/server-components': 0.4.3(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0))
+      '@vinxi/server-functions': 0.4.3(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0))
       defu: 6.1.4
       error-stack-parser: 2.1.4
       html-to-image: 1.11.11
@@ -4406,6 +4430,8 @@ snapshots:
       '@types/node': 22.7.9
 
   '@types/json-schema@7.0.15': {}
+
+  '@types/luxon@3.4.2': {}
 
   '@types/micromatch@4.0.9':
     dependencies:
@@ -4544,7 +4570,7 @@ snapshots:
     transitivePeerDependencies:
       - uWebSockets.js
 
-  '@vinxi/plugin-directives@0.4.3(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0))':
+  '@vinxi/plugin-directives@0.4.3(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0))':
     dependencies:
       '@babel/parser': 7.25.9
       acorn: 8.13.0
@@ -4555,29 +4581,29 @@ snapshots:
       magicast: 0.2.11
       recast: 0.23.9
       tslib: 2.8.0
-      vinxi: 0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0)
+      vinxi: 0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0)
 
-  '@vinxi/server-components@0.4.3(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0))':
+  '@vinxi/server-components@0.4.3(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0))':
     dependencies:
-      '@vinxi/plugin-directives': 0.4.3(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0))
+      '@vinxi/plugin-directives': 0.4.3(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0))
       acorn: 8.13.0
       acorn-loose: 8.4.0
       acorn-typescript: 1.4.13(acorn@8.13.0)
       astring: 1.9.0
       magicast: 0.2.11
       recast: 0.23.9
-      vinxi: 0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0)
+      vinxi: 0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0)
 
-  '@vinxi/server-functions@0.4.3(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0))':
+  '@vinxi/server-functions@0.4.3(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0))':
     dependencies:
-      '@vinxi/plugin-directives': 0.4.3(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0))
+      '@vinxi/plugin-directives': 0.4.3(vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0))
       acorn: 8.13.0
       acorn-loose: 8.4.0
       acorn-typescript: 1.4.13(acorn@8.13.0)
       astring: 1.9.0
       magicast: 0.2.11
       recast: 0.23.9
-      vinxi: 0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0)
+      vinxi: 0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0)
 
   abbrev@1.1.1: {}
 
@@ -4764,7 +4790,7 @@ snapshots:
       base64-js: 1.5.1
       ieee754: 1.2.1
 
-  c12@1.11.2(magicast@0.2.11):
+  c12@1.11.2:
     dependencies:
       chokidar: 3.6.0
       confbox: 0.1.8
@@ -4778,8 +4804,6 @@ snapshots:
       perfect-debounce: 1.0.0
       pkg-types: 1.2.1
       rc9: 2.1.2
-    optionalDependencies:
-      magicast: 0.2.11
 
   callsites@3.1.0: {}
 
@@ -4896,6 +4920,11 @@ snapshots:
     dependencies:
       crc-32: 1.2.2
       readable-stream: 4.5.2
+
+  cron@3.1.7:
+    dependencies:
+      '@types/luxon': 3.4.2
+      luxon: 3.4.4
 
   croner@8.1.2: {}
 
@@ -5652,6 +5681,8 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
+  luxon@3.4.4: {}
+
   magic-string@0.30.12:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
@@ -5739,7 +5770,7 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  nitropack@2.9.7(magicast@0.2.11):
+  nitropack@2.9.7:
     dependencies:
       '@cloudflare/kv-asset-handler': 0.3.4
       '@netlify/functions': 2.8.2
@@ -5754,7 +5785,7 @@ snapshots:
       '@types/http-proxy': 1.17.15
       '@vercel/nft': 0.26.5
       archiver: 7.0.1
-      c12: 1.11.2(magicast@0.2.11)
+      c12: 1.11.2
       chalk: 5.3.0
       chokidar: 3.6.0
       citty: 0.1.6
@@ -5830,6 +5861,10 @@ snapshots:
       - webpack-sources
 
   node-addon-api@7.1.1: {}
+
+  node-cron@3.0.3:
+    dependencies:
+      uuid: 8.3.2
 
   node-fetch-native@1.6.4: {}
 
@@ -6661,13 +6696,15 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
+  uuid@8.3.2: {}
+
   valibot@1.0.0-beta.1(typescript@5.6.3):
     optionalDependencies:
       typescript: 5.6.3
 
   validate-html-nesting@1.2.2: {}
 
-  vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(magicast@0.2.11)(terser@5.36.0):
+  vinxi@0.4.3(@types/node@22.7.9)(ioredis@5.4.1)(terser@5.36.0):
     dependencies:
       '@babel/core': 7.25.9
       '@babel/plugin-syntax-jsx': 7.25.9(@babel/core@7.25.9)
@@ -6689,7 +6726,7 @@ snapshots:
       hookable: 5.5.3
       http-proxy: 1.18.1
       micromatch: 4.0.8
-      nitropack: 2.9.7(magicast@0.2.11)
+      nitropack: 2.9.7
       node-fetch-native: 1.6.4
       path-to-regexp: 6.3.0
       pathe: 1.1.2
