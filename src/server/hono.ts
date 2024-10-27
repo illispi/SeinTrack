@@ -61,13 +61,4 @@ app.use(
 
 export default app;
 
-if (process.env.DEMO) {
-	const test = CronJob.from({
-		cronTime: "0 * * * *",
-		onTick: () => {
-			console.log("You will see this message every minute");
-		},
-		start: true,
-		timeZone: "America/Los_Angeles",
-	});
-}
+
