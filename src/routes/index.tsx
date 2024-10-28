@@ -1,6 +1,4 @@
-import {
-	A
-} from "@solidjs/router";
+import { A } from "@solidjs/router";
 import { For, Show, Suspense, createSignal } from "solid-js";
 import BackNav from "~/components/BackNav";
 import DayEditor from "~/components/DayEditor";
