@@ -98,8 +98,6 @@ const ListMonth: Component<{
 	curDate: Date;
 	setDayEditorOpen: Setter<boolean>;
 }> = (props) => {
-	const [countedDays, setCountedDays] = createStore([1, 2, 3, 4, 5]);
-
 	const firstAndLastDate = trpc.getFirstAndLastDate.createQuery(() => ({
 		projectId: props.projectId,
 	}));
@@ -114,6 +112,8 @@ const ListMonth: Component<{
 		dates: dayAdjust(props.month, props.year),
 		projectId: props.projectId,
 	}));
+
+	const activeDays = trpc.getActiveDays.createQuery(() => props.projectId);
 
 	const targetHours = trpc.getTargetHours.createQuery(() => props.projectId);
 
@@ -147,7 +147,7 @@ const ListMonth: Component<{
 											firstAndLastDate.data?.firstDate,
 											firstAndLastDate.data?.lastDate,
 											data()[index()].hours,
-											countedDays,
+											activeDays.data.map((e) => e.day),
 										),
 
 										index() === 0 ? "rounded-ss-lg border-t" : "",
@@ -178,7 +178,7 @@ const ListMonth: Component<{
 															data()[index()].date,
 															firstAndLastDate.data?.lastDate,
 															firstAndLastDate.data?.firstDate,
-															countedDays,
+															activeDays.data.map((e) => e.day),
 														) || data()[index()].hours > 0
 													}
 													fallback=""
@@ -191,7 +191,7 @@ const ListMonth: Component<{
 																data()[index()].date,
 																firstAndLastDate.data?.lastDate,
 																firstAndLastDate.data?.firstDate,
-																countedDays,
+																activeDays.data.map((e) => e.day),
 															)
 														}
 														fallback={
