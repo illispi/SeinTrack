@@ -34,13 +34,10 @@ const Menu: Component<{
 			<div class="flex w-11/12 flex-col gap-8">
 				<h3 class="mt-12 text-xl">Select project</h3>
 				<Suspense>
-					<div class="flex flex-col gap-4">
+					<div class="flex flex-col items-center justify-start gap-4">
 						<For each={projects.data}>
 							{(project) => (
-								<button
-									type="button"
-									class="ml-8 w-fit text-left hover:scale-105"
-								>
+								<button type="button" class="w-11/12 text-left hover:scale-105">
 									{project.name}
 								</button>
 							)}
@@ -49,7 +46,7 @@ const Menu: Component<{
 				</Suspense>
 				<h3 class="text-xl">Hour target</h3>
 				<div class="flex w-full justify-center">
-					<div class="grid w-4/5 grid-cols-3 gap-4">
+					<div class="grid w-11/12 grid-cols-3 gap-4">
 						<Button
 							class="w-full max-w-40"
 							variant={"outline"}
@@ -102,11 +99,11 @@ const Menu: Component<{
 					</div>
 				</div>
 				<h3 class="text-xl">Toggle active days</h3>
-				<div class="flex flex-col gap-4">
+				<div class="flex flex-col items-center justify-center gap-4">
 					<For each={daysOfWeekJsDate}>
 						{(day, i) => (
 							<div class="flex w-11/12 items-center justify-between">
-								<p class="ml-8 w-fit text-left hover:scale-105">
+								<p class=" w-fit text-left ">
 									{daysOfWeekJsDate[i() !== 6 ? i() + 1 : 0]}
 								</p>
 
