@@ -52,7 +52,7 @@ const Menu: Component<{
 					<A href="stastics">Statistics</A>
 				</Button>
 				<Button class="w-full flex-1" variant={"secondary"}>
-					New Project
+					Edit Projects
 				</Button>
 			</div>
 			<div class="flex w-11/12 flex-col gap-8">
@@ -181,7 +181,7 @@ const Menu: Component<{
 						)}
 					</For>
 				</div>
-				<div class="my-4 flex w-full items-center justify-center gap-12">
+				<div class="mt-4 flex w-full items-center justify-center gap-12">
 					<Button
 						class="w-full flex-1"
 						variant={"secondary"}
