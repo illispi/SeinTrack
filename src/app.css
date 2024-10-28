@@ -4,6 +4,9 @@
 
 @layer base {
 	:root {
+
+		interpolate-size: allow-keywords;
+
 		--background: 360 100% 100%;
 		--foreground: 240 10% 3.9%;
 

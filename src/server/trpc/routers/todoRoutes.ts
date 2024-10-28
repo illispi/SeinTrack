@@ -295,6 +295,7 @@ export const getAllTags = publicProcedure
 			.select(["id", "tag", "projectId", "tagActive"])
 			.where("tags.projectId", "=", input.projectId)
 			.where("tag", "is not", null)
+			.orderBy("id asc")
 			.execute();
 
 		if (tags.length === 0) {
@@ -310,6 +311,7 @@ export const getAllTagGroups = publicProcedure
 			.selectFrom("tagGroups")
 			.select(["id", "tagGroup", "tagGroupActive"])
 			.where("projectId", "=", input.projectId)
+			.orderBy("id asc")
 			.execute();
 
 		if (activeTagGroups.length === 0) {

@@ -21,7 +21,9 @@ const Menu: Component<{
 
 	const [tagsOpen, setTagsOpen] = createSignal(false);
 
-	const [tagOption, setTagOption] = createSignal<"tags" | "tagGroups">("tags");
+	const [tagOption, setTagOption] = createSignal<"tags" | "tagGroups" | null>(
+		null,
+	);
 	const projects = trpc.allProjects.createQuery();
 	const activeDays = trpc.getActiveDays.createQuery(
 		() => props.selectedProjectId,
@@ -184,8 +186,13 @@ const Menu: Component<{
 						class="w-full flex-1"
 						variant={"secondary"}
 						onClick={() => {
-							setTagsOpen(!tagsOpen);
-							setTagOption("tags");
+							if (tagOption() === "tags" && tagsOpen()) {
+								setTagsOpen(false);
+								setTagOption(null);
+							} else {
+								setTagOption("tags");
+								setTagsOpen(true);
+							}
 						}}
 					>
 						Toggle Tags
@@ -194,34 +201,29 @@ const Menu: Component<{
 						class="w-full flex-1"
 						variant={"secondary"}
 						onClick={() => {
-							setTagsOpen(!tagsOpen);
-							setTagOption("tagGroups");
+							if (tagOption() === "tagGroups" && tagsOpen()) {
+								setTagsOpen(false);
+								setTagOption(null);
+							} else {
+								setTagOption("tagGroups");
+								setTagsOpen(true);
+							}
 						}}
 					>
 						Toggle Tag Groups
 					</Button>
 				</div>
-				<div
-					class={clsx(
-						tagsOpen() ? "h-auto" : "h-0",
-						"flex flex-col items-center justify-center gap-4",
-					)}
-					style={{
-						"interpolate-size": "allow-keywords",
-						transition: "height 2s ease",
-					}}
-				>
+				<div class={"flex flex-col items-center justify-center gap-4"}>
 					<Show when={tagOption() === "tags"}>
 						<For each={allTags.data}>
 							{(tag) => (
 								<>
 									<div class="flex w-11/12 items-center justify-between">
 										<p class=" w-fit text-left ">{tag.tag}</p>
-
 										<Switch
 											checked={tag.tagActive}
 											onChange={(e) => {
-												toggleTag.mutate({ setActive: !e, tagId: tag.id });
+												toggleTag.mutate({ setActive: e, tagId: tag.id });
 											}}
 										>
 											<SwitchControl>
@@ -239,12 +241,11 @@ const Menu: Component<{
 								<>
 									<div class="flex w-11/12 items-center justify-between">
 										<p class=" w-fit text-left ">{tagGroup.tagGroup}</p>
-
 										<Switch
 											checked={tagGroup.tagGroupActive}
 											onChange={(e) => {
 												toggleTagGroup.mutate({
-													setActive: !e,
+													setActive: e,
 													tagGroupId: tagGroup.id,
 												});
 											}}
