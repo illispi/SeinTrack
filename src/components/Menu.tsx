@@ -10,12 +10,15 @@ import { daysOfWeekJsDate } from "~/utils/functionsAndVariables";
 import { trpc } from "~/utils/trpc";
 import { Button } from "./ui/button";
 import { Switch, SwitchControl, SwitchThumb } from "./ui/switch";
+import clsx from "clsx";
 
 const Menu: Component<{
 	selectedProjectId: number;
 	setSelectedProjectId: Setter<number>;
 }> = (props) => {
 	// const [projectTarget, setProjectTarget] = createSignal(0);
+
+	const [tagsOpen, setTagsOpen] = createSignal(false);
 	const projects = trpc.allProjects.createQuery();
 	const activeDays = trpc.getActiveDays.createQuery(
 		() => props.selectedProjectId,
@@ -34,7 +37,7 @@ const Menu: Component<{
 					<A href="stastics">Statistics</A>
 				</Button>
 				<Button class="w-full flex-1" variant={"secondary"}>
-					New project
+					New Project
 				</Button>
 			</div>
 			<div class="flex w-11/12 flex-col gap-8">
@@ -163,6 +166,22 @@ const Menu: Component<{
 						)}
 					</For>
 				</div>
+				<div class="my-4 flex w-full items-center justify-center gap-12">
+					<Button class="w-full flex-1" variant={"secondary"}>
+						Toggle Tags
+					</Button>
+					<Button class="w-full flex-1" variant={"secondary"}>
+						Toggle Tag Groups
+					</Button>
+				</div>
+				<div
+					class={clsx(tagsOpen() ? "h-auto" : "h-0")}
+					style={{
+						"interpolate-size": "allow-keywords",
+						transition: "height 2s ease",
+					}}
+				><For>
+					</For></div>
 			</div>
 		</>
 	);

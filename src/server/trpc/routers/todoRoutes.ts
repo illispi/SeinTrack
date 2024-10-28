@@ -3,7 +3,7 @@ import * as v from "valibot";
 import { adjustDateByOne } from "~/utils/functionsAndVariables";
 import { publicProcedure } from "../initTrpc";
 
-export const AddTodo = publicProcedure
+export const addTodo = publicProcedure
 	.input(
 		v.parser(
 			v.object({
@@ -166,36 +166,7 @@ export const addTagOrGroup = publicProcedure
 		}
 		return;
 	});
-export const toggleTagOrGroupActivation = publicProcedure
-	.input(
-		v.parser(
-			v.object({
-				enable: v.boolean(),
-				switch: v.union([v.literal("tag"), v.literal("tagGroup")]),
-				projectId: v.number(),
-			}),
-		),
-	)
-	.mutation(async ({ input, ctx }) => {
-		if (input.switch === "tag") {
-			await ctx.db
-				.updateTable("tags")
-				.set({
-					tagActive: input.enable,
-					projectId: input.projectId,
-				})
-				.executeTakeFirstOrThrow();
-		}
-		if (input.switch === "tagGroup") {
-			await ctx.db
-				.updateTable("tagGroups")
-				.set({
-					tagGroupActive: input.enable,
-				})
-				.executeTakeFirstOrThrow();
-		}
-		return;
-	});
+
 export const getUnDoneTodos = publicProcedure
 	.input(
 		v.parser(
@@ -282,13 +253,14 @@ export const getTagsOrGroupsActiveOrNot = publicProcedure
 		),
 	)
 	.query(async ({ input, ctx }) => {
+		//TODO why not just rquire projectID????
 		if (!input.projectId) {
 			throw new TRPCError({ code: "BAD_REQUEST" });
 		}
 		if (input.switch === "tag") {
 			const activeTags = await ctx.db
 				.selectFrom("tags")
-				.select(["id", "tag"])
+				.select(["id", "tag", "projectId", "tagActive"])
 				.where("tags.projectId", "=", input.projectId)
 				.where("tagActive", "=", input.active)
 				.where("tag", "is not", null)
@@ -302,7 +274,7 @@ export const getTagsOrGroupsActiveOrNot = publicProcedure
 		if (input.switch === "tagGroup") {
 			const activeTagGroups = await ctx.db
 				.selectFrom("tagGroups")
-				.select(["id", "tagGroup"])
+				.select(["id", "tagGroup", "tagGroupActive"])
 				.where("tagGroupActive", "=", input.active)
 				.execute();
 
@@ -311,6 +283,68 @@ export const getTagsOrGroupsActiveOrNot = publicProcedure
 			}
 			return activeTagGroups;
 		}
+	});
+
+export const getAllTags = publicProcedure
+	.input(v.parser(v.object({ projectId: v.number() })))
+	.query(async ({ ctx, input }) => {
+		const tags = await ctx.db
+			.selectFrom("tags")
+			.select(["id", "tag", "projectId", "tagActive"])
+			.where("tags.projectId", "=", input.projectId)
+			.where("tag", "is not", null)
+			.execute();
+
+		if (tags.length === 0) {
+			return null;
+		}
+		return tags;
+	});
+
+export const getAllTagGroups = publicProcedure.query(async ({ ctx }) => {
+	const activeTagGroups = await ctx.db
+		.selectFrom("tagGroups")
+		.select(["id", "tagGroup", "tagGroupActive"])
+		.execute();
+
+	if (activeTagGroups.length === 0) {
+		return null;
+	}
+	return activeTagGroups;
+});
+
+export const toggleTagActive = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				projectId: v.number(),
+				tagId: v.number(),
+				setActive: v.boolean(),
+			}),
+		),
+	)
+	.mutation(async ({ ctx, input }) => {
+		await ctx.db
+			.updateTable("tags")
+			.set({ tagActive: input.setActive })
+			.where("id", "=", input.tagId)
+			.executeTakeFirstOrThrow();
+	});
+export const toggleTagGroupActive = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				tagGroupId: v.number(),
+				setActive: v.boolean(),
+			}),
+		),
+	)
+	.mutation(async ({ ctx, input }) => {
+		await ctx.db
+			.updateTable("tagGroups")
+			.set({ tagGroupActive: input.setActive })
+			.where("id", "=", input.tagGroupId)
+			.executeTakeFirstOrThrow();
 	});
 
 export const EditTagOrGroupName = publicProcedure

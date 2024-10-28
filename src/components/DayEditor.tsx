@@ -51,7 +51,8 @@ const DayEditor: Component<{
 		if (
 			hours.data?.hoursWorked &&
 			hours.data?.hoursWorked >= targetHours.data?.targetHours &&
-			(props.hoursWorkedPrev < targetHours.data?.targetHours || !props.hoursWorkedPrev)
+			(props.hoursWorkedPrev < targetHours.data?.targetHours ||
+				!props.hoursWorkedPrev)
 		) {
 			jsConfetti.addConfetti();
 			audio.play();

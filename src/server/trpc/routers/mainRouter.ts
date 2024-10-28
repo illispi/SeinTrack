@@ -16,8 +16,9 @@ import {
 	newProject,
 } from "./projectRoutes";
 import {
-	AddTodo,
+	addTodo,
 	EditTagOrGroupName,
+	getAllTagGroups,
 	addTagOrGroup,
 	completeTodo,
 	deleteTodo,
@@ -25,7 +26,9 @@ import {
 	getDoneTodosByMonth,
 	getTagsOrGroupsActiveOrNot,
 	getUnDoneTodos,
-	toggleTagOrGroupActivation,
+	getAllTags,
+	toggleTagActive,
+	toggleTagGroupActive,
 } from "./todoRoutes";
 
 export const appRouter = router({
@@ -34,11 +37,10 @@ export const appRouter = router({
 	editProject: editProject,
 	allProjects: allProjects,
 	getFirstAndLastDate: getFirstAndLastDate,
-	AddTodo: AddTodo,
+	addTodo: addTodo,
 	completeTodo: completeTodo,
 	editTodo: editTodo,
 	addTagOrGroup: addTagOrGroup,
-	toggleTagOrGroupActivation: toggleTagOrGroupActivation,
 	getUnDoneTodos: getUnDoneTodos,
 	getDoneTodosByMonth: getDoneTodosByMonth,
 	getTagsOrGroupsActiveOrNot: getTagsOrGroupsActiveOrNot,
@@ -51,6 +53,10 @@ export const appRouter = router({
 	editActiveDays: editActiveDays,
 	getTargetHours: getTargetHours,
 	editTargetHours: editTargetHours,
+	getAllTagGroups: getAllTagGroups,
+	getAllTags: getAllTags,
+	toggleTagActive: toggleTagActive,
+	toggleTagGroupActive: toggleTagGroupActive,
 });
 
 export type IAppRouter = typeof appRouter;
