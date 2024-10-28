@@ -3,6 +3,7 @@ import {
 	type Component,
 	For,
 	type Setter,
+	Show,
 	Suspense,
 	createSignal,
 } from "solid-js";
@@ -19,6 +20,8 @@ const Menu: Component<{
 	// const [projectTarget, setProjectTarget] = createSignal(0);
 
 	const [tagsOpen, setTagsOpen] = createSignal(false);
+
+	const [tagOption, setTagOption] = createSignal<"tags" | "tagGroups">("tags");
 	const projects = trpc.allProjects.createQuery();
 	const activeDays = trpc.getActiveDays.createQuery(
 		() => props.selectedProjectId,
@@ -36,6 +39,9 @@ const Menu: Component<{
 	const allTagGroups = trpc.getAllTagGroups.createQuery(() => ({
 		projectId: props.selectedProjectId,
 	}));
+
+	const toggleTag = trpc.toggleTagActive.createMutation();
+	const toggleTagGroup = trpc.toggleTagGroupActive.createMutation();
 	return (
 		<>
 			<h2 class="m-8 text-4xl font-light">Menu</h2>
@@ -174,21 +180,84 @@ const Menu: Component<{
 					</For>
 				</div>
 				<div class="my-4 flex w-full items-center justify-center gap-12">
-					<Button class="w-full flex-1" variant={"secondary"}>
+					<Button
+						class="w-full flex-1"
+						variant={"secondary"}
+						onClick={() => {
+							setTagsOpen(!tagsOpen);
+							setTagOption("tags");
+						}}
+					>
 						Toggle Tags
 					</Button>
-					<Button class="w-full flex-1" variant={"secondary"}>
+					<Button
+						class="w-full flex-1"
+						variant={"secondary"}
+						onClick={() => {
+							setTagsOpen(!tagsOpen);
+							setTagOption("tagGroups");
+						}}
+					>
 						Toggle Tag Groups
 					</Button>
 				</div>
 				<div
-					class={clsx(tagsOpen() ? "h-auto" : "h-0")}
+					class={clsx(
+						tagsOpen() ? "h-auto" : "h-0",
+						"flex flex-col items-center justify-center gap-4",
+					)}
 					style={{
 						"interpolate-size": "allow-keywords",
 						transition: "height 2s ease",
 					}}
 				>
-					<For></For>
+					<Show when={tagOption() === "tags"}>
+						<For each={allTags.data}>
+							{(tag) => (
+								<>
+									<div class="flex w-11/12 items-center justify-between">
+										<p class=" w-fit text-left ">{tag.tag}</p>
+
+										<Switch
+											checked={tag.tagActive}
+											onChange={(e) => {
+												toggleTag.mutate({ setActive: !e, tagId: tag.id });
+											}}
+										>
+											<SwitchControl>
+												<SwitchThumb />
+											</SwitchControl>
+										</Switch>
+									</div>
+								</>
+							)}
+						</For>
+					</Show>
+					<Show when={tagOption() === "tagGroups"}>
+						<For each={allTagGroups.data}>
+							{(tagGroup) => (
+								<>
+									<div class="flex w-11/12 items-center justify-between">
+										<p class=" w-fit text-left ">{tagGroup.tagGroup}</p>
+
+										<Switch
+											checked={tagGroup.tagGroupActive}
+											onChange={(e) => {
+												toggleTagGroup.mutate({
+													setActive: !e,
+													tagGroupId: tagGroup.id,
+												});
+											}}
+										>
+											<SwitchControl>
+												<SwitchThumb />
+											</SwitchControl>
+										</Switch>
+									</div>
+								</>
+							)}
+						</For>
+					</Show>
 				</div>
 			</div>
 		</>
@@ -196,4 +265,3 @@ const Menu: Component<{
 };
 
 export default Menu;
-//activeDays.data

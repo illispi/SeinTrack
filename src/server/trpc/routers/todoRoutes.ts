@@ -161,6 +161,7 @@ export const addTagOrGroup = publicProcedure
 				.values({
 					tagGroupActive: true,
 					tagGroup: input.nameOfTagOrGroup,
+					projectId: input.projectId,
 				})
 				.executeTakeFirstOrThrow();
 		}
@@ -276,6 +277,7 @@ export const getTagsOrGroupsActiveOrNot = publicProcedure
 				.selectFrom("tagGroups")
 				.select(["id", "tagGroup", "tagGroupActive"])
 				.where("tagGroupActive", "=", input.active)
+				.where("projectId", "=", input.projectId)
 				.execute();
 
 			if (activeTagGroups.length === 0) {
@@ -301,23 +303,25 @@ export const getAllTags = publicProcedure
 		return tags;
 	});
 
-export const getAllTagGroups = publicProcedure.query(async ({ ctx }) => {
-	const activeTagGroups = await ctx.db
-		.selectFrom("tagGroups")
-		.select(["id", "tagGroup", "tagGroupActive"])
-		.execute();
+export const getAllTagGroups = publicProcedure
+	.input(v.parser(v.object({ projectId: v.number() })))
+	.query(async ({ ctx, input }) => {
+		const activeTagGroups = await ctx.db
+			.selectFrom("tagGroups")
+			.select(["id", "tagGroup", "tagGroupActive"])
+			.where("projectId", "=", input.projectId)
+			.execute();
 
-	if (activeTagGroups.length === 0) {
-		return null;
-	}
-	return activeTagGroups;
-});
+		if (activeTagGroups.length === 0) {
+			return null;
+		}
+		return activeTagGroups;
+	});
 
 export const toggleTagActive = publicProcedure
 	.input(
 		v.parser(
 			v.object({
-				projectId: v.number(),
 				tagId: v.number(),
 				setActive: v.boolean(),
 			}),
