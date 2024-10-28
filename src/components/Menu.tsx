@@ -29,6 +29,13 @@ const Menu: Component<{
 	const editTargetHours = trpc.editTargetHours.createMutation();
 
 	const editActiveDays = trpc.editActiveDays.createMutation();
+
+	const allTags = trpc.getAllTags.createQuery(() => ({
+		projectId: props.selectedProjectId,
+	}));
+	const allTagGroups = trpc.getAllTagGroups.createQuery(() => ({
+		projectId: props.selectedProjectId,
+	}));
 	return (
 		<>
 			<h2 class="m-8 text-4xl font-light">Menu</h2>
@@ -180,8 +187,9 @@ const Menu: Component<{
 						"interpolate-size": "allow-keywords",
 						transition: "height 2s ease",
 					}}
-				><For>
-					</For></div>
+				>
+					<For></For>
+				</div>
 			</div>
 		</>
 	);
