@@ -44,7 +44,7 @@ const BackNav: ParentComponent<{ setOpen: Setter<boolean>; open: boolean }> = (
 			setPrev(false);
 		}
 	});
-	return <div>{props.children}</div>;
+	return <>{props.children}</>;
 };
 
 export default BackNav;

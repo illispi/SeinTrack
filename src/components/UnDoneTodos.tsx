@@ -1,7 +1,5 @@
 import { Link } from "@solidjs/meta";
-import {
-	useSearchParams
-} from "@solidjs/router";
+import { useSearchParams } from "@solidjs/router";
 import type { inferRouterOutputs } from "@trpc/server";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/themes/light.css";
@@ -173,15 +171,14 @@ const UnDoneTodos: Component<{
 							props.setOpenSecond(!props.openSecond);
 						}}
 					>
-						<DialogTrigger class="flex-1 p-0" as={Button<"button">}>
-							<Button class="w-full" variant={"secondary"}>
-								Add Todo
-							</Button>
-						</DialogTrigger>
-						<DialogContent
-							onOpenAutoFocus={(e) => e.preventDefault()}
-							class="  sm:max-w-[425px]"
+						<DialogTrigger
+							class="flex-1 p-0"
+							as={Button<"button">}
+							variant={"secondary"}
 						>
+							Add Todo
+						</DialogTrigger>
+						<DialogContent onOpenAutoFocus={(e) => e.preventDefault()} class="">
 							<DialogHeader>
 								<DialogTitle>Add todo</DialogTitle>
 							</DialogHeader>
@@ -280,10 +277,12 @@ const UnDoneTodos: Component<{
 							props.setOpenSecond(!props.openSecond);
 						}}
 					>
-						<DialogTrigger class="flex-1 p-0" as={Button<"button">}>
-							<Button class="w-full" variant={"secondary"}>
-								Add Tag
-							</Button>
+						<DialogTrigger
+							class="flex-1 p-0"
+							as={Button<"button">}
+							variant={"secondary"}
+						>
+							Add Tag
 						</DialogTrigger>
 						<DialogContent
 							onOpenAutoFocus={(e) => e.preventDefault()}
