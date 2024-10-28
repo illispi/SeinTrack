@@ -102,7 +102,6 @@ const UnDoneTodos: Component<{
 			}) as Instance;
 		}
 	});
-	const [searchParams, setSearchParams] = useSearchParams();
 	const [editOpen, setEditOpen] = createSignal(false);
 	const [doneOpen, setDoneOpen] = createSignal(false);
 

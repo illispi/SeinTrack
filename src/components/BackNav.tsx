@@ -6,6 +6,7 @@ import {
 	type ParentComponent,
 	type Setter,
 } from "solid-js";
+import { latestDateFunc } from "~/utils/functionsAndVariables";
 
 const BackNav: ParentComponent<{ setOpen: Setter<boolean>; open: boolean }> = (
 	props,
@@ -40,6 +41,14 @@ const BackNav: ParentComponent<{ setOpen: Setter<boolean>; open: boolean }> = (
 			if (searchParamsString.length > 10) {
 				history.replaceState(null, "", "/");
 			}
+			// const test = location.search.match(/cl-\d{1,5}/g);
+			// if (test) {
+			// 	for (const el of test) {
+			// 		if (id !== el) {
+			// 			setSearchParams({ [el]: null });
+			// 		}
+			// 	}
+			// }
 			setSearchParams({ [id]: null });
 			setPrev(false);
 		}

@@ -99,12 +99,24 @@ export default function Home() {
 
 	return (
 		<>
-			<A class="fixed bottom-0 left-0" href="/testing/test/">
+			<A class="fixed bottom-0 left-12" href="/testing/test/">
 				Testing
 			</A>
 			<div class="sticky top-0 mx-auto flex h-12 w-full items-center justify-between bg-gradient-to-t from-green-500 to-green-400 shadow-md">
-				<div class="flex-1"></div>
-				<div class="flex h-12 items-center justify-center gap-6 rounded-s-full bg-white px-6 lg:hidden">
+				<div class="flex-1">
+					<div class="flex h-12 max-w-20 items-center justify-end rounded-e-full bg-white pr-5">
+						<A href="/">
+							<img
+								class="size-12"
+								src="icon.webp"
+								alt="Logo"
+								width="128"
+								height="128"
+							/>
+						</A>
+					</div>
+				</div>
+				<div class="flex h-12 items-center justify-center gap-6 rounded-s-full bg-white px-6 xl:hidden">
 					<Button
 						onClick={() => {
 							setMenuOpen(!menuOpen());
@@ -129,7 +141,7 @@ export default function Home() {
 						</svg>
 					</Button>
 					<Button
-						class="size-10 rounded-full bg-green-400 shadow-lg hover:bg-green-500 active:bg-green-500"
+						class="size-10 rounded-full bg-green-400 shadow-lg hover:bg-green-500 active:bg-green-500 lg:hidden"
 						onClick={() => {
 							setOpenFirst(!openFirst());
 						}}

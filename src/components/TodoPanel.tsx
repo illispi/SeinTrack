@@ -36,7 +36,7 @@ const TodoPanel: Component<{
 		projectId: props.curProjectId,
 	}));
 
-	const addTodo = trpc.AddTodo.createMutation(() => ({
+	const addTodo = trpc.addTodo.createMutation(() => ({
 		onSuccess: () => {
 			showToast({
 				title: "Todo added:",
