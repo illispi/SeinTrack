@@ -6,6 +6,7 @@ import { QueryClientProvider } from "@tanstack/solid-query";
 import { SolidQueryDevtools } from "@tanstack/solid-query-devtools";
 import { queryClient, trpc } from "./utils/trpc";
 import { MetaProvider } from "@solidjs/meta";
+import { Toaster } from "./components/ui/toast";
 
 export default function App() {
 	return (
@@ -16,7 +17,10 @@ export default function App() {
 					<Router
 						root={(props) => (
 							<ErrorBoundary fallback="boundary">
-								<Suspense>{props.children}</Suspense>
+								<Suspense>
+									{props.children}
+									<Toaster />
+								</Suspense>
 							</ErrorBoundary>
 						)}
 					>

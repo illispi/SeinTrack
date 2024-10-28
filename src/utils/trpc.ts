@@ -58,12 +58,15 @@ export const queryClient = new QueryClient({
 		},
 	}),
 	queryCache: new QueryCache({
-		onError: (error) =>
+		onError: (error) => {
+			//NOTE this doesnt work
+			console.log("error here");
 			showToast({
 				title: "Error!",
 				description: error.message,
 				variant: "error",
-			}),
+			});
+		},
 	}),
 });
 //NOTE test this query cache
