@@ -104,3 +104,33 @@ export const getActiveDays = publicProcedure
 
 		return activeDays;
 	});
+
+export const getTargetHours = publicProcedure
+	.input(v.parser(v.number()))
+	.query(async ({ ctx, input }) => {
+		const activeDays = await ctx.db
+			.selectFrom("projects")
+			.select("targetHours")
+			.where("id", "=", input)
+			.executeTakeFirstOrThrow();
+
+		return activeDays;
+	});
+
+export const editTargetHours = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				projectId: v.number(),
+				targetHours: v.pipe(v.number(), v.minValue(0.1), v.maxValue(23)),
+			}),
+		),
+	)
+	.mutation(async ({ ctx, input }) => {
+		await ctx.db
+			.updateTable("projects")
+			.set({ targetHours: input.targetHours })
+			.where("id", "=", input.projectId)
+			.executeTakeFirstOrThrow();
+		return;
+	});
