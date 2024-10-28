@@ -26,6 +26,8 @@ const DayEditor: Component<{
 	const jsConfetti = new JSConfetti();
 	const audio = new Audio("victory.wav");
 
+	const targetHours = trpc.getTargetHours.createQuery(() => props.projectId);
+
 	createEffect(() => {
 		if (lastSelectedDate() !== props.selectedDate) {
 			setAddHours(0);
@@ -48,8 +50,8 @@ const DayEditor: Component<{
 		}
 		if (
 			hours.data?.hoursWorked &&
-			hours.data?.hoursWorked >= 3 &&
-			(props.hoursWorkedPrev < 3 || !props.hoursWorkedPrev)
+			hours.data?.hoursWorked >= targetHours.data?.targetHours &&
+			(props.hoursWorkedPrev < targetHours.data?.targetHours || !props.hoursWorkedPrev)
 		) {
 			jsConfetti.addConfetti();
 			audio.play();

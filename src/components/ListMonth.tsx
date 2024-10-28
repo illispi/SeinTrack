@@ -71,7 +71,7 @@ const isCountedDay = (
 };
 
 const colorPicker = (
-	selectedDate: Date,
+	targetHours: number,
 	iterDate: Date,
 	firstDate: Date,
 	lastDate: Date,
@@ -80,7 +80,7 @@ const colorPicker = (
 ) => {
 	if (isCountedDay(iterDate, lastDate, firstDate, countedDays) || hours > 0) {
 		if (
-			hours >= 3 ||
+			hours >= targetHours ||
 			!isCountedDay(iterDate, lastDate, firstDate, countedDays)
 		) {
 			return "bg-green-300";
@@ -115,6 +115,8 @@ const ListMonth: Component<{
 		projectId: props.projectId,
 	}));
 
+	const targetHours = trpc.getTargetHours.createQuery(() => props.projectId);
+
 	return (
 		<div class="flex w-11/12 max-w-5xl flex-col items-center justify-start ">
 			<div class="grid w-full grid-cols-7 place-content-center place-items-center">
@@ -139,7 +141,8 @@ const ListMonth: Component<{
 									}}
 									class={clsx(
 										colorPicker(
-											selectedDate(),
+											targetHours.data?.targetHours,
+											// selectedDate(),
 											data()[index()].date,
 											firstAndLastDate.data?.firstDate,
 											firstAndLastDate.data?.lastDate,
@@ -182,7 +185,8 @@ const ListMonth: Component<{
 												>
 													<Show
 														when={
-															data()[index()].hours >= 3 ||
+															data()[index()].hours >=
+																targetHours.data?.targetHours ||
 															!isCountedDay(
 																data()[index()].date,
 																firstAndLastDate.data?.lastDate,
