@@ -1,6 +1,7 @@
 import type { Component, Setter } from "solid-js";
 import Menu from "./Menu";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import BackNav from "./BackNav";
 
 const MenuPanel: Component<{
 	menuOpen: boolean;
@@ -19,15 +20,19 @@ const MenuPanel: Component<{
 				</div>
 			</div>
 			<div class="flex lg:hidden">
-				<Sheet onOpenChange={props.setMenuOpen} open={props.menuOpen}>
-					<SheetTrigger></SheetTrigger>
-					<SheetContent>
-						<Menu
-							selectedProjectId={props.selectedProjectId}
-							setSelectedProjectId={props.setSelectedProjectId}
-						/>
-					</SheetContent>
-				</Sheet>
+				<BackNav open={props.menuOpen} setOpen={props.setMenuOpen}>
+					<Sheet onOpenChange={props.setMenuOpen} open={props.menuOpen}>
+						<SheetTrigger></SheetTrigger>
+						<SheetContent class="w-full max-w-96 p-0">
+							<div class=" flex min-h-screen grow flex-col items-center border border-t-4 border-gray-200 border-t-green-500 bg-white ">
+								<Menu
+									selectedProjectId={props.selectedProjectId}
+									setSelectedProjectId={props.setSelectedProjectId}
+								/>
+							</div>
+						</SheetContent>
+					</Sheet>
+				</BackNav>
 			</div>
 		</>
 	);
