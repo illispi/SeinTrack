@@ -20,6 +20,8 @@ const Menu: Component<{
 	const activeDays = trpc.getActiveDays.createQuery(
 		() => props.selectedProjectId,
 	);
+
+	const editActiveDays = trpc.editActiveDays.createMutation();
 	return (
 		<>
 			<h2 class="m-8 text-4xl font-light">Menu</h2>
@@ -113,6 +115,25 @@ const Menu: Component<{
 											(e) => e.day === (i() !== 6 ? i() + 1 : 0),
 										)?.day,
 									)}
+									onChange={(e) => {
+										if (e === true) {
+											const newDates = activeDays.data?.map((e) => e.day);
+											newDates?.push(i() !== 6 ? i() + 1 : 0);
+											editActiveDays.mutate({
+												activeDays: newDates!,
+												projectId: props.selectedProjectId,
+											});
+										} else {
+											const filterDates = activeDays.data?.filter(
+												(e) => e.day !== (i() !== 6 ? i() + 1 : 0),
+											);
+											const newDates = filterDates?.map((e) => e.day);
+											editActiveDays.mutate({
+												activeDays: newDates!,
+												projectId: props.selectedProjectId,
+											});
+										}
+									}}
 								>
 									<SwitchControl>
 										<SwitchThumb />
