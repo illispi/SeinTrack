@@ -13,7 +13,10 @@ export default function App() {
 		<MetaProvider>
 			<trpc.Provider queryClient={queryClient}>
 				<QueryClientProvider client={queryClient}>
-					<SolidQueryDevtools initialIsOpen={false} buttonPosition="top-left" />
+					<SolidQueryDevtools
+						initialIsOpen={false}
+						buttonPosition="bottom-left"
+					/>
 					<Router
 						root={(props) => (
 							<ErrorBoundary fallback="boundary">
