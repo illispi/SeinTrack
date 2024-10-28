@@ -8,6 +8,8 @@ import {
 import { Button } from "./ui/button";
 import { A } from "@solidjs/router";
 import { trpc } from "~/utils/trpc";
+import { daysOfWeekJsDate, weekdaysArr } from "~/utils/functionsAndVariables";
+import { Switch, SwitchControl, SwitchThumb } from "./ui/switch";
 
 const Menu: Component<{
 	selectedProjectId: number;
@@ -101,14 +103,25 @@ const Menu: Component<{
 				</div>
 				<h3 class="text-xl">Toggle active days</h3>
 				<div class="flex flex-col gap-4">
-					<For each={activeDays.data}>
-						{(day) => (
-							<button
-								type="button"
-								class="ml-8 w-fit text-left hover:scale-105"
-							>
-								{day.day}
-							</button>
+					<For each={daysOfWeekJsDate}>
+						{(day, i) => (
+							<div class="flex w-11/12 items-center justify-between">
+								<p class="ml-8 w-fit text-left hover:scale-105">
+									{daysOfWeekJsDate[i() !== 6 ? i() + 1 : 0]}
+								</p>
+
+								<Switch
+									checked={Number.isInteger(
+										activeDays.data?.find(
+											(e) => e.day === (i() !== 6 ? i() + 1 : 0),
+										)?.day,
+									)}
+								>
+									<SwitchControl>
+										<SwitchThumb />
+									</SwitchControl>
+								</Switch>
+							</div>
 						)}
 					</For>
 				</div>
@@ -118,3 +131,4 @@ const Menu: Component<{
 };
 
 export default Menu;
+//activeDays.data

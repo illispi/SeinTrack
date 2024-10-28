@@ -17,6 +17,16 @@ export const weekdaysShortHandArr = [
 	"Sun.",
 ];
 
+export const daysOfWeekJsDate = [
+	"Sunday",
+	"Monday",
+	"Tuesday",
+	"Wednesday",
+	"Thursday",
+	"Friday",
+	"Saturday",
+];
+
 export const monthsArr = [
 	"January",
 	"February",
