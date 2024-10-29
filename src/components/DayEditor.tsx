@@ -29,6 +29,16 @@ const DayEditor: Component<{
 	const targetHours = trpc.getTargetHours.createQuery(() => props.projectId);
 
 	createEffect(() => {
+		console.log(
+			"Should exist: ",
+			hours.data?.hoursWorked,
+			" and be larger than: ",
+			targetHours.data?.targetHours,
+			" And this: ",
+			props.hoursWorkedPrev,
+			" should not exist or be smaller than: ",
+			targetHours.data?.targetHours,
+		);
 		if (lastSelectedDate() !== props.selectedDate) {
 			setAddHours(0);
 			setAddMinutes(0);

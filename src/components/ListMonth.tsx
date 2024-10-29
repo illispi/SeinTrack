@@ -78,20 +78,6 @@ const colorPicker = (
 	hours: number,
 	countedDays: number[],
 ) => {
-	// console.log(
-	// 	"TargeThours   ",
-	// 	targetHours,
-	// 	"  IterDate   ",
-	// 	iterDate,
-	// 	"  firstDate   ",
-	// 	firstDate,
-	// 	"  lastDate   ",
-	// 	lastDate,
-	// 	"hours   ",
-	// 	hours,
-	// 	"  countedDays  ",
-	// 	countedDays,
-	// );
 	if (isCountedDay(iterDate, lastDate, firstDate, countedDays) || hours > 0) {
 		if (
 			hours >= targetHours ||
@@ -141,7 +127,6 @@ const ListMonth: Component<{
 					{(day) => <div class="block pb-6 2xl:hidden">{day}</div>}
 				</For>
 			</div>
-			{console.log(firstAndLastDate.data)}
 			<div class="grid w-full grid-cols-7 place-content-center place-items-center shadow-md">
 				<Show when={props.projectId}>
 					<For each={dayAdjust(props.month, props.year)}>

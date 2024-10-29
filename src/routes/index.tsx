@@ -56,7 +56,7 @@ export default function Home() {
 	const projects = trpc.allProjects.createQuery();
 	const hours = trpc.getHoursForDate.createQuery(() => ({
 		date: curDate(),
-		projectId: 1,
+		projectId: curProjectId(),
 	}));
 
 	const [todoEditOpen, setTodoEditOpen] = createSignal(false);
