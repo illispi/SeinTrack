@@ -23,6 +23,8 @@ const DayEditor: Component<{
 		props.selectedDate,
 	);
 
+	const [prev, setPrev] = createSignal(props.hoursWorkedPrev);
+
 	const jsConfetti = new JSConfetti();
 	const audio = new Audio("victory.wav");
 
@@ -59,10 +61,14 @@ const DayEditor: Component<{
 			});
 		}
 		if (
-			hours.data?.hoursWorked &&
-			hours.data?.hoursWorked >= targetHours.data?.targetHours &&
-			(props.hoursWorkedPrev < targetHours.data?.targetHours ||
-				!props.hoursWorkedPrev)
+			props.hoursWorkedPrev < targetHours.data?.targetHours ||
+			!props.hoursWorkedPrev
+		) {
+			setPrev(props.hoursWorkedPrev || 0);
+		}
+		if (
+			prev() < targetHours.data?.targetHours &&
+			hours.data?.hoursWorked >= targetHours.data?.targetHours
 		) {
 			jsConfetti.addConfetti();
 			audio.play();
