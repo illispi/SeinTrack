@@ -62,7 +62,7 @@ export const zeroTimer = publicProcedure
 		if (exists) {
 			await ctx.db
 				.updateTable("dates")
-				.set({ hoursWorked: 0 })
+				.set({ hoursWorked: null })
 				.where("date", "=", input.date)
 				.executeTakeFirst();
 		} else {
@@ -70,7 +70,7 @@ export const zeroTimer = publicProcedure
 				.insertInto("dates")
 				.values({
 					date: input.date,
-					hoursWorked: 0,
+					hoursWorked: null,
 					projectId: input.projectId,
 				})
 				.execute();
