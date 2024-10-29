@@ -93,6 +93,7 @@ export const changeDayHours = publicProcedure
 			.selectFrom("dates")
 			.select(["date", "dates.hoursWorked"])
 			.where("date", "=", input.date)
+			.where("projectId", "=", input.projectId)
 			.executeTakeFirst();
 		if (exists) {
 			if (!exists.hoursWorked) {
@@ -100,6 +101,7 @@ export const changeDayHours = publicProcedure
 					.updateTable("dates")
 					.set({ hoursWorked: input.hours <= 0 ? 0 : input.hours })
 					.where("date", "=", input.date)
+					.where("projectId", "=", input.projectId)
 					.executeTakeFirst();
 				return;
 			}
@@ -112,8 +114,9 @@ export const changeDayHours = publicProcedure
 			const hours = exists.hoursWorked + input.hours;
 			await ctx.db
 				.updateTable("dates")
-				.set({ hoursWorked: hours <= 0 ? 0 : hours })
+				.set({ hoursWorked: hours <= 0 ? null : hours })
 				.where("date", "=", input.date)
+				.where("projectId", "=", input.projectId)
 				.executeTakeFirst();
 		} else {
 			await ctx.db
