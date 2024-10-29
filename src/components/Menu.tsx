@@ -186,35 +186,15 @@ const Menu: Component<{
 						class="w-full flex-1"
 						variant={"secondary"}
 						onClick={() => {
-							if (tagOption() === "tags" && tagsOpen()) {
-								setTagsOpen(false);
-								setTagOption(null);
-							} else {
-								setTagOption("tags");
-								setTagsOpen(true);
-							}
+							setTagsOpen(!tagsOpen());
 						}}
 					>
-						Toggle Tags
-					</Button>
-					<Button
-						class="w-full flex-1"
-						variant={"secondary"}
-						onClick={() => {
-							if (tagOption() === "tagGroups" && tagsOpen()) {
-								setTagsOpen(false);
-								setTagOption(null);
-							} else {
-								setTagOption("tagGroups");
-								setTagsOpen(true);
-							}
-						}}
-					>
-						Toggle Tag Groups
+						{tagsOpen() ? "Close Tags/Groups" : "Show Tags/Groups"}
 					</Button>
 				</div>
 				<div class={"flex flex-col items-center justify-center gap-4"}>
-					<Show when={tagOption() === "tags"}>
+					<Show when={tagsOpen()}>
+						<h3 class="mb-4 w-full text-left text-xl">Tags</h3>
 						<For each={allTags.data}>
 							{(tag) => (
 								<>
@@ -234,8 +214,7 @@ const Menu: Component<{
 								</>
 							)}
 						</For>
-					</Show>
-					<Show when={tagOption() === "tagGroups"}>
+						<h3 class="mb-4 w-full text-left text-xl">Tag Groups</h3>
 						<For each={allTagGroups.data}>
 							{(tagGroup) => (
 								<>
