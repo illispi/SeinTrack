@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import BackNav from "./BackNav";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
+import clsx from "clsx";
 
 const Menu: Component<{
 	selectedProjectId: number;
@@ -141,7 +142,17 @@ const Menu: Component<{
 							{(project) => (
 								<Show when={project.active}>
 									<div class="w-11/12">
-										<button type="button" class="text-left hover:scale-105">
+										<button
+											onClick={() => {
+												props.setSelectedProjectId(project.id);
+											}}
+											type="button"
+											class={clsx(
+												props.selectedProjectId !== project.id ||
+													"text-2xl font-semibold underline",
+												"text-left hover:scale-105",
+											)}
+										>
 											{project.name}
 										</button>
 									</div>
