@@ -265,6 +265,7 @@ export const getTagsOrGroupsActiveOrNot = publicProcedure
 				.where("tags.projectId", "=", input.projectId)
 				.where("tagActive", "=", input.active)
 				.where("tag", "is not", null)
+				.orderBy("id asc")
 				.execute();
 
 			if (activeTags.length === 0) {
@@ -278,6 +279,7 @@ export const getTagsOrGroupsActiveOrNot = publicProcedure
 				.select(["id", "tagGroup", "tagGroupActive"])
 				.where("tagGroupActive", "=", input.active)
 				.where("projectId", "=", input.projectId)
+				.orderBy("id asc")
 				.execute();
 
 			if (activeTagGroups.length === 0) {
