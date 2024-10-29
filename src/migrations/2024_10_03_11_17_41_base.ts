@@ -8,6 +8,9 @@ export async function up(db: Kysely<any>): Promise<void> {
 		.addColumn("name", "text", (col) => col.notNull().unique())
 		.addColumn("target_hours", "float4", (col) => col.defaultTo(3).notNull())
 		.addColumn("active", "boolean", (col) => col.notNull().defaultTo(true))
+		.addColumn("created_at", "timestamp", (col) =>
+			col.notNull().defaultTo(sql`NOW()`),
+		)
 		.execute();
 
 	await db.schema
@@ -26,6 +29,9 @@ export async function up(db: Kysely<any>): Promise<void> {
 		)
 		.addColumn("hours_worked", "float4")
 		.addColumn("date", "timestamp", (col) => col.defaultTo(null))
+		.addColumn("created_at", "timestamp", (col) =>
+			col.notNull().defaultTo(sql`NOW()`),
+		)
 		.execute();
 
 	await db.schema
@@ -36,6 +42,9 @@ export async function up(db: Kysely<any>): Promise<void> {
 		.addColumn("project_id", "integer", (col) =>
 			col.references("projects.id").onDelete("cascade").notNull(),
 		)
+		.addColumn("created_at", "timestamp", (col) =>
+			col.notNull().defaultTo(sql`NOW()`),
+		)
 		.execute();
 
 	await db.schema
@@ -45,6 +54,9 @@ export async function up(db: Kysely<any>): Promise<void> {
 		.addColumn("tag_active", "boolean", (col) => col.notNull())
 		.addColumn("project_id", "integer", (col) =>
 			col.references("projects.id").onDelete("cascade").notNull(),
+		)
+		.addColumn("created_at", "timestamp", (col) =>
+			col.notNull().defaultTo(sql`NOW()`),
 		)
 		.execute();
 
@@ -62,6 +74,9 @@ export async function up(db: Kysely<any>): Promise<void> {
 		.addColumn("todo", "text", (col) => col.notNull())
 		.addColumn("hours_worked", "float4")
 		.addColumn("completed", "boolean", (col) => col.notNull().defaultTo(false))
+		.addColumn("created_at", "timestamp", (col) =>
+			col.notNull().defaultTo(sql`NOW()`),
+		)
 		.execute();
 }
 

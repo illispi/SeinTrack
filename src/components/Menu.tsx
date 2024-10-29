@@ -272,63 +272,51 @@ const Menu: Component<{
 						)}
 					</For>
 				</div>
-				<div class="mt-4 flex w-full items-center justify-center gap-12">
-					<Button
-						class="w-full flex-1"
-						variant={"secondary"}
-						onClick={() => {
-							setTagsOpen(!tagsOpen());
-						}}
-					>
-						{tagsOpen() ? "Close Tags/Groups" : "Show Tags/Groups"}
-					</Button>
-				</div>
+
 				<div class={"flex flex-col items-center justify-center gap-4"}>
-					<Show when={tagsOpen()}>
-						<h3 class="mb-4 w-full text-left text-xl">Tags</h3>
-						<For each={allTags.data}>
-							{(tag) => (
-								<>
-									<div class="flex w-11/12 items-center justify-between">
-										<p class=" w-fit text-left ">{tag.tag}</p>
-										<Switch
-											checked={tag.tagActive}
-											onChange={(e) => {
-												toggleTag.mutate({ setActive: e, tagId: tag.id });
-											}}
-										>
-											<SwitchControl>
-												<SwitchThumb />
-											</SwitchControl>
-										</Switch>
-									</div>
-								</>
-							)}
-						</For>
-						<h3 class="mb-4 w-full text-left text-xl">Tag Groups</h3>
-						<For each={allTagGroups.data}>
-							{(tagGroup) => (
-								<>
-									<div class="flex w-11/12 items-center justify-between">
-										<p class=" w-fit text-left ">{tagGroup.tagGroup}</p>
-										<Switch
-											checked={tagGroup.tagGroupActive}
-											onChange={(e) => {
-												toggleTagGroup.mutate({
-													setActive: e,
-													tagGroupId: tagGroup.id,
-												});
-											}}
-										>
-											<SwitchControl>
-												<SwitchThumb />
-											</SwitchControl>
-										</Switch>
-									</div>
-								</>
-							)}
-						</For>
-					</Show>
+					<h3 class="mb-4 w-full text-left text-xl">Tags</h3>
+					<For each={allTags.data}>
+						{(tag) => (
+							<>
+								<div class="flex w-11/12 items-center justify-between">
+									<p class=" w-fit text-left ">{tag.tag}</p>
+									<Switch
+										checked={tag.tagActive}
+										onChange={(e) => {
+											toggleTag.mutate({ setActive: e, tagId: tag.id });
+										}}
+									>
+										<SwitchControl>
+											<SwitchThumb />
+										</SwitchControl>
+									</Switch>
+								</div>
+							</>
+						)}
+					</For>
+					<h3 class="mb-4 w-full text-left text-xl">Tag Groups</h3>
+					<For each={allTagGroups.data}>
+						{(tagGroup) => (
+							<>
+								<div class="flex w-11/12 items-center justify-between">
+									<p class=" w-fit text-left ">{tagGroup.tagGroup}</p>
+									<Switch
+										checked={tagGroup.tagGroupActive}
+										onChange={(e) => {
+											toggleTagGroup.mutate({
+												setActive: e,
+												tagGroupId: tagGroup.id,
+											});
+										}}
+									>
+										<SwitchControl>
+											<SwitchThumb />
+										</SwitchControl>
+									</Switch>
+								</div>
+							</>
+						)}
+					</For>
 				</div>
 			</div>
 		</>

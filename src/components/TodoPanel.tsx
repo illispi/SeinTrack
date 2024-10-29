@@ -18,7 +18,6 @@ const TodoPanel: Component<{
 	setOpenFirst: Setter<boolean>;
 }> = (props) => {
 	const [selectedTag, setSelectedTag] = createSignal("none");
-	const [selectedTagGroup, setSelectedTagGroup] = createSignal("bug fix");
 
 	const [addHours, setAddHours] = createSignal(0);
 	const [addMinutes, setAddMinutes] = createSignal(0);
@@ -45,7 +44,7 @@ const TodoPanel: Component<{
 			});
 			setNewTodo("");
 			setSelectedTag("none");
-			setSelectedTagGroup("bug fix");
+			setSelectedTagGroup(tagGroupsActive.data[0].tagGroup);
 		},
 	}));
 	const tagsActive = trpc.getTagsOrGroupsActiveOrNot.createQuery(() => ({
@@ -58,6 +57,9 @@ const TodoPanel: Component<{
 		projectId: props.curProjectId,
 		switch: "tagGroup",
 	}));
+	const [selectedTagGroup, setSelectedTagGroup] = createSignal(
+		tagGroupsActive.data[0].tagGroup,
+	);
 
 	const addTag = trpc.addTagOrGroup.createMutation(() => ({
 		onSuccess: () => {

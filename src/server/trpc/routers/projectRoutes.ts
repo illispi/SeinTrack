@@ -46,6 +46,7 @@ export const newProject = publicProcedure
 					tagGroup: group,
 					tagGroupActive: true,
 					projectId: project.id,
+					
 				})
 				.executeTakeFirstOrThrow();
 		}
