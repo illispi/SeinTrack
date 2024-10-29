@@ -7,7 +7,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 		.addColumn("id", "serial", (col) => col.primaryKey())
 		.addColumn("name", "text", (col) => col.notNull().unique())
 		.addColumn("target_hours", "float4", (col) => col.defaultTo(3).notNull())
-
+		.addColumn("active", "boolean", (col) => col.notNull().defaultTo(true))
 		.execute();
 
 	await db.schema

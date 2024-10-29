@@ -39,6 +39,7 @@ export const editProject = publicProcedure
 				projectId: v.number(),
 				name: v.string(),
 				hoursTarget: v.number(),
+				active: v.boolean(),
 			}),
 		),
 	)
@@ -46,7 +47,11 @@ export const editProject = publicProcedure
 		await ctx.db
 			.updateTable("projects")
 			.where("id", "=", input.projectId)
-			.set({ name: input.name, targetHours: input.hoursTarget })
+			.set({
+				name: input.name,
+				targetHours: input.hoursTarget,
+				active: input.active,
+			})
 			.executeTakeFirstOrThrow();
 		return;
 	});
@@ -54,7 +59,7 @@ export const editProject = publicProcedure
 export const allProjects = publicProcedure.query(async ({ ctx }) => {
 	const projects = await ctx.db
 		.selectFrom("projects")
-		.select(["name", "targetHours", "id"])
+		.select(["name", "targetHours", "id", "active"])
 		.execute();
 	if (projects.length === 0) {
 		return null;

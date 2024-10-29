@@ -11,19 +11,21 @@ import { daysOfWeekJsDate } from "~/utils/functionsAndVariables";
 import { trpc } from "~/utils/trpc";
 import { Button } from "./ui/button";
 import { Switch, SwitchControl, SwitchThumb } from "./ui/switch";
-import clsx from "clsx";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import BackNav from "./BackNav";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
 
 const Menu: Component<{
 	selectedProjectId: number;
 	setSelectedProjectId: Setter<number>;
 }> = (props) => {
-	// const [projectTarget, setProjectTarget] = createSignal(0);
-
 	const [tagsOpen, setTagsOpen] = createSignal(false);
+	const [name, setName] = createSignal("");
+	const [hours, setHours] = createSignal("");
 
-	const [tagOption, setTagOption] = createSignal<"tags" | "tagGroups" | null>(
-		null,
-	);
+	const [openEditProjects, setOpenEditProjects] = createSignal(false);
+
 	const projects = trpc.allProjects.createQuery();
 	const activeDays = trpc.getActiveDays.createQuery(
 		() => props.selectedProjectId,
@@ -44,6 +46,9 @@ const Menu: Component<{
 
 	const toggleTag = trpc.toggleTagActive.createMutation();
 	const toggleTagGroup = trpc.toggleTagGroupActive.createMutation();
+	const allProjects = trpc.allProjects.createQuery();
+	const editProjects = trpc.editProject.createMutation();
+	const newProject = trpc.newProject.createMutation();
 	return (
 		<>
 			<h2 class="m-8 text-4xl font-light">Menu</h2>
@@ -51,9 +56,82 @@ const Menu: Component<{
 				<Button class="w-full flex-1" variant={"secondary"}>
 					<A href="stastics">Statistics</A>
 				</Button>
-				<Button class="w-full flex-1" variant={"secondary"}>
-					Edit Projects
-				</Button>
+				<BackNav setOpen={setOpenEditProjects} open={openEditProjects()}>
+					<Sheet onOpenChange={setOpenEditProjects} open={openEditProjects()}>
+						<SheetTrigger
+							class="w-full flex-1"
+							as={Button<"button">}
+							variant={"secondary"}
+						>
+							Edit Projects
+						</SheetTrigger>
+						<SheetContent class="w-full max-w-96 p-0">
+							<div class="flex min-h-screen grow flex-col items-center gap-6 border border-t-4 border-gray-200 border-t-green-500 bg-white py-8 shadow-md">
+								<h3 class="text-xl">Edit Projects</h3>
+								<div class="flex w-11/12 flex-col items-center justify-start gap-6 rounded-lg border px-4 py-8 shadow-md">
+									<h3 class="text-xl">Create New Project</h3>
+									<TextField class="grid w-full grid-cols-4 items-center gap-4">
+										<TextFieldLabel class="text-right">
+											Project Name
+										</TextFieldLabel>
+										<TextFieldInput
+											class="col-span-3"
+											type="text"
+											onInput={(e) => {
+												setName(e.target.value);
+											}}
+										/>
+									</TextField>
+									<TextField class="grid w-full grid-cols-4 items-center gap-4">
+										<TextFieldLabel class="text-right">Hours</TextFieldLabel>
+										<TextFieldInput
+											class="col-span-3"
+											type="number"
+											onInput={(e) => {
+												setHours(e.target.value);
+											}}
+										/>
+									</TextField>
+									<Button
+										onClick={() =>
+											newProject.mutate({
+												hoursTarget: Number(hours()),
+												name: name(),
+											})
+										}
+										type="submit"
+										variant={"secondary"}
+									>
+										Create New
+									</Button>
+								</div>
+								<h3 class="text-xl">Activate project</h3>
+								<For each={allProjects.data}>
+									{(project) => (
+										<div class="flex w-11/12 items-center justify-between">
+											<p>{project.name}</p>
+											<Switch
+												checked={project.active}
+												onChange={(e) => {
+													editProjects.mutate({
+														active: e,
+														hoursTarget: project.targetHours,
+														name: project.name,
+														projectId: project.id,
+													});
+												}}
+											>
+												<SwitchControl>
+													<SwitchThumb />
+												</SwitchControl>
+											</Switch>
+										</div>
+									)}
+								</For>
+							</div>
+						</SheetContent>
+					</Sheet>
+				</BackNav>
 			</div>
 			<div class="flex w-11/12 flex-col gap-8">
 				<h3 class="mt-12 text-xl">Select project</h3>
@@ -61,11 +139,13 @@ const Menu: Component<{
 					<div class="flex flex-col items-center justify-start gap-4">
 						<For each={projects.data}>
 							{(project) => (
-								<div class="w-11/12">
-									<button type="button" class="text-left hover:scale-105">
-										{project.name}
-									</button>
-								</div>
+								<Show when={project.active}>
+									<div class="w-11/12">
+										<button type="button" class="text-left hover:scale-105">
+											{project.name}
+										</button>
+									</div>
+								</Show>
 							)}
 						</For>
 					</div>
