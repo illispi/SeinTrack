@@ -23,7 +23,7 @@ const DayEditor: Component<{
 		props.selectedDate,
 	);
 
-	const [prev, setPrev] = createSignal(props.hoursWorkedPrev);
+	const [active, setActive] = createSignal(false);
 
 	const jsConfetti = new JSConfetti();
 	const audio = new Audio("victory.wav");
@@ -31,16 +31,6 @@ const DayEditor: Component<{
 	const targetHours = trpc.getTargetHours.createQuery(() => props.projectId);
 
 	createEffect(() => {
-		console.log(
-			"Should exist: ",
-			hours.data?.hoursWorked,
-			" and be larger than: ",
-			targetHours.data?.targetHours,
-			" And this: ",
-			props.hoursWorkedPrev,
-			" should not exist or be smaller than: ",
-			targetHours.data?.targetHours,
-		);
 		if (lastSelectedDate() !== props.selectedDate) {
 			setAddHours(0);
 			setAddMinutes(0);
@@ -60,23 +50,21 @@ const DayEditor: Component<{
 				variant: "error",
 			});
 		}
+		const test = hours.data?.hoursWorked || 0;
 		if (
-			props.hoursWorkedPrev < targetHours.data?.targetHours ||
-			!props.hoursWorkedPrev
-		) {
-			setPrev(props.hoursWorkedPrev || 0);
-		}
-		if (
-			prev() < targetHours.data?.targetHours &&
-			hours.data?.hoursWorked >= targetHours.data?.targetHours
+			test < targetHours.data?.targetHours &&
+			test + addHours() + addMinutes() / 60 >= targetHours.data?.targetHours &&
+			active()
 		) {
 			jsConfetti.addConfetti();
 			audio.play();
+			setActive(false);
 		}
 	});
 
 	const changeHours = trpc.changeDayHours.createMutation(() => ({
 		onSuccess: () => {
+			setActive(true);
 			setAddHours(0);
 			setAddMinutes(0);
 			props.setDayEditorOpen(false);
