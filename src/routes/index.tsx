@@ -104,7 +104,7 @@ export default function Home() {
 			</A>
 			<div class="sticky top-0 mx-auto flex h-12 w-full items-center justify-between bg-gradient-to-t from-green-500 to-green-400 shadow-md">
 				<div class="flex-1">
-					<div class="flex h-12 max-w-20 items-center justify-end rounded-e-full bg-white pr-5">
+					<div class="flex h-12 max-w-20 items-center justify-end rounded-e-full pr-5">
 						<A href="/">
 							<img
 								class="size-12"

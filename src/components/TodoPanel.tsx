@@ -61,6 +61,10 @@ const TodoPanel: Component<{
 		tagGroupsActive.data[0].tagGroup,
 	);
 
+	createEffect(() => {
+		setSelectedTagGroup(tagGroupsActive.data[0]?.tagGroup);
+	});
+
 	const addTag = trpc.addTagOrGroup.createMutation(() => ({
 		onSuccess: () => {
 			showToast({
