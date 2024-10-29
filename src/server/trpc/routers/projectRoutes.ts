@@ -29,6 +29,27 @@ export const newProject = publicProcedure
 				.executeTakeFirstOrThrow();
 		}
 
+		const defaultGroups = [
+			"bug fix",
+			"feature",
+			"major feature",
+			"docs",
+			"content",
+			"refactor",
+			"learning",
+		];
+
+		for (const group of defaultGroups) {
+			await ctx.db
+				.insertInto("tagGroups")
+				.values({
+					tagGroup: group,
+					tagGroupActive: true,
+					projectId: project.id,
+				})
+				.executeTakeFirstOrThrow();
+		}
+
 		return;
 	});
 
