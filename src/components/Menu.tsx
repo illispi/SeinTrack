@@ -78,7 +78,7 @@ const Menu: Component<{
 											class="col-span-3"
 											type="text"
 											onInput={(e) => {
-												setName(e.target.value);
+												setName(e.currentTarget.value);
 											}}
 										/>
 									</TextField>
@@ -88,7 +88,7 @@ const Menu: Component<{
 											class="col-span-3"
 											type="number"
 											onInput={(e) => {
-												setHours(e.target.value);
+												setHours(e.currentTarget.value);
 											}}
 										/>
 									</TextField>
