@@ -149,7 +149,7 @@ const Menu: Component<{
 											type="button"
 											class={clsx(
 												props.selectedProjectId !== project.id ||
-													"text-2xl font-semibold underline",
+													"text-2xl font-semibold underline underline-offset-4",
 												"text-left hover:scale-105",
 											)}
 										>

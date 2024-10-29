@@ -60,6 +60,7 @@ export const allProjects = publicProcedure.query(async ({ ctx }) => {
 	const projects = await ctx.db
 		.selectFrom("projects")
 		.select(["name", "targetHours", "id", "active"])
+		.orderBy("id asc")
 		.execute();
 	if (projects.length === 0) {
 		return null;

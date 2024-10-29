@@ -78,6 +78,20 @@ const colorPicker = (
 	hours: number,
 	countedDays: number[],
 ) => {
+	// console.log(
+	// 	"TargeThours   ",
+	// 	targetHours,
+	// 	"  IterDate   ",
+	// 	iterDate,
+	// 	"  firstDate   ",
+	// 	firstDate,
+	// 	"  lastDate   ",
+	// 	lastDate,
+	// 	"hours   ",
+	// 	hours,
+	// 	"  countedDays  ",
+	// 	countedDays,
+	// );
 	if (isCountedDay(iterDate, lastDate, firstDate, countedDays) || hours > 0) {
 		if (
 			hours >= targetHours ||
@@ -127,88 +141,91 @@ const ListMonth: Component<{
 					{(day) => <div class="block pb-6 2xl:hidden">{day}</div>}
 				</For>
 			</div>
+			{console.log(firstAndLastDate.data)}
 			<div class="grid w-full grid-cols-7 place-content-center place-items-center shadow-md">
-				<For each={dayAdjust(props.month, props.year)}>
-					{(date, index) => (
-						<Show when={hours.data}>
-							{(data) => (
-								<button
-									type="button"
-									onClick={() => {
-										setSelectedDate(data()[index()].date);
+				<Show when={props.projectId}>
+					<For each={dayAdjust(props.month, props.year)}>
+						{(date, index) => (
+							<Show when={hours.data}>
+								{(data) => (
+									<button
+										type="button"
+										onClick={() => {
+											setSelectedDate(data()[index()].date);
 
-										props.setDayEditorOpen(true);
-									}}
-									class={clsx(
-										colorPicker(
-											targetHours.data?.targetHours,
-											// selectedDate(),
-											data()[index()].date,
-											firstAndLastDate.data?.firstDate,
-											firstAndLastDate.data?.lastDate,
-											data()[index()].hours,
-											activeDays.data.map((e) => e.day),
-										),
+											props.setDayEditorOpen(true);
+										}}
+										class={clsx(
+											colorPicker(
+												targetHours.data?.targetHours,
+												// selectedDate(),
+												data()[index()].date,
+												firstAndLastDate.data?.firstDate,
+												firstAndLastDate.data?.lastDate,
+												data()[index()].hours,
+												activeDays.data.map((e) => e.day),
+											),
 
-										index() === 0 ? "rounded-ss-lg border-t" : "",
-										index() < 7 && index() > 0 ? "border-t" : "",
-										index() % 7 === 0 ? "border-l" : "",
-										index() !== 6 || "rounded-se-lg",
-										index() !== 41 || "rounded-ee-lg",
-										index() !== 35 || "rounded-es-lg",
-										"flex h-16 w-full flex-col items-center justify-around border-b border-r border-gray-600 transition-all duration-300 hover:bg-slate-300",
-									)}
-								>
-									<div class="flex size-full flex-col items-center justify-start">
-										<h5
-											class={clsx(
-												date.toDateString() === new Date().toDateString()
-													? "size-6 rounded-full bg-black text-center text-white"
-													: "size-6",
-											)}
-										>
-											{date.getDate()}
-										</h5>
+											index() === 0 ? "rounded-ss-lg border-t" : "",
+											index() < 7 && index() > 0 ? "border-t" : "",
+											index() % 7 === 0 ? "border-l" : "",
+											index() !== 6 || "rounded-se-lg",
+											index() !== 41 || "rounded-ee-lg",
+											index() !== 35 || "rounded-es-lg",
+											"flex h-16 w-full flex-col items-center justify-around border-b border-r border-gray-600 transition-all duration-300 hover:bg-slate-300",
+										)}
+									>
+										<div class="flex size-full flex-col items-center justify-start">
+											<h5
+												class={clsx(
+													date.toDateString() === new Date().toDateString()
+														? "size-6 rounded-full bg-black text-center text-white"
+														: "size-6",
+												)}
+											>
+												{date.getDate()}
+											</h5>
 
-										<Suspense fallback={<div class="size-full" />}>
-											<div>
-												<Show
-													when={
-														isCountedDay(
-															data()[index()].date,
-															firstAndLastDate.data?.lastDate,
-															firstAndLastDate.data?.firstDate,
-															activeDays.data.map((e) => e.day),
-														) || data()[index()].hours > 0
-													}
-													fallback=""
-												>
+											<Suspense fallback={<div class="size-full" />}>
+												<div>
 													<Show
 														when={
-															data()[index()].hours >=
-																targetHours.data?.targetHours ||
-															!isCountedDay(
+															isCountedDay(
 																data()[index()].date,
 																firstAndLastDate.data?.lastDate,
 																firstAndLastDate.data?.firstDate,
 																activeDays.data.map((e) => e.day),
-															)
+															) || data()[index()].hours > 0
 														}
-														fallback={
-															<MinuteFormat hours={data()[index()].hours} />
-														}
+														fallback=""
 													>
-														<MinuteFormat hours={data()[index()].hours} />
+														<Show
+															when={
+																data()[index()].hours >=
+																	targetHours.data?.targetHours ||
+																!isCountedDay(
+																	data()[index()].date,
+																	firstAndLastDate.data?.lastDate,
+																	firstAndLastDate.data?.firstDate,
+																	activeDays.data.map((e) => e.day),
+																)
+															}
+															fallback={
+																<MinuteFormat hours={data()[index()].hours} />
+															}
+														>
+															<MinuteFormat hours={data()[index()].hours} />
+														</Show>
 													</Show>
-												</Show>
-											</div>
-										</Suspense>
-									</div>
-								</button>
-							)}
-						</Show>
-					)}
-				</For>
+												</div>
+											</Suspense>
+										</div>
+									</button>
+								)}
+							</Show>
+						)}
+					</For>
+				</Show>
 			</div>
 		</div>
 	);

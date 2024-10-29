@@ -185,7 +185,7 @@ export default function Home() {
 											setDayEditorOpen={setDayEditorOpen}
 											month={curMonth()}
 											year={curYear()}
-											projectId={data()[0].id}
+											projectId={curProjectId()}
 											setCurDate={setCurDate}
 											curDate={curDate()}
 										/>
@@ -238,7 +238,7 @@ export default function Home() {
 														hoursWorkedPrev={hours.data?.hoursWorked}
 														setDayEditorOpen={setDayEditorOpen}
 														selectedDate={curDate()}
-														projectId={data()[0].id}
+														projectId={curProjectId()}
 													/>
 												</DialogContent>
 											</Dialog>
