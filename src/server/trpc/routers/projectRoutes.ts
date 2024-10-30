@@ -46,11 +46,49 @@ export const newProject = publicProcedure
 					tagGroup: group,
 					tagGroupActive: true,
 					projectId: project.id,
-					
 				})
 				.executeTakeFirstOrThrow();
 		}
 
+		const defaultProject = await ctx.db
+			.selectFrom("projects")
+			.select("default")
+			.where("default", "=", true)
+			.executeTakeFirst();
+
+		if (!defaultProject?.default) {
+			await ctx.db
+				.updateTable("projects")
+				.set({ default: true })
+				.where("id", "=", project.id)
+				.executeTakeFirstOrThrow();
+		}
+
+		return;
+	});
+
+export const setDefault = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				projectId: v.number(),
+			}),
+		),
+	)
+	.mutation(async ({ input, ctx }) => {
+		ctx.db
+			.updateTable("projects")
+			.set({ default: false })
+			.where("default", "=", true)
+			.executeTakeFirstOrThrow();
+
+		await ctx.db
+			.updateTable("projects")
+			.where("id", "=", input.projectId)
+			.set({
+				default: true,
+			})
+			.executeTakeFirstOrThrow();
 		return;
 	});
 
@@ -81,7 +119,7 @@ export const editProject = publicProcedure
 export const allProjects = publicProcedure.query(async ({ ctx }) => {
 	const projects = await ctx.db
 		.selectFrom("projects")
-		.select(["name", "targetHours", "id", "active"])
+		.select(["name", "targetHours", "id", "active", "default"])
 		.orderBy("id asc")
 		.execute();
 	if (projects.length === 0) {

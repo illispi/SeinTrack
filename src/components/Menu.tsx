@@ -51,6 +51,8 @@ const Menu: Component<{
 	const allProjects = trpc.allProjects.createQuery();
 	const editProjects = trpc.editProject.createMutation();
 	const newProject = trpc.newProject.createMutation();
+
+	const setDefault = trpc.setDefault.createMutation();
 	return (
 		<>
 			<h2 class="m-8 text-4xl font-light">Menu</h2>
@@ -136,13 +138,16 @@ const Menu: Component<{
 				</BackNav>
 			</div>
 			<div class="flex w-11/12 flex-col gap-8">
-				<h3 class="mt-12 text-xl">Select project</h3>
+				<div class="mt-12 flex w-full items-end justify-between">
+					<h3 class=" text-xl">Select project</h3>
+					<h3 class="mr-5 text-sm">Default</h3>
+				</div>
 				<Suspense>
 					<div class="flex flex-col items-center justify-start gap-4">
 						<For each={projects.data}>
 							{(project) => (
 								<Show when={project.active}>
-									<div class="w-11/12">
+									<div class="flex h-8 w-11/12 items-center justify-between">
 										<button
 											onClick={() => {
 												props.setSelectedProjectId(project.id);
@@ -151,11 +156,22 @@ const Menu: Component<{
 											class={clsx(
 												props.selectedProjectId !== project.id ||
 													"text-2xl font-semibold underline underline-offset-4",
-												"text-left hover:scale-105",
+												"text-left",
 											)}
 										>
 											{project.name}
 										</button>
+										<Switch
+											class="flex items-center justify-center"
+											checked={project.default}
+											onChange={() => {
+												setDefault.mutate({ projectId: project.id });
+											}}
+										>
+											<SwitchControl>
+												<SwitchThumb />
+											</SwitchControl>
+										</Switch>
 									</div>
 								</Show>
 							)}

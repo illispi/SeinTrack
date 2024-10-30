@@ -1,5 +1,10 @@
-import { A } from "@solidjs/router";
-import { For, Show, Suspense, createSignal } from "solid-js";
+import { A, cache, createAsync } from "@solidjs/router";
+import {
+	createTRPCClient,
+	createTRPCProxyClient,
+	httpBatchLink,
+} from "@trpc/client";
+import { For, Show, Suspense, createEffect, createSignal } from "solid-js";
 import BackNav from "~/components/BackNav";
 import DayEditor from "~/components/DayEditor";
 import ListMonth from "~/components/ListMonth";
@@ -26,10 +31,47 @@ import {
 } from "~/components/ui/select";
 import { TextField, TextFieldInput } from "~/components/ui/text-field";
 import { showToast } from "~/components/ui/toast";
+import type { IAppRouter } from "~/server/trpc/routers/mainRouter";
 import { adjustDateByOne, monthsArr } from "~/utils/functionsAndVariables";
 import { trpc } from "~/utils/trpc";
+import superjson from "superjson";
+
+const getBaseUrl = () => {
+	if (typeof window !== "undefined") return "";
+
+	return `${
+		!import.meta.env.VITE_SITE ? process.env.SITE_URL : "http://localhost:3000"
+	}`;
+};
+
+const getDefault = cache(async () => {
+	"use server";
+	const client = createTRPCProxyClient<IAppRouter>({
+		links: [
+			httpBatchLink({
+				url: `${getBaseUrl()}/api/trpc`,
+			}),
+		],
+		transformer: superjson,
+	});
+
+	const projects = await client.allProjects.query();
+	if (!projects) {
+		return 1;
+	}
+	const defaultp = projects.find((e) => e.default)?.id;
+	if (defaultp) {
+		return defaultp;
+	}
+	return 1;
+}, "default");
+
+export const route = {
+	preload: () => getDefault(),
+};
 
 export default function Home() {
+	// const defaultP = createAsync(() => getDefault());
 	const [curMonth, setCurMonth] = createSignal(new Date().getMonth());
 	const [curYear, setCurYear] = createSignal(new Date().getFullYear());
 	const [curDate, setCurDate] = createSignal<Date>(new Date());
@@ -58,6 +100,13 @@ export default function Home() {
 		date: curDate(),
 		projectId: curProjectId(),
 	}));
+
+	createEffect(() => {
+		if (projects.data) {
+			console.log("ges");
+			setProjectId(projects.data.find((e) => e.default)?.id);
+		}
+	});
 
 	const [todoEditOpen, setTodoEditOpen] = createSignal(false);
 	const [menuOpen, setMenuOpen] = createSignal(false);

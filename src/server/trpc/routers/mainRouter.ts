@@ -14,6 +14,7 @@ import {
 	getActiveDays,
 	getTargetHours,
 	newProject,
+	setDefault,
 } from "./projectRoutes";
 import {
 	addTodo,
@@ -57,6 +58,7 @@ export const appRouter = router({
 	getAllTags: getAllTags,
 	toggleTagActive: toggleTagActive,
 	toggleTagGroupActive: toggleTagGroupActive,
+	setDefault: setDefault,
 });
 
 export type IAppRouter = typeof appRouter;
