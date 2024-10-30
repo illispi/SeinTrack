@@ -394,7 +394,7 @@ export const filteredTagsInfinite = publicProcedure
 	.input(
 		v.parser(
 			v.object({
-				cursor: v.number(),
+				cursor: v.nullish(v.number()),
 				limit: v.pipe(v.number(), v.minValue(1), v.maxValue(100)),
 				// direction: v.union([v.literal("forward"), v.literal("backward")]),
 				projectId: v.number(),
@@ -403,15 +403,19 @@ export const filteredTagsInfinite = publicProcedure
 		),
 	)
 	.query(async ({ input, ctx }) => {
+		const cursor = input.cursor ? input.cursor : 0;
 		const items = await ctx.db
 			.selectFrom("todos")
 			.select(["id", "projectId", "tagId"])
 			.where("projectId", "=", input.projectId)
-			.where("id", ">=", input.cursor)
+			.where("id", ">=", cursor)
 			.where("tagId", "=", input.tagId)
+			.where("completed", "=", true)
 			.limit(input.limit + 1)
 			.orderBy("id asc")
 			.execute();
+
+		console.log(items);
 
 		let nextCursor: typeof input.cursor | undefined = undefined;
 

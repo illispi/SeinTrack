@@ -159,7 +159,11 @@ export default function Home() {
 			limit: 10,
 			projectId: curProjectId(),
 			tagId: filteredTag(),
-			getNextPageParam: (lastPage) => lastPage.nextCursor,
+		}),
+		() => ({
+			getNextPageParam: (lastPage) => {
+				return lastPage.nextCursor;
+			},
 		}),
 	);
 
@@ -537,9 +541,12 @@ export default function Home() {
 									<Dialog open={filteredOpen()} onOpenChange={setFilteredOpen}>
 										<DialogTrigger></DialogTrigger>
 										<DialogContent>
+											{console.log(tagsFilteredInfinite.data?.pages)}
 											<For each={tagsFilteredInfinite.data?.pages}>
 												{(page) => (
-													<For each={page.items}>{(item) => item.id}</For>
+													<For each={page.items}>
+														{(item) => <>{item.id}</>}
+													</For>
 												)}
 											</For>
 										</DialogContent>
