@@ -103,10 +103,7 @@ export default function Home() {
 
 	createEffect(() => {
 		if (projects.data) {
-			const active = projects.data
-				?.filter((e) => e.active)
-				.map((e) => e.id);
-			console.log(active);
+			const active = projects.data?.filter((e) => e.active).map((e) => e.id);
 			if (!active?.includes(curProjectId())) {
 				setProjectId(projects.data.find((e) => e.default)?.id);
 			}
