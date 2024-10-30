@@ -1,4 +1,5 @@
 import { A } from "@solidjs/router";
+import clsx from "clsx";
 import {
 	type Component,
 	For,
@@ -9,19 +10,16 @@ import {
 } from "solid-js";
 import { daysOfWeekJsDate } from "~/utils/functionsAndVariables";
 import { trpc } from "~/utils/trpc";
-import { Button } from "./ui/button";
-import { Switch, SwitchControl, SwitchThumb } from "./ui/switch";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import BackNav from "./BackNav";
+import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { Switch, SwitchControl, SwitchThumb } from "./ui/switch";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
-import clsx from "clsx";
 
 const Menu: Component<{
 	selectedProjectId: number;
 	setSelectedProjectId: Setter<number>;
 }> = (props) => {
-	const [tagsOpen, setTagsOpen] = createSignal(false);
 	const [name, setName] = createSignal("");
 	const [hours, setHours] = createSignal("");
 	const [showHidden, setShowHidden] = createSignal(false);

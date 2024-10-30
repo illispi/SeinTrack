@@ -103,7 +103,6 @@ export default function Home() {
 
 	createEffect(() => {
 		if (projects.data) {
-			console.log("ges");
 			setProjectId(projects.data.find((e) => e.default)?.id);
 		}
 	});
