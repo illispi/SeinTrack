@@ -113,7 +113,9 @@ const DayEditor: Component<{
 			</button>
 			<div class="mx-auto flex w-full max-w-72 flex-col items-center justify-start gap-6">
 				<h4 class="text-3xl font-light">{props.selectedDate.toDateString()}</h4>
-				<h3 class="text-3xl">{`${hours.data?.hoursWorked ? Math.floor(hours.data.hoursWorked) : 0} h ${hours.data?.hoursWorked ? Number((hours.data.hoursWorked % 1).toFixed(2)) * 60 : 0} min`}</h3>
+				<Suspense fallback={<h3 class="text-3xl">...</h3>}>
+					<h3 class="text-3xl">{`${hours.data?.hoursWorked ? Math.floor(hours.data.hoursWorked) : 0} h ${hours.data?.hoursWorked ? Number((hours.data.hoursWorked % 1).toFixed(2)) * 60 : 0} min`}</h3>
+				</Suspense>
 				<div class="flex w-full flex-col items-center justify-center gap-8">
 					<AddTime
 						hours={addHours()}
