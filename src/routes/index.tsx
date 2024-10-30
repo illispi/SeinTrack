@@ -167,6 +167,10 @@ export default function Home() {
 		}),
 	);
 
+	const allTags = trpc.getAllTags.createQuery(() => ({
+		projectId: curProjectId(),
+	}));
+
 	return (
 		<>
 			<A class="fixed bottom-0 left-12" href="/testing/test/">
@@ -541,14 +545,22 @@ export default function Home() {
 									<Dialog open={filteredOpen()} onOpenChange={setFilteredOpen}>
 										<DialogTrigger></DialogTrigger>
 										<DialogContent>
-											{console.log(tagsFilteredInfinite.data?.pages)}
-											<For each={tagsFilteredInfinite.data?.pages}>
-												{(page) => (
-													<For each={page.items}>
-														{(item) => <>{item.id}</>}
-													</For>
-												)}
-											</For>
+											<div class="flex flex-col gap-4">
+												<h3 class="text-center text-2xl font-semibold">Tag</h3>
+												<h4 class="text-xl">
+													{filteredTag()
+														? allTags.data?.find((e) => e.id === filteredTag())
+																?.tag
+														: "none"}
+												</h4>
+												<For each={tagsFilteredInfinite.data?.pages}>
+													{(page) => (
+														<For each={page.items}>
+															{(item) => <div>{item.todo}</div>}
+														</For>
+													)}
+												</For>
+											</div>
 										</DialogContent>
 									</Dialog>
 								</BackNav>

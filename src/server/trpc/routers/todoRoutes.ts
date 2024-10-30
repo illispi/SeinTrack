@@ -404,18 +404,28 @@ export const filteredTagsInfinite = publicProcedure
 	)
 	.query(async ({ input, ctx }) => {
 		const cursor = input.cursor ? input.cursor : 0;
-		const items = await ctx.db
-			.selectFrom("todos")
-			.select(["id", "projectId", "tagId"])
-			.where("projectId", "=", input.projectId)
-			.where("id", ">=", cursor)
-			.where("tagId", "=", input.tagId)
-			.where("completed", "=", true)
-			.limit(input.limit + 1)
-			.orderBy("id asc")
-			.execute();
 
-		console.log(items);
+		const items = input.tagId
+			? await ctx.db
+					.selectFrom("todos")
+					.select(["id", "projectId", "tagId", "todo"])
+					.where("projectId", "=", input.projectId)
+					.where("id", ">=", cursor)
+					.where("tagId", "=", input.tagId)
+					.where("completed", "=", true)
+					.limit(input.limit + 1)
+					.orderBy("id asc")
+					.execute()
+			: await ctx.db
+					.selectFrom("todos")
+					.select(["id", "projectId", "tagId", "todo"])
+					.where("projectId", "=", input.projectId)
+					.where("id", ">=", cursor)
+					.where("tagId", "is", null)
+					.where("completed", "=", true)
+					.limit(input.limit + 1)
+					.orderBy("id asc")
+					.execute();
 
 		let nextCursor: typeof input.cursor | undefined = undefined;
 
