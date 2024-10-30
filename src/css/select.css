@@ -6,6 +6,8 @@
 .select__content[data-expanded] {
 	animation: contentShow 250ms ease-out;
 }
+
+
 @keyframes contentShow {
 	from {
 		opacity: 0;
