@@ -104,6 +104,16 @@ export const editProject = publicProcedure
 		),
 	)
 	.mutation(async ({ input, ctx }) => {
+		const atLeastOneActive = await ctx.db
+			.selectFrom("projects")
+			.select("id")
+			.where("active", "=", true)
+			.execute();
+
+		if (atLeastOneActive.length <= 1 && input.active === false) {
+			return;
+		}
+
 		await ctx.db
 			.updateTable("projects")
 			.where("id", "=", input.projectId)
@@ -113,6 +123,40 @@ export const editProject = publicProcedure
 				active: input.active,
 			})
 			.executeTakeFirstOrThrow();
+		let defaultActive;
+		if (input.active === false) {
+			defaultActive = await ctx.db
+				.selectFrom("projects")
+				.select(["id", "active", "default"])
+				.where("default", "=", true)
+				.executeTakeFirstOrThrow();
+		} else {
+			defaultActive = await ctx.db
+				.selectFrom("projects")
+				.select(["id", "active", "default"])
+				.where("default", "=", true)
+				.where("id", "!=", input.projectId)
+				.executeTakeFirstOrThrow();
+		}
+
+		if (!defaultActive.active) {
+			await ctx.db
+				.updateTable("projects")
+				.set({ default: false })
+				.where("id", "=", input.projectId)
+				.executeTakeFirstOrThrow();
+			const first = await ctx.db
+				.selectFrom("projects")
+				.select("id")
+				.where("active", "=", true)
+				.executeTakeFirstOrThrow();
+			await ctx.db
+				.updateTable("projects")
+				.set({ default: true })
+				.where("active", "=", true)
+				.where("id", "=", first.id)
+				.executeTakeFirstOrThrow();
+		}
 		return;
 	});
 
