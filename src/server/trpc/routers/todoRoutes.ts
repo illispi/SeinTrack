@@ -355,7 +355,7 @@ export const toggleTagGroupActive = publicProcedure
 			.executeTakeFirstOrThrow();
 	});
 
-export const EditTagOrGroupName = publicProcedure
+export const editTagOrGroupName = publicProcedure
 	.input(
 		v.parser(
 			v.object({
@@ -388,4 +388,36 @@ export const EditTagOrGroupName = publicProcedure
 		}
 
 		return;
+	});
+
+export const filteredTagsInfinite = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				cursor: v.number(),
+				limit: v.pipe(v.number(), v.minValue(1), v.maxValue(100)),
+				// direction: v.union([v.literal("forward"), v.literal("backward")]),
+				projectId: v.number(),
+				tagId: v.nullable(v.number()),
+			}),
+		),
+	)
+	.query(async ({ input, ctx }) => {
+		const items = await ctx.db
+			.selectFrom("todos")
+			.select(["id", "projectId", "tagId"])
+			.where("projectId", "=", input.projectId)
+			.where("id", ">=", input.cursor)
+			.where("tagId", "=", input.tagId)
+			.limit(input.limit + 1)
+			.orderBy("id asc")
+			.execute();
+
+		let nextCursor: typeof input.cursor | undefined = undefined;
+
+		if (items.length > input.limit) {
+			const nextItem = items.pop();
+			nextCursor = nextItem?.id;
+		}
+		return { items, nextCursor };
 	});

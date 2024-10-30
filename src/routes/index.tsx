@@ -75,11 +75,13 @@ export const route = {
 };
 
 export default function Home() {
-	// const defaultP = createAsync(() => getDefault());
 	const [curMonth, setCurMonth] = createSignal(new Date().getMonth());
 	const [curYear, setCurYear] = createSignal(new Date().getFullYear());
 	const [curDate, setCurDate] = createSignal<Date>(new Date());
 	const [openFirst, setOpenFirst] = createSignal(false);
+	const [filteredTag, setFilteredTag] = createSignal<number | null>(null);
+
+	const [filteredOpen, setFilteredOpen] = createSignal(false);
 
 	const [todo, setTodo] = createSignal<{
 		id: number;
@@ -151,6 +153,15 @@ export default function Home() {
 			setTodoEditOpen(false);
 		},
 	}));
+
+	const tagsFilteredInfinite = trpc.filteredTagsInfinite.createInfiniteQuery(
+		() => ({
+			limit: 10,
+			projectId: curProjectId(),
+			tagId: filteredTag(),
+			getNextPageParam: (lastPage) => lastPage.nextCursor,
+		}),
+	);
 
 	return (
 		<>
@@ -310,14 +321,19 @@ export default function Home() {
 														<div class="flex items-end justify-start gap-4">
 															{/* TODO these links as new pages with params */}
 
-															<A
-																href="/TODO"
+															<button
+																type="button"
+																onClick={() => {
+																	setFilteredTag(todoDone.tagId);
+																	setFilteredOpen(true);
+																}}
 																class="mt-4 text-sm italic"
-															>{`tag: ${todoDone.tag ? todoDone.tag : "none"}`}</A>
-															<A
-																href="/TODO"
+															>{`tag: ${todoDone.tag ? todoDone.tag : "none"}`}</button>
+															<button
+																type="button"
+																// onClick={}
 																class="mt-4 text-sm italic"
-															>{`group: ${todoDone.tagGroup}`}</A>
+															>{`group: ${todoDone.tagGroup}`}</button>
 														</div>
 													</div>
 													<div class="flex items-center justify-center gap-8">
@@ -517,6 +533,18 @@ export default function Home() {
 										</Show>
 									</DialogContent>
 								</Dialog>
+								<BackNav open={filteredOpen()} setOpen={setFilteredOpen}>
+									<Dialog open={filteredOpen()} onOpenChange={setFilteredOpen}>
+										<DialogTrigger></DialogTrigger>
+										<DialogContent>
+											<For each={tagsFilteredInfinite.data?.pages}>
+												{(page) => (
+													<For each={page.items}>{(item) => item.id}</For>
+												)}
+											</For>
+										</DialogContent>
+									</Dialog>
+								</BackNav>
 							</>
 						)}
 					</Show>
