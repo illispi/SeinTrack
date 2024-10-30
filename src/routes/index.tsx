@@ -103,7 +103,13 @@ export default function Home() {
 
 	createEffect(() => {
 		if (projects.data) {
-			setProjectId(projects.data.find((e) => e.default)?.id);
+			const active = projects.data
+				?.filter((e) => e.active)
+				.map((e) => e.id);
+			console.log(active);
+			if (!active?.includes(curProjectId())) {
+				setProjectId(projects.data.find((e) => e.default)?.id);
+			}
 		}
 	});
 
