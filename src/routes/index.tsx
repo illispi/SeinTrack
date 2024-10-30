@@ -32,7 +32,11 @@ import {
 import { TextField, TextFieldInput } from "~/components/ui/text-field";
 import { showToast } from "~/components/ui/toast";
 import type { IAppRouter } from "~/server/trpc/routers/mainRouter";
-import { adjustDateByOne, monthsArr } from "~/utils/functionsAndVariables";
+import {
+	adjustDateByOne,
+	hoursToFormat,
+	monthsArr,
+} from "~/utils/functionsAndVariables";
 import { trpc } from "~/utils/trpc";
 import superjson from "superjson";
 
@@ -321,9 +325,22 @@ export default function Home() {
 															<p class="text-sm italic">
 																{todoDone.dateCompleted?.toDateString()}
 															</p>
-															<div class="flex items-center justify-start gap-2">
-																<p class="text-lg font-semibold">{`${todoDone.hoursWorked}`}</p>
-																<p class="text-sm">hours</p>
+															<div class="flex items-center justify-start">
+																<h3 class="text-center font-semibold lg:size-full lg:text-xl">{`${todoDone.hoursWorked ? hoursToFormat(todoDone.hoursWorked).hours : hoursToFormat(0).hours}`}</h3>
+																<Show
+																	when={
+																		todoDone.hoursWorked
+																			? hoursToFormat(todoDone.hoursWorked)
+																					.minutes > 0
+																			: hoursToFormat(0).minutes
+																	}
+																>
+																	<span class="text-center font-semibold lg:size-full lg:text-xl">
+																		:
+																	</span>
+																	<h3 class="text-center font-semibold lg:size-full lg:text-xl">{`${todoDone.hoursWorked ? hoursToFormat(todoDone.hoursWorked).minutes : hoursToFormat(0).minutes}`}</h3>
+																</Show>
+																<span class="ml-2 mr-4"> hours</span>
 																<Button
 																	onClick={() => {
 																		setTodo(todoDone);
