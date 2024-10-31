@@ -294,99 +294,90 @@ export default function Home() {
 													<DialogContent
 														onOpenAutoFocus={(e) => e.preventDefault()}
 													>
-														<div>
-															<div class="flex items-center justify-between">
-																<div>
-																	<h5 class="text-lg font-semibold">
-																		Tag filter
-																	</h5>
-																	<Select
-																		value={tagSelect()}
-																		onChange={(e) => {
-																			if (!e) {
-																				setFilterTag(undefined);
-																				setTagSelect("All");
-																				return;
-																			}
-																			if (e === "None") {
-																				setFilterTag(null);
-																				setTagSelect(e);
-																				return;
-																			}
-																			setFilterTag(
-																				tags.data?.find((el) => el.tag === e)
-																					?.id,
-																			);
+														<div class="flex items-center justify-between">
+															<div class="flex-1">
+																<h5 class="text-lg font-semibold">
+																	Tag filter
+																</h5>
+																<Select
+																	value={tagSelect()}
+																	onChange={(e) => {
+																		if (!e) {
+																			setFilterTag(undefined);
+																			setTagSelect("All");
+																			return;
+																		}
+																		if (e === "None") {
+																			setFilterTag(null);
 																			setTagSelect(e);
 																			return;
-																		}}
-																		options={[
-																			"All",
-																			"None",
-																			...tags.data?.map((e) => e.tag),
-																		]}
-																		placeholder="Tag"
-																		itemComponent={(props) => (
-																			<SelectItem item={props.item}>
-																				{props.item.rawValue}
-																			</SelectItem>
-																		)}
-																	>
-																		<SelectTrigger
-																			aria-label="Tag"
-																			class="w-[180px]"
-																		>
-																			<SelectValue<string>>
-																				{(state) => state.selectedOption()}
-																			</SelectValue>
-																		</SelectTrigger>
-																		<SelectContent />
-																	</Select>
-																</div>
-																<div>
-																	<h5 class="text-lg font-semibold">
-																		Tag group filter
-																	</h5>
-																	<Select
-																		value={tagGroupSelect()}
-																		onChange={(e) => {
-																			if (!e) {
-																				setFilterTagGroup(null);
-																				setTagGroupSelect("All");
-																				return;
-																			}
-
-																			const temp =
-																				tagGroups.data?.find(
-																					(el) => el.tagGroup === e,
-																				)?.id || null;
-
-																			setFilterTagGroup(temp);
-																			setTagGroupSelect(e);
+																		}
+																		setFilterTag(
+																			tags.data?.find((el) => el.tag === e)?.id,
+																		);
+																		setTagSelect(e);
+																		return;
+																	}}
+																	options={[
+																		"All",
+																		"None",
+																		...tags.data?.map((e) => e.tag),
+																	]}
+																	placeholder="Tag"
+																	itemComponent={(props) => (
+																		<SelectItem item={props.item}>
+																			{props.item.rawValue}
+																		</SelectItem>
+																	)}
+																>
+																	<SelectTrigger aria-label="Tag">
+																		<SelectValue<string>>
+																			{(state) => state.selectedOption()}
+																		</SelectValue>
+																	</SelectTrigger>
+																	<SelectContent />
+																</Select>
+															</div>
+															<div class="flex-1">
+																<h5 class="text-lg font-semibold">
+																	Tag group filter
+																</h5>
+																<Select
+																	value={tagGroupSelect()}
+																	onChange={(e) => {
+																		if (!e) {
+																			setFilterTagGroup(null);
+																			setTagGroupSelect("All");
 																			return;
-																		}}
-																		options={[
-																			"All",
-																			...tagGroups.data?.map((e) => e.tagGroup),
-																		]}
-																		placeholder="Tag group"
-																		itemComponent={(props) => (
-																			<SelectItem item={props.item}>
-																				{props.item.rawValue}
-																			</SelectItem>
-																		)}
-																	>
-																		<SelectTrigger
-																			aria-label="Tag group"
-																			class="w-[180px]"
-																		>
-																			<SelectValue<string>>
-																				{(state) => state.selectedOption()}
-																			</SelectValue>
-																		</SelectTrigger>
-																		<SelectContent />
-																	</Select>
-																</div>
+																		}
+
+																		const temp =
+																			tagGroups.data?.find(
+																				(el) => el.tagGroup === e,
+																			)?.id || null;
+
+																		setFilterTagGroup(temp);
+																		setTagGroupSelect(e);
+																		return;
+																	}}
+																	options={[
+																		"All",
+																		...tagGroups.data?.map((e) => e.tagGroup),
+																	]}
+																	placeholder="Tag group"
+																	itemComponent={(props) => (
+																		<SelectItem item={props.item}>
+																			{props.item.rawValue}
+																		</SelectItem>
+																	)}
+																>
+																	<SelectTrigger aria-label="Tag group">
+																		<SelectValue<string>>
+																			{(state) => state.selectedOption()}
+																		</SelectValue>
+																	</SelectTrigger>
+																	<SelectContent />
+																</Select>
 															</div>
 														</div>
 													</DialogContent>
@@ -412,83 +403,92 @@ export default function Home() {
 										</Dialog>
 									</BackNav>
 									<div class="flex w-11/12 flex-col items-center justify-center gap-4">
-										<For each={doneTodos.data?.pages}>
-											{(page) => (
-												<Show when={page}>
-													{(pageEl) => (
-														<For each={pageEl().doneTodos}>
-															{(todoDone) => (
-																<div class="flex size-full min-h-28 items-start justify-between rounded-lg border border-t-2 border-gray-200 bg-white p-4 shadow-md">
-																	<div class="flex min-h-24 flex-col items-start justify-between">
-																		<p class="mr-2 text-wrap break-words text-left text-sm lg:text-base">
-																			{todoDone.todo}
-																		</p>
-																		<div class="flex items-end justify-start gap-4">
-																			{/* TODO these links as new pages with params */}
-
-																			<button
-																				type="button"
-																				onClick={() => {
-																					setFilterTag(todoDone.tagId);
-																				}}
-																				class="mt-4 text-sm italic"
-																			>{`tag: ${todoDone.tag ? todoDone.tag : "none"}`}</button>
-																			<button
-																				type="button"
-																				// onClick={}
-																				class="mt-4 text-sm italic"
-																			>{`group: ${todoDone.tagGroup}`}</button>
-																		</div>
-																	</div>
-																	<div class="flex items-center justify-center gap-8">
-																		<div class="flex min-h-24  flex-col items-start justify-between">
-																			<p class="text-sm italic">
-																				{todoDone.dateCompleted?.toDateString()}
+										<Suspense>
+											<For each={doneTodos.data?.pages}>
+												{(page) => (
+													<Show
+														when={page}
+														fallback={
+															<div class="h-96">
+																Nothing found """Clear filters""""
+															</div>
+														}
+													>
+														{(pageEl) => (
+															<For each={pageEl().doneTodos}>
+																{(todoDone) => (
+																	<div class="flex size-full min-h-28 items-start justify-between rounded-lg border border-t-2 border-gray-200 bg-white p-4 shadow-md">
+																		<div class="flex min-h-24 flex-col items-start justify-between">
+																			<p class="mr-2 text-wrap break-words text-left text-sm lg:text-base">
+																				{todoDone.todo}
 																			</p>
-																			<div class="flex items-center justify-start">
-																				<h3 class="text-center font-semibold lg:size-full lg:text-xl">{`${todoDone.hoursWorked ? hoursToFormat(todoDone.hoursWorked).hours : hoursToFormat(0).hours}`}</h3>
-																				<Show
-																					when={
-																						todoDone.hoursWorked
-																							? hoursToFormat(
-																									todoDone.hoursWorked,
-																								).minutes > 0
-																							: hoursToFormat(0).minutes
-																					}
-																				>
-																					<span class="text-center font-semibold lg:size-full lg:text-xl">
-																						:
-																					</span>
-																					<h3 class="text-center font-semibold lg:size-full lg:text-xl">{`${todoDone.hoursWorked ? hoursToFormat(todoDone.hoursWorked).minutes : hoursToFormat(0).minutes}`}</h3>
-																				</Show>
-																				<span class="ml-2 mr-4"> hours</span>
-																				<Button
+																			<div class="flex items-end justify-start gap-4">
+																				{/* TODO these links as new pages with params */}
+
+																				<button
+																					type="button"
 																					onClick={() => {
-																						setTodo(todoDone);
-																						setSelectedTag(
-																							todoDone.tag || "none",
-																						);
-																						setSelectedTagGroup(
-																							todoDone.tagGroup,
-																						);
-																						setTodoText(todoDone.todo);
-																						setTodoEditOpen(true);
+																						setFilterTag(todoDone.tagId);
 																					}}
-																					class="flex h-8 w-12 items-center justify-center "
-																					variant={"outline"}
-																				>
-																					Edit
-																				</Button>
+																					class="mt-4 text-sm italic"
+																				>{`tag: ${todoDone.tag ? todoDone.tag : "none"}`}</button>
+																				<button
+																					type="button"
+																					// onClick={}
+																					class="mt-4 text-sm italic"
+																				>{`group: ${todoDone.tagGroup}`}</button>
+																			</div>
+																		</div>
+																		<div class="flex items-center justify-center gap-8">
+																			<div class="flex min-h-24  flex-col items-start justify-between">
+																				<p class="text-sm italic">
+																					{todoDone.dateCompleted?.toDateString()}
+																				</p>
+																				<div class="flex items-center justify-start">
+																					<h3 class="text-center font-semibold lg:size-full lg:text-xl">{`${todoDone.hoursWorked ? hoursToFormat(todoDone.hoursWorked).hours : hoursToFormat(0).hours}`}</h3>
+																					<Show
+																						when={
+																							todoDone.hoursWorked
+																								? hoursToFormat(
+																										todoDone.hoursWorked,
+																									).minutes > 0
+																								: hoursToFormat(0).minutes
+																						}
+																					>
+																						<span class="text-center font-semibold lg:size-full lg:text-xl">
+																							:
+																						</span>
+																						<h3 class="text-center font-semibold lg:size-full lg:text-xl">{`${todoDone.hoursWorked ? hoursToFormat(todoDone.hoursWorked).minutes : hoursToFormat(0).minutes}`}</h3>
+																					</Show>
+																					<span class="ml-2 mr-4"> hours</span>
+																					<Button
+																						onClick={() => {
+																							setTodo(todoDone);
+																							setSelectedTag(
+																								todoDone.tag || "none",
+																							);
+																							setSelectedTagGroup(
+																								todoDone.tagGroup,
+																							);
+																							setTodoText(todoDone.todo);
+																							setTodoEditOpen(true);
+																						}}
+																						class="flex h-8 w-12 items-center justify-center "
+																						variant={"outline"}
+																					>
+																						Edit
+																					</Button>
+																				</div>
 																			</div>
 																		</div>
 																	</div>
-																</div>
-															)}
-														</For>
-													)}
-												</Show>
-											)}
-										</For>
+																)}
+															</For>
+														)}
+													</Show>
+												)}
+											</For>
+										</Suspense>
 									</div>
 								</div>
 

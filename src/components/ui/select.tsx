@@ -69,8 +69,8 @@ const SelectContent = <T extends ValidComponent = "div">(
 				{...others}
 			>
 				<SelectPrimitive.Listbox
-					class="m-0 p-1"
-					style={{ height: "200px", width: "200px", overflow: "auto" }}
+					class="m-0 max-w-48 p-1"
+					style={{ height: "200px", overflow: "auto" }}
 				/>
 			</SelectPrimitive.Content>
 		</SelectPrimitive.Portal>
