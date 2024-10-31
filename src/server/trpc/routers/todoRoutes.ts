@@ -234,7 +234,7 @@ export const doneTodosInf = publicProcedure
 				"todos.dateCompleted",
 			])
 			.select("tagGroups.id as tagGroupId")
-			.where("id", ">=", cursor)
+			.where("todos.id", ">=", cursor)
 			.where("todos.completed", "=", true)
 			.where("todos.projectId", "=", input.projectId)
 			.orderBy("todos.dateCompleted")

@@ -45,10 +45,11 @@ export default function Home() {
 	const [curYear, setCurYear] = createSignal(new Date().getFullYear());
 	const [curDate, setCurDate] = createSignal<Date>(new Date());
 	const [openFirst, setOpenFirst] = createSignal(false);
-	const [filteredTag, setFilteredTag] = createSignal<number | null>(null);
 	const [start, setStart] = createSignal(true);
-
-	const [filteredOpen, setFilteredOpen] = createSignal(false);
+	const [filterMonth, setFilterMonth] = createSignal<number | null>(null);
+	const [filterYear, setFilterYear] = createSignal<number | null>(null);
+	const [filterTag, setFilterTag] = createSignal<number | null>(null);
+	const [filterTagGroup, setFilterTagGroup] = createSignal<number | null>(null);
 
 	const [todo, setTodo] = createSignal<{
 		id: number;
@@ -61,13 +62,8 @@ export default function Home() {
 		tagGroupId: number;
 	} | null>(null);
 	const [dayEditorOpen, setDayEditorOpen] = createSignal(false);
-	//TODO remove hard coding project id, maybe new table with default id
 	const [curProjectId, setProjectId] = createSignal(1);
-	const completedTodos = trpc.getDoneTodosByMonth.createQuery(() => ({
-		month: curMonth(),
-		projectId: curProjectId(),
-		year: curYear(),
-	}));
+
 	const projects = trpc.allProjects.createQuery();
 	const hours = trpc.getHoursForDate.createQuery(() => ({
 		date: curDate(),
@@ -126,11 +122,14 @@ export default function Home() {
 		},
 	}));
 
-	const tagsFilteredInfinite = trpc.filteredTagsInfinite.createInfiniteQuery(
+	const doneTodos = trpc.doneTodosInf.createInfiniteQuery(
 		() => ({
 			limit: 10,
 			projectId: curProjectId(),
-			tagId: filteredTag(),
+			tagId: filterTag(),
+			month: filterMonth(),
+			year: filterYear(),
+			tagGroupId: filterTagGroup(),
 		}),
 		() => ({
 			getNextPageParam: (lastPage) => {
@@ -291,69 +290,72 @@ export default function Home() {
 										</BackNav>
 									</div>
 									<div class="flex w-11/12 flex-col items-center justify-center gap-4">
-										<For each={completedTodos.data}>
-											{(todoDone) => (
-												<div class="flex size-full min-h-28 items-start justify-between rounded-lg border border-t-2 border-gray-200 bg-white p-4 shadow-md">
-													<div class="flex min-h-24 flex-col items-start justify-between">
-														<p class="mr-2 text-wrap break-words text-left text-sm lg:text-base">
-															{todoDone.todo}
-														</p>
-														<div class="flex items-end justify-start gap-4">
-															{/* TODO these links as new pages with params */}
+										<For each={doneTodos.data?.pages}>
+											{(page) => (
+												<For each={page.doneTodos}>
+													{(todoDone) => (
+														<div class="flex size-full min-h-28 items-start justify-between rounded-lg border border-t-2 border-gray-200 bg-white p-4 shadow-md">
+															<div class="flex min-h-24 flex-col items-start justify-between">
+																<p class="mr-2 text-wrap break-words text-left text-sm lg:text-base">
+																	{todoDone.todo}
+																</p>
+																<div class="flex items-end justify-start gap-4">
+																	{/* TODO these links as new pages with params */}
 
-															<button
-																type="button"
-																onClick={() => {
-																	setFilteredTag(todoDone.tagId);
-																	setFilteredOpen(true);
-																}}
-																class="mt-4 text-sm italic"
-															>{`tag: ${todoDone.tag ? todoDone.tag : "none"}`}</button>
-															<button
-																type="button"
-																// onClick={}
-																class="mt-4 text-sm italic"
-															>{`group: ${todoDone.tagGroup}`}</button>
-														</div>
-													</div>
-													<div class="flex items-center justify-center gap-8">
-														<div class="flex min-h-24  flex-col items-start justify-between">
-															<p class="text-sm italic">
-																{todoDone.dateCompleted?.toDateString()}
-															</p>
-															<div class="flex items-center justify-start">
-																<h3 class="text-center font-semibold lg:size-full lg:text-xl">{`${todoDone.hoursWorked ? hoursToFormat(todoDone.hoursWorked).hours : hoursToFormat(0).hours}`}</h3>
-																<Show
-																	when={
-																		todoDone.hoursWorked
-																			? hoursToFormat(todoDone.hoursWorked)
-																					.minutes > 0
-																			: hoursToFormat(0).minutes
-																	}
-																>
-																	<span class="text-center font-semibold lg:size-full lg:text-xl">
-																		:
-																	</span>
-																	<h3 class="text-center font-semibold lg:size-full lg:text-xl">{`${todoDone.hoursWorked ? hoursToFormat(todoDone.hoursWorked).minutes : hoursToFormat(0).minutes}`}</h3>
-																</Show>
-																<span class="ml-2 mr-4"> hours</span>
-																<Button
-																	onClick={() => {
-																		setTodo(todoDone);
-																		setSelectedTag(todoDone.tag || "none");
-																		setSelectedTagGroup(todoDone.tagGroup);
-																		setTodoText(todoDone.todo);
-																		setTodoEditOpen(true);
-																	}}
-																	class="flex h-8 w-12 items-center justify-center "
-																	variant={"outline"}
-																>
-																	Edit
-																</Button>
+																	<button
+																		type="button"
+																		onClick={() => {
+																			setFilterTag(todoDone.tagId);
+																		}}
+																		class="mt-4 text-sm italic"
+																	>{`tag: ${todoDone.tag ? todoDone.tag : "none"}`}</button>
+																	<button
+																		type="button"
+																		// onClick={}
+																		class="mt-4 text-sm italic"
+																	>{`group: ${todoDone.tagGroup}`}</button>
+																</div>
+															</div>
+															<div class="flex items-center justify-center gap-8">
+																<div class="flex min-h-24  flex-col items-start justify-between">
+																	<p class="text-sm italic">
+																		{todoDone.dateCompleted?.toDateString()}
+																	</p>
+																	<div class="flex items-center justify-start">
+																		<h3 class="text-center font-semibold lg:size-full lg:text-xl">{`${todoDone.hoursWorked ? hoursToFormat(todoDone.hoursWorked).hours : hoursToFormat(0).hours}`}</h3>
+																		<Show
+																			when={
+																				todoDone.hoursWorked
+																					? hoursToFormat(todoDone.hoursWorked)
+																							.minutes > 0
+																					: hoursToFormat(0).minutes
+																			}
+																		>
+																			<span class="text-center font-semibold lg:size-full lg:text-xl">
+																				:
+																			</span>
+																			<h3 class="text-center font-semibold lg:size-full lg:text-xl">{`${todoDone.hoursWorked ? hoursToFormat(todoDone.hoursWorked).minutes : hoursToFormat(0).minutes}`}</h3>
+																		</Show>
+																		<span class="ml-2 mr-4"> hours</span>
+																		<Button
+																			onClick={() => {
+																				setTodo(todoDone);
+																				setSelectedTag(todoDone.tag || "none");
+																				setSelectedTagGroup(todoDone.tagGroup);
+																				setTodoText(todoDone.todo);
+																				setTodoEditOpen(true);
+																			}}
+																			class="flex h-8 w-12 items-center justify-center "
+																			variant={"outline"}
+																		>
+																			Edit
+																		</Button>
+																	</div>
+																</div>
 															</div>
 														</div>
-													</div>
-												</div>
+													)}
+												</For>
 											)}
 										</For>
 									</div>
@@ -513,29 +515,6 @@ export default function Home() {
 										</Show>
 									</DialogContent>
 								</Dialog>
-								<BackNav open={filteredOpen()} setOpen={setFilteredOpen}>
-									<Dialog open={filteredOpen()} onOpenChange={setFilteredOpen}>
-										<DialogTrigger></DialogTrigger>
-										<DialogContent>
-											<div class="flex flex-col gap-4">
-												<h3 class="text-center text-2xl font-semibold">Tag</h3>
-												<h4 class="text-xl">
-													{filteredTag()
-														? allTags.data?.find((e) => e.id === filteredTag())
-																?.tag
-														: "none"}
-												</h4>
-												<For each={tagsFilteredInfinite.data?.pages}>
-													{(page) => (
-														<For each={page.items}>
-															{(item) => <div>{item.todo}</div>}
-														</For>
-													)}
-												</For>
-											</div>
-										</DialogContent>
-									</Dialog>
-								</BackNav>
 							</>
 						)}
 					</Show>
