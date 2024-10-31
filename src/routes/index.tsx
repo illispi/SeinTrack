@@ -306,7 +306,7 @@ export default function Home() {
 													<DialogContent
 														onOpenAutoFocus={(e) => e.preventDefault()}
 													>
-														<div class="flex items-center justify-between">
+														<div class="flex h-[110px] items-start justify-between">
 															<div class="flex-1">
 																<h5 class="text-lg font-semibold">Year</h5>
 																<Button
@@ -334,30 +334,32 @@ export default function Home() {
 															</div>
 
 															<div class="flex-1">
-																<h5 class="text-lg font-semibold">Month</h5>
-																<Button
-																	variant={"outline"}
-																	onClick={() =>
-																		filterMonth()
-																			? setFilterMonth(null)
-																			: setFilterMonth(curMonth())
-																	}
-																>
-																	{filterMonth() ? "All" : "Filter"}
-																</Button>
-																<Show when={filterMonth()}>
-																	<NumberField
-																		defaultValue={filterMonth() + 1}
-																		onRawValueChange={(e) =>
-																			setFilterMonth(e - 1)
+																<Show when={filterYear()}>
+																	<h5 class="text-lg font-semibold">Month</h5>
+																	<Button
+																		variant={"outline"}
+																		onClick={() =>
+																			filterMonth()
+																				? setFilterMonth(null)
+																				: setFilterMonth(curMonth())
 																		}
 																	>
-																		<NumberFieldGroup>
-																			<NumberFieldInput />
-																			<NumberFieldIncrementTrigger />
-																			<NumberFieldDecrementTrigger />
-																		</NumberFieldGroup>
-																	</NumberField>
+																		{filterMonth() ? "All" : "Filter"}
+																	</Button>
+																	<Show when={filterMonth() && filterYear()}>
+																		<NumberField
+																			defaultValue={filterMonth() + 1}
+																			onRawValueChange={(e) =>
+																				setFilterMonth(e - 1)
+																			}
+																		>
+																			<NumberFieldGroup>
+																				<NumberFieldInput />
+																				<NumberFieldIncrementTrigger />
+																				<NumberFieldDecrementTrigger />
+																			</NumberFieldGroup>
+																		</NumberField>
+																	</Show>
 																</Show>
 															</div>
 														</div>
