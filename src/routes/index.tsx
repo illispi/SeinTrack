@@ -1,9 +1,4 @@
-import { A, cache, createAsync } from "@solidjs/router";
-import {
-	createTRPCClient,
-	createTRPCProxyClient,
-	httpBatchLink,
-} from "@trpc/client";
+import { A } from "@solidjs/router";
 import { For, Show, Suspense, createEffect, createSignal } from "solid-js";
 import BackNav from "~/components/BackNav";
 import DayEditor from "~/components/DayEditor";
@@ -31,14 +26,12 @@ import {
 } from "~/components/ui/select";
 import { TextField, TextFieldInput } from "~/components/ui/text-field";
 import { showToast } from "~/components/ui/toast";
-import type { IAppRouter } from "~/server/trpc/routers/mainRouter";
 import {
 	adjustDateByOne,
 	hoursToFormat,
 	monthsArr,
 } from "~/utils/functionsAndVariables";
 import { trpc } from "~/utils/trpc";
-import superjson from "superjson";
 
 export default function Home() {
 	const [curMonth, setCurMonth] = createSignal(new Date().getMonth());
@@ -46,12 +39,15 @@ export default function Home() {
 	const [curDate, setCurDate] = createSignal<Date>(new Date());
 	const [openFirst, setOpenFirst] = createSignal(false);
 	const [start, setStart] = createSignal(true);
+
+	const [filterDialog, setFilterDialog] = createSignal(false);
 	const [filterMonth, setFilterMonth] = createSignal<number | null>(null);
 	const [filterYear, setFilterYear] = createSignal<number | null>(null);
 	const [filterTag, setFilterTag] = createSignal<number | null | undefined>(
 		undefined,
 	);
 	const [filterTagGroup, setFilterTagGroup] = createSignal<number | null>(null);
+	const [tagSelect, setTagSelect] = createSignal("All");
 
 	const [todo, setTodo] = createSignal<{
 		id: number;
@@ -135,20 +131,24 @@ export default function Home() {
 		}),
 		() => ({
 			getNextPageParam: (lastPage) => {
-				return lastPage.nextCursor;
+				return lastPage?.nextCursor;
 			},
+			initialPageParam: 0,
 		}),
 	);
 
-	const allTags = trpc.getAllTags.createQuery(() => ({
+	const tags = trpc.getAllTags.createQuery(() => ({
+		projectId: curProjectId(),
+	}));
+	const tagGroups = trpc.getAllTagGroups.createQuery(() => ({
 		projectId: curProjectId(),
 	}));
 
 	return (
 		<>
-			<A class="fixed bottom-0 left-12" href="/testing/test/">
+			{/* <A class="fixed bottom-0 left-12" href="/testing/test/">
 				Testing
-			</A>
+			</A> */}
 			<div class="sticky top-0 mx-auto flex h-12 w-full items-center justify-between bg-gradient-to-t from-green-500 to-green-400 shadow-md">
 				<div class="flex-1">
 					<div class="flex h-12 max-w-20 items-center justify-end rounded-e-full pr-5">
@@ -237,7 +237,7 @@ export default function Home() {
 											curDate={curDate()}
 										/>
 									</Suspense>
-									<div class="flex w-11/12 max-w-96 flex-col gap-4">
+									<div class="flex w-11/12 max-w-96 flex-col gap-12">
 										<div class="flex w-full items-center justify-between gap-8">
 											<Button
 												class="flex-1"
@@ -274,90 +274,156 @@ export default function Home() {
 												Next
 											</Button>
 										</div>
-										<BackNav open={dayEditorOpen()} setOpen={setDayEditorOpen}>
-											<Dialog
-												open={dayEditorOpen()}
-												onOpenChange={() => setDayEditorOpen(!dayEditorOpen())}
-											>
-												<DialogTrigger></DialogTrigger>
-												<DialogContent>
-													<DayEditor
-														hoursWorkedPrev={hours.data?.hoursWorked}
-														setDayEditorOpen={setDayEditorOpen}
-														selectedDate={curDate()}
-														projectId={curProjectId()}
-													/>
-												</DialogContent>
-											</Dialog>
-										</BackNav>
+										<div class="flex w-full items-center justify-center gap-8">
+											<Button class="w-48" variant={"secondary"}>
+												Filters
+											</Button>
+											<BackNav open={filterDialog()} setOpen={setFilterDialog}>
+												<Dialog
+													open={filterDialog()}
+													onOpenChange={() => setFilterDialog(!filterDialog())}
+												>
+													<DialogTrigger></DialogTrigger>
+													<DialogContent>
+														<Select
+															value={tagSelect()}
+															onChange={(e) => {
+																if (!e) {
+																	setFilterTag(undefined);
+																	return;
+																}
+																if(e === "None"){
+																	setFilterTag(null)
+																	return
+																}
+																const temp = tags.data?.find(
+																	(e) => e.id === filterTag(),
+																);
+																if (temp) {
+																	setFilterTag(temp.id);
+																	return temp.tag;
+																}
+															}}
+															options={[
+																"All",
+																"None",
+																...tags.data?.map((e) => e.tag),
+															]}
+															placeholder="Tag"
+															itemComponent={(props) => (
+																<SelectItem item={props.item}>
+																	{props.item.rawValue}
+																</SelectItem>
+															)}
+														>
+															<SelectTrigger
+																aria-label="Fruit"
+																class="w-[180px]"
+															>
+																<SelectValue<string>>
+																	{(state) => state.selectedOption()}
+																</SelectValue>
+															</SelectTrigger>
+															<SelectContent />
+														</Select>
+													</DialogContent>
+												</Dialog>
+											</BackNav>
+										</div>
 									</div>
+
+									<BackNav open={dayEditorOpen()} setOpen={setDayEditorOpen}>
+										<Dialog
+											open={dayEditorOpen()}
+											onOpenChange={() => setDayEditorOpen(!dayEditorOpen())}
+										>
+											<DialogTrigger></DialogTrigger>
+											<DialogContent>
+												<DayEditor
+													hoursWorkedPrev={hours.data?.hoursWorked || 0}
+													setDayEditorOpen={setDayEditorOpen}
+													selectedDate={curDate()}
+													projectId={curProjectId()}
+												/>
+											</DialogContent>
+										</Dialog>
+									</BackNav>
 									<div class="flex w-11/12 flex-col items-center justify-center gap-4">
 										<For each={doneTodos.data?.pages}>
 											{(page) => (
-												<For each={page.doneTodos}>
-													{(todoDone) => (
-														<div class="flex size-full min-h-28 items-start justify-between rounded-lg border border-t-2 border-gray-200 bg-white p-4 shadow-md">
-															<div class="flex min-h-24 flex-col items-start justify-between">
-																<p class="mr-2 text-wrap break-words text-left text-sm lg:text-base">
-																	{todoDone.todo}
-																</p>
-																<div class="flex items-end justify-start gap-4">
-																	{/* TODO these links as new pages with params */}
+												<Show when={page}>
+													{(pageEl) => (
+														<For each={pageEl().doneTodos}>
+															{(todoDone) => (
+																<div class="flex size-full min-h-28 items-start justify-between rounded-lg border border-t-2 border-gray-200 bg-white p-4 shadow-md">
+																	<div class="flex min-h-24 flex-col items-start justify-between">
+																		<p class="mr-2 text-wrap break-words text-left text-sm lg:text-base">
+																			{todoDone.todo}
+																		</p>
+																		<div class="flex items-end justify-start gap-4">
+																			{/* TODO these links as new pages with params */}
 
-																	<button
-																		type="button"
-																		onClick={() => {
-																			setFilterTag(todoDone.tagId);
-																		}}
-																		class="mt-4 text-sm italic"
-																	>{`tag: ${todoDone.tag ? todoDone.tag : "none"}`}</button>
-																	<button
-																		type="button"
-																		// onClick={}
-																		class="mt-4 text-sm italic"
-																	>{`group: ${todoDone.tagGroup}`}</button>
-																</div>
-															</div>
-															<div class="flex items-center justify-center gap-8">
-																<div class="flex min-h-24  flex-col items-start justify-between">
-																	<p class="text-sm italic">
-																		{todoDone.dateCompleted?.toDateString()}
-																	</p>
-																	<div class="flex items-center justify-start">
-																		<h3 class="text-center font-semibold lg:size-full lg:text-xl">{`${todoDone.hoursWorked ? hoursToFormat(todoDone.hoursWorked).hours : hoursToFormat(0).hours}`}</h3>
-																		<Show
-																			when={
-																				todoDone.hoursWorked
-																					? hoursToFormat(todoDone.hoursWorked)
-																							.minutes > 0
-																					: hoursToFormat(0).minutes
-																			}
-																		>
-																			<span class="text-center font-semibold lg:size-full lg:text-xl">
-																				:
-																			</span>
-																			<h3 class="text-center font-semibold lg:size-full lg:text-xl">{`${todoDone.hoursWorked ? hoursToFormat(todoDone.hoursWorked).minutes : hoursToFormat(0).minutes}`}</h3>
-																		</Show>
-																		<span class="ml-2 mr-4"> hours</span>
-																		<Button
-																			onClick={() => {
-																				setTodo(todoDone);
-																				setSelectedTag(todoDone.tag || "none");
-																				setSelectedTagGroup(todoDone.tagGroup);
-																				setTodoText(todoDone.todo);
-																				setTodoEditOpen(true);
-																			}}
-																			class="flex h-8 w-12 items-center justify-center "
-																			variant={"outline"}
-																		>
-																			Edit
-																		</Button>
+																			<button
+																				type="button"
+																				onClick={() => {
+																					setFilterTag(todoDone.tagId);
+																				}}
+																				class="mt-4 text-sm italic"
+																			>{`tag: ${todoDone.tag ? todoDone.tag : "none"}`}</button>
+																			<button
+																				type="button"
+																				// onClick={}
+																				class="mt-4 text-sm italic"
+																			>{`group: ${todoDone.tagGroup}`}</button>
+																		</div>
+																	</div>
+																	<div class="flex items-center justify-center gap-8">
+																		<div class="flex min-h-24  flex-col items-start justify-between">
+																			<p class="text-sm italic">
+																				{todoDone.dateCompleted?.toDateString()}
+																			</p>
+																			<div class="flex items-center justify-start">
+																				<h3 class="text-center font-semibold lg:size-full lg:text-xl">{`${todoDone.hoursWorked ? hoursToFormat(todoDone.hoursWorked).hours : hoursToFormat(0).hours}`}</h3>
+																				<Show
+																					when={
+																						todoDone.hoursWorked
+																							? hoursToFormat(
+																									todoDone.hoursWorked,
+																								).minutes > 0
+																							: hoursToFormat(0).minutes
+																					}
+																				>
+																					<span class="text-center font-semibold lg:size-full lg:text-xl">
+																						:
+																					</span>
+																					<h3 class="text-center font-semibold lg:size-full lg:text-xl">{`${todoDone.hoursWorked ? hoursToFormat(todoDone.hoursWorked).minutes : hoursToFormat(0).minutes}`}</h3>
+																				</Show>
+																				<span class="ml-2 mr-4"> hours</span>
+																				<Button
+																					onClick={() => {
+																						setTodo(todoDone);
+																						setSelectedTag(
+																							todoDone.tag || "none",
+																						);
+																						setSelectedTagGroup(
+																							todoDone.tagGroup,
+																						);
+																						setTodoText(todoDone.todo);
+																						setTodoEditOpen(true);
+																					}}
+																					class="flex h-8 w-12 items-center justify-center "
+																					variant={"outline"}
+																				>
+																					Edit
+																				</Button>
+																			</div>
+																		</div>
 																	</div>
 																</div>
-															</div>
-														</div>
+															)}
+														</For>
 													)}
-												</For>
+												</Show>
 											)}
 										</For>
 									</div>
@@ -368,155 +434,157 @@ export default function Home() {
 									openFirst={openFirst()}
 									setOpenFirst={setOpenFirst}
 								/>
-								<Dialog open={todoEditOpen()} onOpenChange={setTodoEditOpen}>
-									<DialogTrigger></DialogTrigger>
-									<DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
-										<DialogHeader>
-											<DialogTitle class="mx-auto">Edit todo</DialogTitle>
-											<DialogDescription>
-												If you want to edit hours or date completed just delete
-												this todo, and create new one
-											</DialogDescription>
-										</DialogHeader>
-										<Show when={todo()}>
-											{(td) => (
-												<>
-													<button
-														type="button"
-														onClick={() => {
-															deleteTodo.mutate({ todoId: td().id });
-														}}
-														class="absolute left-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[expanded]:bg-accent data-[expanded]:text-muted-foreground"
-													>
-														<svg
-															fill="currentColor"
-															stroke-width="0"
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 1024 1024"
-															height="1em"
-															width="1em"
-															style="overflow: visible; color: currentcolor;"
-															class="size-6"
-														>
-															<path d="M864 256H736v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zm-200 0H360v-72h304v72z"></path>
-														</svg>
-													</button>
-													<div class="mx-auto flex w-full flex-col items-center justify-between gap-12">
-														<TextField
-															value={todoText()}
-															onChange={setTodoText}
-															class="grid w-full items-center gap-1.5"
-														>
-															<div class="flex items-center justify-start gap-4">
-																<TextFieldInput
-																	type="text"
-																	id="editTodo"
-																	placeholder="editTodo"
-																/>
-															</div>
-														</TextField>
-														<div class="grid w-full grid-cols-2">
-															<h3 class="font-semibold">Tag</h3>
-															<h3 class="font-semibold">Tag group</h3>
-															<Show
-																when={tagsActive.data}
-																fallback="No tags found"
-															>
-																{(tags) => (
-																	<>
-																		<Select
-																			class="flex"
-																			defaultValue={td().tag || "none"}
-																			value={selectedTag()}
-																			onChange={setSelectedTag}
-																			options={[
-																				"none",
-																				...massageTagsAndGroupsToArr(tags()),
-																			]}
-																			placeholder="Select a tag"
-																			itemComponent={(props) => (
-																				<SelectItem item={props.item}>
-																					{props.item.rawValue}
-																				</SelectItem>
-																			)}
-																		>
-																			<SelectTrigger aria-label="Tag">
-																				<SelectValue<string>>
-																					{(state) => state.selectedOption()}
-																				</SelectValue>
-																			</SelectTrigger>
-																			<SelectContent />
-																		</Select>
-																	</>
-																)}
-															</Show>
-															<Show
-																when={tagGroupsActive.data}
-																fallback="No tag groups found"
-															>
-																{(tagGroups) => (
-																	<>
-																		<Select
-																			class="flex"
-																			defaultValue={td().tagGroup}
-																			value={selectedTagGroup()}
-																			onChange={setSelectedTagGroup}
-																			options={[
-																				...massageTagsAndGroupsToArr(
-																					tagGroups(),
-																				),
-																			]}
-																			placeholder="Select a tag"
-																			itemComponent={(props) => (
-																				<SelectItem item={props.item}>
-																					{props.item.rawValue}
-																				</SelectItem>
-																			)}
-																		>
-																			<SelectTrigger aria-label="Tag">
-																				<SelectValue<string>>
-																					{(state) => state.selectedOption()}
-																				</SelectValue>
-																			</SelectTrigger>
-																			<SelectContent />
-																		</Select>
-																	</>
-																)}
-															</Show>
-														</div>
-													</div>
-													<DialogFooter class="mx-auto w-full">
-														<Button
+								<BackNav open={todoEditOpen()} setOpen={setTodoEditOpen}>
+									<Dialog open={todoEditOpen()} onOpenChange={setTodoEditOpen}>
+										<DialogTrigger></DialogTrigger>
+										<DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+											<DialogHeader>
+												<DialogTitle class="mx-auto">Edit todo</DialogTitle>
+												<DialogDescription>
+													If you want to edit hours or date completed just
+													delete this todo, and create new one
+												</DialogDescription>
+											</DialogHeader>
+											<Show when={todo()}>
+												{(td) => (
+													<>
+														<button
+															type="button"
 															onClick={() => {
-																editTodo.mutate({
-																	dateCompleted: td().dateCompleted,
-																	hoursWorked: td().hoursWorked,
-																	todoId: td().id,
-																	completed: true,
-																	tagId:
-																		selectedTag() === "none"
-																			? null
-																			: tagsActive.data.find(
-																					(e) => e.tag === selectedTag(),
-																				)?.id,
-																	todo: todoText(),
-																	tagGroupId: tagGroupsActive.data.find(
-																		(e) => e.tagGroup === selectedTagGroup(),
-																	)?.id as number,
-																});
-																console.log(todoText(), todo());
+																deleteTodo.mutate({ todoId: td().id });
 															}}
-															class="w-full"
-															variant={"secondary"}
+															class="absolute left-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[expanded]:bg-accent data-[expanded]:text-muted-foreground"
 														>
-															Edit
-														</Button>
-													</DialogFooter>
-												</>
-											)}
-										</Show>
-									</DialogContent>
-								</Dialog>
+															<svg
+																fill="currentColor"
+																stroke-width="0"
+																xmlns="http://www.w3.org/2000/svg"
+																viewBox="0 0 1024 1024"
+																height="1em"
+																width="1em"
+																style="overflow: visible; color: currentcolor;"
+																class="size-6"
+															>
+																<path d="M864 256H736v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zm-200 0H360v-72h304v72z"></path>
+															</svg>
+														</button>
+														<div class="mx-auto flex w-full flex-col items-center justify-between gap-12">
+															<TextField
+																value={todoText()}
+																onChange={setTodoText}
+																class="grid w-full items-center gap-1.5"
+															>
+																<div class="flex items-center justify-start gap-4">
+																	<TextFieldInput
+																		type="text"
+																		id="editTodo"
+																		placeholder="editTodo"
+																	/>
+																</div>
+															</TextField>
+															<div class="grid w-full grid-cols-2">
+																<h3 class="font-semibold">Tag</h3>
+																<h3 class="font-semibold">Tag group</h3>
+																<Show
+																	when={tagsActive.data}
+																	fallback="No tags found"
+																>
+																	{(tags) => (
+																		<>
+																			<Select
+																				class="flex"
+																				defaultValue={td().tag || "none"}
+																				value={selectedTag()}
+																				onChange={setSelectedTag}
+																				options={[
+																					"none",
+																					...massageTagsAndGroupsToArr(tags()),
+																				]}
+																				placeholder="Select a tag"
+																				itemComponent={(props) => (
+																					<SelectItem item={props.item}>
+																						{props.item.rawValue}
+																					</SelectItem>
+																				)}
+																			>
+																				<SelectTrigger aria-label="Tag">
+																					<SelectValue<string>>
+																						{(state) => state.selectedOption()}
+																					</SelectValue>
+																				</SelectTrigger>
+																				<SelectContent />
+																			</Select>
+																		</>
+																	)}
+																</Show>
+																<Show
+																	when={tagGroupsActive.data}
+																	fallback="No tag groups found"
+																>
+																	{(tagGroups) => (
+																		<>
+																			<Select
+																				class="flex"
+																				defaultValue={td().tagGroup}
+																				value={selectedTagGroup()}
+																				onChange={setSelectedTagGroup}
+																				options={[
+																					...massageTagsAndGroupsToArr(
+																						tagGroups(),
+																					),
+																				]}
+																				placeholder="Select a tag"
+																				itemComponent={(props) => (
+																					<SelectItem item={props.item}>
+																						{props.item.rawValue}
+																					</SelectItem>
+																				)}
+																			>
+																				<SelectTrigger aria-label="Tag">
+																					<SelectValue<string>>
+																						{(state) => state.selectedOption()}
+																					</SelectValue>
+																				</SelectTrigger>
+																				<SelectContent />
+																			</Select>
+																		</>
+																	)}
+																</Show>
+															</div>
+														</div>
+														<DialogFooter class="mx-auto w-full">
+															<Button
+																onClick={() => {
+																	editTodo.mutate({
+																		dateCompleted: td().dateCompleted,
+																		hoursWorked: td().hoursWorked,
+																		todoId: td().id,
+																		completed: true,
+																		tagId:
+																			selectedTag() === "none"
+																				? null
+																				: tagsActive.data.find(
+																						(e) => e.tag === selectedTag(),
+																					)?.id,
+																		todo: todoText(),
+																		tagGroupId: tagGroupsActive.data.find(
+																			(e) => e.tagGroup === selectedTagGroup(),
+																		)?.id as number,
+																	});
+																	console.log(todoText(), todo());
+																}}
+																class="w-full"
+																variant={"secondary"}
+															>
+																Edit
+															</Button>
+														</DialogFooter>
+													</>
+												)}
+											</Show>
+										</DialogContent>
+									</Dialog>
+								</BackNav>
 							</>
 						)}
 					</Show>

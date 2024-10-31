@@ -219,7 +219,8 @@ export const doneTodosInf = publicProcedure
 	)
 	.query(async ({ input, ctx }) => {
 		const cursor = input.cursor ? input.cursor : 0;
-		let doneTodos = ctx.db
+
+		let doneTodosPartial = ctx.db
 			.selectFrom("todos")
 			.innerJoin("tagGroups", "tagGroups.id", "todos.tagGroupId")
 			.leftJoin("tags", "tags.id", "todos.tagId")
@@ -243,7 +244,7 @@ export const doneTodosInf = publicProcedure
 		if (input.year) {
 			if (input.month) {
 				const nextMonth = adjustDateByOne(input.year, input.month, true);
-				doneTodos = doneTodos
+				doneTodosPartial = doneTodosPartial
 					.where("dateCompleted", ">=", new Date(input.year, input.month, 1))
 					.where(
 						"dateCompleted",
@@ -251,23 +252,31 @@ export const doneTodosInf = publicProcedure
 						new Date(nextMonth.year, nextMonth.month, 1),
 					);
 			} else {
-				doneTodos = doneTodos
+				doneTodosPartial = doneTodosPartial
 					.where("dateCompleted", ">=", new Date(input.year, 0, 1))
 					.where("dateCompleted", "<", new Date(input.year + 1, 0, 1));
 			}
 		}
 
 		if (input.tagId) {
-			doneTodos = doneTodos.where("todos.tagId", "=", input.tagId);
+			doneTodosPartial = doneTodosPartial.where(
+				"todos.tagId",
+				"=",
+				input.tagId,
+			);
 		}
 		if (input.tagId === null) {
-			doneTodos = doneTodos.where("todos.tagId", "is", null);
+			doneTodosPartial = doneTodosPartial.where("todos.tagId", "is", null);
 		}
 		if (input.tagGroupId) {
-			doneTodos = doneTodos.where("todos.tagGroupId", "=", input.tagGroupId);
+			doneTodosPartial = doneTodosPartial.where(
+				"todos.tagGroupId",
+				"=",
+				input.tagGroupId,
+			);
 		}
 
-		doneTodos = await doneTodos.execute();
+		const doneTodos = await doneTodosPartial.execute();
 
 		if (doneTodos.length === 0) {
 			return null;
@@ -279,7 +288,7 @@ export const doneTodosInf = publicProcedure
 			const nextItem = doneTodos.pop();
 			nextCursor = nextItem?.id;
 		}
-		return { doneTodos, nextCursor };
+		return { doneTodos: doneTodos, nextCursor };
 	});
 
 export const getTagsOrGroupsActiveOrNot = publicProcedure
