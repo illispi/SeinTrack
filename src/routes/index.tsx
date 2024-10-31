@@ -18,6 +18,13 @@ import {
 	DialogTrigger,
 } from "~/components/ui/dialog";
 import {
+	NumberField,
+	NumberFieldDecrementTrigger,
+	NumberFieldGroup,
+	NumberFieldIncrementTrigger,
+	NumberFieldInput,
+} from "~/components/ui/number-field";
+import {
 	Select,
 	SelectContent,
 	SelectItem,
@@ -68,6 +75,11 @@ export default function Home() {
 		date: curDate(),
 		projectId: curProjectId(),
 	}));
+
+	createEffect(() => {
+		setFilterMonth(curMonth());
+		setFilterYear(curYear());
+	});
 
 	createEffect(() => {
 		if (projects.data) {
@@ -296,9 +308,62 @@ export default function Home() {
 													>
 														<div class="flex items-center justify-between">
 															<div class="flex-1">
-																<h5 class="text-lg font-semibold">
-																	Tag filter
-																</h5>
+																<h5 class="text-lg font-semibold">Year</h5>
+																<Button
+																	variant={"outline"}
+																	onClick={() =>
+																		filterYear()
+																			? setFilterYear(null)
+																			: setFilterYear(curYear())
+																	}
+																>
+																	{filterYear() ? "All" : "Filter"}
+																</Button>
+																<Show when={filterYear()}>
+																	<NumberField
+																		defaultValue={filterYear()}
+																		onRawValueChange={setFilterYear}
+																	>
+																		<NumberFieldGroup>
+																			<NumberFieldInput />
+																			<NumberFieldIncrementTrigger />
+																			<NumberFieldDecrementTrigger />
+																		</NumberFieldGroup>
+																	</NumberField>
+																</Show>
+															</div>
+
+															<div class="flex-1">
+																<h5 class="text-lg font-semibold">Month</h5>
+																<Button
+																	variant={"outline"}
+																	onClick={() =>
+																		filterMonth()
+																			? setFilterMonth(null)
+																			: setFilterMonth(curMonth())
+																	}
+																>
+																	{filterMonth() ? "All" : "Filter"}
+																</Button>
+																<Show when={filterMonth()}>
+																	<NumberField
+																		defaultValue={filterMonth() + 1}
+																		onRawValueChange={(e) =>
+																			setFilterMonth(e - 1)
+																		}
+																	>
+																		<NumberFieldGroup>
+																			<NumberFieldInput />
+																			<NumberFieldIncrementTrigger />
+																			<NumberFieldDecrementTrigger />
+																		</NumberFieldGroup>
+																	</NumberField>
+																</Show>
+															</div>
+														</div>
+														<div class="flex items-center justify-between">
+															<div class="flex-1">
+																<h5 class="text-lg font-semibold">Tag</h5>
 																<Select
 																	value={tagSelect()}
 																	onChange={(e) => {
@@ -339,9 +404,7 @@ export default function Home() {
 																</Select>
 															</div>
 															<div class="flex-1">
-																<h5 class="text-lg font-semibold">
-																	Tag group filter
-																</h5>
+																<h5 class="text-lg font-semibold">Tag group</h5>
 																<Select
 																	value={tagGroupSelect()}
 																	onChange={(e) => {
