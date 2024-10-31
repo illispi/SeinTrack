@@ -48,7 +48,9 @@ export default function Home() {
 	const [start, setStart] = createSignal(true);
 	const [filterMonth, setFilterMonth] = createSignal<number | null>(null);
 	const [filterYear, setFilterYear] = createSignal<number | null>(null);
-	const [filterTag, setFilterTag] = createSignal<number | null>(null);
+	const [filterTag, setFilterTag] = createSignal<number | null | undefined>(
+		undefined,
+	);
 	const [filterTagGroup, setFilterTagGroup] = createSignal<number | null>(null);
 
 	const [todo, setTodo] = createSignal<{

@@ -212,7 +212,7 @@ export const doneTodosInf = publicProcedure
 				cursor: v.nullish(v.number()),
 				limit: v.pipe(v.number(), v.minValue(1), v.maxValue(100)),
 				// direction: v.union([v.literal("forward"), v.literal("backward")]),
-				tagId: v.nullable(v.number()),
+				tagId: v.nullish(v.number()),
 				tagGroupId: v.nullable(v.number()),
 			}),
 		),
@@ -259,6 +259,9 @@ export const doneTodosInf = publicProcedure
 
 		if (input.tagId) {
 			doneTodos = doneTodos.where("todos.tagId", "=", input.tagId);
+		}
+		if (input.tagId === null) {
+			doneTodos = doneTodos.where("todos.tagId", "is", null);
 		}
 		if (input.tagGroupId) {
 			doneTodos = doneTodos.where("todos.tagGroupId", "=", input.tagGroupId);
