@@ -48,6 +48,7 @@ export default function Home() {
 	);
 	const [filterTagGroup, setFilterTagGroup] = createSignal<number | null>(null);
 	const [tagSelect, setTagSelect] = createSignal("All");
+	const [tagGroupSelect, setTagGroupSelect] = createSignal("All");
 
 	const [todo, setTodo] = createSignal<{
 		id: number;
@@ -291,47 +292,101 @@ export default function Home() {
 												>
 													<DialogTrigger></DialogTrigger>
 													<DialogContent>
-														<Select
-															value={tagSelect()}
-															onChange={(e) => {
-																if (!e) {
-																	setFilterTag(undefined);
-																	setTagSelect("All");
-																	return;
-																}
-																if (e === "None") {
-																	setFilterTag(null);
-																	setTagSelect(e);
-																	return;
-																}
-																setFilterTag(
-																	tags.data?.find((el) => el.tag === e)?.id,
-																);
-																setTagSelect(e);
-																return;
-															}}
-															options={[
-																"All",
-																"None",
-																...tags.data?.map((e) => e.tag),
-															]}
-															placeholder="Tag"
-															itemComponent={(props) => (
-																<SelectItem item={props.item}>
-																	{props.item.rawValue}
-																</SelectItem>
-															)}
-														>
-															<SelectTrigger
-																aria-label="Fruit"
-																class="w-[180px]"
-															>
-																<SelectValue<string>>
-																	{(state) => state.selectedOption()}
-																</SelectValue>
-															</SelectTrigger>
-															<SelectContent />
-														</Select>
+														<div>
+															<div class="flex items-center justify-between">
+																<div>
+																	<h5 class="text-lg font-semibold">
+																		Tag filter
+																	</h5>
+																	<Select
+																		value={tagSelect()}
+																		onChange={(e) => {
+																			if (!e) {
+																				setFilterTag(undefined);
+																				setTagSelect("All");
+																				return;
+																			}
+																			if (e === "None") {
+																				setFilterTag(null);
+																				setTagSelect(e);
+																				return;
+																			}
+																			setFilterTag(
+																				tags.data?.find((el) => el.tag === e)
+																					?.id,
+																			);
+																			setTagSelect(e);
+																			return;
+																		}}
+																		options={[
+																			"All",
+																			"None",
+																			...tags.data?.map((e) => e.tag),
+																		]}
+																		placeholder="Tag"
+																		itemComponent={(props) => (
+																			<SelectItem item={props.item}>
+																				{props.item.rawValue}
+																			</SelectItem>
+																		)}
+																	>
+																		<SelectTrigger
+																			aria-label="Tag"
+																			class="w-[180px]"
+																		>
+																			<SelectValue<string>>
+																				{(state) => state.selectedOption()}
+																			</SelectValue>
+																		</SelectTrigger>
+																		<SelectContent />
+																	</Select>
+																</div>
+																<div>
+																	<h5 class="text-lg font-semibold">
+																		Tag group filter
+																	</h5>
+																	<Select
+																		value={tagGroupSelect()}
+																		onChange={(e) => {
+																			if (!e) {
+																				setFilterTagGroup(null);
+																				setTagGroupSelect("All");
+																				return;
+																			}
+
+																			const temp =
+																				tagGroups.data?.find(
+																					(el) => el.tagGroup === e,
+																				)?.id || null;
+
+																			setFilterTagGroup(temp);
+																			setTagGroupSelect(e);
+																			return;
+																		}}
+																		options={[
+																			"All",
+																			...tagGroups.data?.map((e) => e.tagGroup),
+																		]}
+																		placeholder="Tag"
+																		itemComponent={(props) => (
+																			<SelectItem item={props.item}>
+																				{props.item.rawValue}
+																			</SelectItem>
+																		)}
+																	>
+																		<SelectTrigger
+																			aria-label="Tag group"
+																			class="w-[180px]"
+																		>
+																			<SelectValue<string>>
+																				{(state) => state.selectedOption()}
+																			</SelectValue>
+																		</SelectTrigger>
+																		<SelectContent />
+																	</Select>
+																</div>
+															</div>
+														</div>
 													</DialogContent>
 												</Dialog>
 											</BackNav>
