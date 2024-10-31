@@ -291,7 +291,9 @@ export default function Home() {
 													onOpenChange={() => setFilterDialog(!filterDialog())}
 												>
 													<DialogTrigger></DialogTrigger>
-													<DialogContent>
+													<DialogContent
+														onOpenAutoFocus={(e) => e.preventDefault()}
+													>
 														<div>
 															<div class="flex items-center justify-between">
 																<div>
@@ -367,7 +369,7 @@ export default function Home() {
 																			"All",
 																			...tagGroups.data?.map((e) => e.tagGroup),
 																		]}
-																		placeholder="Tag"
+																		placeholder="Tag group"
 																		itemComponent={(props) => (
 																			<SelectItem item={props.item}>
 																				{props.item.rawValue}
