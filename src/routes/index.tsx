@@ -275,7 +275,13 @@ export default function Home() {
 											</Button>
 										</div>
 										<div class="flex w-full items-center justify-center gap-8">
-											<Button class="w-48" variant={"secondary"}>
+											<Button
+												onClick={() => {
+													setFilterDialog(true);
+												}}
+												class="w-48"
+												variant={"secondary"}
+											>
 												Filters
 											</Button>
 											<BackNav open={filterDialog()} setOpen={setFilterDialog}>
@@ -290,19 +296,19 @@ export default function Home() {
 															onChange={(e) => {
 																if (!e) {
 																	setFilterTag(undefined);
+																	setTagSelect("All");
 																	return;
 																}
-																if(e === "None"){
-																	setFilterTag(null)
-																	return
+																if (e === "None") {
+																	setFilterTag(null);
+																	setTagSelect(e);
+																	return;
 																}
-																const temp = tags.data?.find(
-																	(e) => e.id === filterTag(),
+																setFilterTag(
+																	tags.data?.find((el) => el.tag === e)?.id,
 																);
-																if (temp) {
-																	setFilterTag(temp.id);
-																	return temp.tag;
-																}
+																setTagSelect(e);
+																return;
 															}}
 															options={[
 																"All",
