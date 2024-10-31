@@ -202,19 +202,24 @@ export const getUnDoneTodos = publicProcedure
 
 		return unDoneTodos;
 	});
-export const getDoneTodosByMonth = publicProcedure
+export const doneTodosInf = publicProcedure
 	.input(
 		v.parser(
 			v.object({
 				projectId: v.number(),
-				month: v.number(),
-				year: v.number(),
+				month: v.nullable(v.number()),
+				year: v.nullable(v.number()),
+				cursor: v.nullish(v.number()),
+				limit: v.pipe(v.number(), v.minValue(1), v.maxValue(100)),
+				// direction: v.union([v.literal("forward"), v.literal("backward")]),
+				tagId: v.nullable(v.number()),
+				tagGroupId: v.nullable(v.number()),
 			}),
 		),
 	)
 	.query(async ({ input, ctx }) => {
-		const nextMonth = adjustDateByOne(input.year, input.month, true);
-		const doneTodos = await ctx.db
+		const cursor = input.cursor ? input.cursor : 0;
+		let doneTodos = ctx.db
 			.selectFrom("todos")
 			.innerJoin("tagGroups", "tagGroups.id", "todos.tagGroupId")
 			.leftJoin("tags", "tags.id", "todos.tagId")
@@ -229,18 +234,49 @@ export const getDoneTodosByMonth = publicProcedure
 				"todos.dateCompleted",
 			])
 			.select("tagGroups.id as tagGroupId")
+			.where("id", ">=", cursor)
 			.where("todos.completed", "=", true)
 			.where("todos.projectId", "=", input.projectId)
-			.where("dateCompleted", ">=", new Date(input.year, input.month, 1))
-			.where("dateCompleted", "<", new Date(nextMonth.year, nextMonth.month, 1))
 			.orderBy("todos.dateCompleted")
-			.execute();
+			.limit(input.limit + 1);
+
+		if (input.year) {
+			if (input.month) {
+				const nextMonth = adjustDateByOne(input.year, input.month, true);
+				doneTodos = doneTodos
+					.where("dateCompleted", ">=", new Date(input.year, input.month, 1))
+					.where(
+						"dateCompleted",
+						"<",
+						new Date(nextMonth.year, nextMonth.month, 1),
+					);
+			} else {
+				doneTodos = doneTodos
+					.where("dateCompleted", ">=", new Date(input.year, 0, 1))
+					.where("dateCompleted", "<", new Date(input.year + 1, 0, 1));
+			}
+		}
+
+		if (input.tagId) {
+			doneTodos = doneTodos.where("todos.tagId", "=", input.tagId);
+		}
+		if (input.tagGroupId) {
+			doneTodos = doneTodos.where("todos.tagGroupId", "=", input.tagGroupId);
+		}
+
+		doneTodos = await doneTodos.execute();
 
 		if (doneTodos.length === 0) {
 			return null;
 		}
 
-		return doneTodos;
+		let nextCursor: typeof input.cursor | undefined = undefined;
+
+		if (doneTodos.length > input.limit) {
+			const nextItem = doneTodos.pop();
+			nextCursor = nextItem?.id;
+		}
+		return { doneTodos, nextCursor };
 	});
 
 export const getTagsOrGroupsActiveOrNot = publicProcedure
@@ -388,50 +424,4 @@ export const editTagOrGroupName = publicProcedure
 		}
 
 		return;
-	});
-
-export const filteredTagsInfinite = publicProcedure
-	.input(
-		v.parser(
-			v.object({
-				cursor: v.nullish(v.number()),
-				limit: v.pipe(v.number(), v.minValue(1), v.maxValue(100)),
-				// direction: v.union([v.literal("forward"), v.literal("backward")]),
-				projectId: v.number(),
-				tagId: v.nullable(v.number()),
-			}),
-		),
-	)
-	.query(async ({ input, ctx }) => {
-		const cursor = input.cursor ? input.cursor : 0;
-
-		const items = input.tagId
-			? await ctx.db
-					.selectFrom("todos")
-					.select(["id", "projectId", "tagId", "todo"])
-					.where("projectId", "=", input.projectId)
-					.where("id", ">=", cursor)
-					.where("tagId", "=", input.tagId)
-					.where("completed", "=", true)
-					.limit(input.limit + 1)
-					.orderBy("id asc")
-					.execute()
-			: await ctx.db
-					.selectFrom("todos")
-					.select(["id", "projectId", "tagId", "todo"])
-					.where("projectId", "=", input.projectId)
-					.where("id", ">=", cursor)
-					.where("tagId", "is", null)
-					.where("completed", "=", true)
-					.limit(input.limit + 1)
-					.orderBy("id asc")
-					.execute();
-
-		let nextCursor: typeof input.cursor | undefined = undefined;
-
-		if (items.length > input.limit) {
-			const nextItem = items.pop();
-			nextCursor = nextItem?.id;
-		}
-		return { items, nextCursor };
 	});

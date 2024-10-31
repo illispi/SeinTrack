@@ -40,46 +40,13 @@ import {
 import { trpc } from "~/utils/trpc";
 import superjson from "superjson";
 
-const getBaseUrl = () => {
-	if (typeof window !== "undefined") return "";
-
-	return `${
-		!import.meta.env.VITE_SITE ? process.env.SITE_URL : "http://localhost:3000"
-	}`;
-};
-
-const getDefault = cache(async () => {
-	"use server";
-	const client = createTRPCProxyClient<IAppRouter>({
-		links: [
-			httpBatchLink({
-				url: `${getBaseUrl()}/api/trpc`,
-			}),
-		],
-		transformer: superjson,
-	});
-
-	const projects = await client.allProjects.query();
-	if (!projects) {
-		return 1;
-	}
-	const defaultp = projects.find((e) => e.default)?.id;
-	if (defaultp) {
-		return defaultp;
-	}
-	return 1;
-}, "default");
-
-export const route = {
-	preload: () => getDefault(),
-};
-
 export default function Home() {
 	const [curMonth, setCurMonth] = createSignal(new Date().getMonth());
 	const [curYear, setCurYear] = createSignal(new Date().getFullYear());
 	const [curDate, setCurDate] = createSignal<Date>(new Date());
 	const [openFirst, setOpenFirst] = createSignal(false);
 	const [filteredTag, setFilteredTag] = createSignal<number | null>(null);
+	const [start, setStart] = createSignal(true);
 
 	const [filteredOpen, setFilteredOpen] = createSignal(false);
 
@@ -112,6 +79,11 @@ export default function Home() {
 			const active = projects.data?.filter((e) => e.active).map((e) => e.id);
 			if (!active?.includes(curProjectId())) {
 				setProjectId(projects.data.find((e) => e.default)?.id);
+			} else {
+				if (start()) {
+					setProjectId(projects.data.find((e) => e.default === true)?.id);
+					setStart(false);
+				}
 			}
 		}
 	});

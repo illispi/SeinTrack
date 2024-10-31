@@ -24,13 +24,12 @@ import {
 	completeTodo,
 	deleteTodo,
 	editTodo,
-	getDoneTodosByMonth,
+	doneTodosInf,
 	getTagsOrGroupsActiveOrNot,
 	getUnDoneTodos,
 	getAllTags,
 	toggleTagActive,
 	toggleTagGroupActive,
-	filteredTagsInfinite,
 } from "./todoRoutes";
 
 export const appRouter = router({
@@ -44,7 +43,7 @@ export const appRouter = router({
 	editTodo: editTodo,
 	addTagOrGroup: addTagOrGroup,
 	getUnDoneTodos: getUnDoneTodos,
-	getDoneTodosByMonth: getDoneTodosByMonth,
+	doneTodosInf: doneTodosInf,
 	getTagsOrGroupsActiveOrNot: getTagsOrGroupsActiveOrNot,
 	getHoursForDate: getHoursForDate,
 	EditTagOrGroupName: editTagOrGroupName,
@@ -60,7 +59,6 @@ export const appRouter = router({
 	toggleTagActive: toggleTagActive,
 	toggleTagGroupActive: toggleTagGroupActive,
 	setDefault: setDefault,
-	filteredTagsInfinite: filteredTagsInfinite
 });
 
 export type IAppRouter = typeof appRouter;
