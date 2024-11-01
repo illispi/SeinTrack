@@ -1,10 +1,12 @@
 {
-	"name": "example-with-tailwindcss",
+	"name": "seintrack",
+	"description": "Seinfeld and prodcuct time tracking hybrid",
+	"author": "Illispi",
 	"type": "module",
 	"scripts": {
 		"dev": "vinxi dev --host",
 		"build": "vinxi build",
-		"start": "vinxi start",
+		"start": "node --env-file=.env .output/server/index.mjs",
 		"sql": "kysely-codegen --dialect postgres --camel-case",
 		"migrate:latest": "tsx ./src/tools/migrate.ts",
 		"migrate:down": "tsx ./src/tools/migrate.ts down",
