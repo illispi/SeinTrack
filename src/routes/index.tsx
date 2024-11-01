@@ -296,168 +296,6 @@ export default function Home() {
 												Next
 											</Button>
 										</div>
-										<div class="flex w-full items-center justify-center gap-8">
-											<Button
-												onClick={() => {
-													setFilterDialog(true);
-												}}
-												class="w-48"
-												variant={"secondary"}
-											>
-												Filters
-											</Button>
-											<BackNav open={filterDialog()} setOpen={setFilterDialog}>
-												<Dialog
-													open={filterDialog()}
-													onOpenChange={() => setFilterDialog(!filterDialog())}
-												>
-													<DialogTrigger></DialogTrigger>
-													<DialogContent
-														onOpenAutoFocus={(e) => e.preventDefault()}
-													>
-														<div class="flex h-[110px] items-start justify-between">
-															<div class="flex-1">
-																<h5 class="text-lg font-semibold">Year</h5>
-																<Button
-																	variant={"outline"}
-																	onClick={() =>
-																		filterYear()
-																			? setFilterYear(null)
-																			: setFilterYear(curYear())
-																	}
-																>
-																	{filterYear() ? "All" : "Filter"}
-																</Button>
-																<Show when={filterYear()}>
-																	<NumberField
-																		defaultValue={filterYear()}
-																		onRawValueChange={setFilterYear}
-																	>
-																		<NumberFieldGroup>
-																			<NumberFieldInput />
-																			<NumberFieldIncrementTrigger />
-																			<NumberFieldDecrementTrigger />
-																		</NumberFieldGroup>
-																	</NumberField>
-																</Show>
-															</div>
-
-															<div class="flex-1">
-																<Show when={filterYear()}>
-																	<h5 class="text-lg font-semibold">Month</h5>
-																	<Button
-																		variant={"outline"}
-																		onClick={() =>
-																			filterMonth()
-																				? setFilterMonth(null)
-																				: setFilterMonth(curMonth())
-																		}
-																	>
-																		{filterMonth() ? "All" : "Filter"}
-																	</Button>
-																	<Show when={filterMonth() && filterYear()}>
-																		<NumberField
-																			defaultValue={filterMonth() + 1}
-																			onRawValueChange={(e) =>
-																				setFilterMonth(e - 1)
-																			}
-																		>
-																			<NumberFieldGroup>
-																				<NumberFieldInput />
-																				<NumberFieldIncrementTrigger />
-																				<NumberFieldDecrementTrigger />
-																			</NumberFieldGroup>
-																		</NumberField>
-																	</Show>
-																</Show>
-															</div>
-														</div>
-														<div class="flex items-center justify-between">
-															<div class="flex-1">
-																<h5 class="text-lg font-semibold">Tag</h5>
-																<Select
-																	value={tagSelect()}
-																	onChange={(e) => {
-																		if (!e) {
-																			setFilterTag(undefined);
-																			setTagSelect("All");
-																			return;
-																		}
-																		if (e === "None") {
-																			setFilterTag(null);
-																			setTagSelect(e);
-																			return;
-																		}
-																		setFilterTag(
-																			tags.data?.find((el) => el.tag === e)?.id,
-																		);
-																		setTagSelect(e);
-																		return;
-																	}}
-																	options={[
-																		"All",
-																		"None",
-																		...tags.data?.map((e) => e.tag),
-																	]}
-																	placeholder="Tag"
-																	itemComponent={(props) => (
-																		<SelectItem item={props.item}>
-																			{props.item.rawValue}
-																		</SelectItem>
-																	)}
-																>
-																	<SelectTrigger aria-label="Tag">
-																		<SelectValue<string>>
-																			{(state) => state.selectedOption()}
-																		</SelectValue>
-																	</SelectTrigger>
-																	<SelectContent />
-																</Select>
-															</div>
-															<div class="flex-1">
-																<h5 class="text-lg font-semibold">Tag group</h5>
-																<Select
-																	value={tagGroupSelect()}
-																	onChange={(e) => {
-																		if (!e) {
-																			setFilterTagGroup(null);
-																			setTagGroupSelect("All");
-																			return;
-																		}
-
-																		const temp =
-																			tagGroups.data?.find(
-																				(el) => el.tagGroup === e,
-																			)?.id || null;
-
-																		setFilterTagGroup(temp);
-																		setTagGroupSelect(e);
-																		return;
-																	}}
-																	options={[
-																		"All",
-																		...tagGroups.data?.map((e) => e.tagGroup),
-																	]}
-																	placeholder="Tag group"
-																	itemComponent={(props) => (
-																		<SelectItem item={props.item}>
-																			{props.item.rawValue}
-																		</SelectItem>
-																	)}
-																>
-																	<SelectTrigger aria-label="Tag group">
-																		<SelectValue<string>>
-																			{(state) => state.selectedOption()}
-																		</SelectValue>
-																	</SelectTrigger>
-																	<SelectContent />
-																</Select>
-															</div>
-														</div>
-													</DialogContent>
-												</Dialog>
-											</BackNav>
-										</div>
 									</div>
 
 									<BackNav open={dayEditorOpen()} setOpen={setDayEditorOpen}>
@@ -476,15 +314,199 @@ export default function Home() {
 											</DialogContent>
 										</Dialog>
 									</BackNav>
-									<div class="flex w-11/12 flex-col items-center justify-center gap-4">
+									<div class="flex w-11/12 flex-col items-center justify-center gap-3">
 										<Suspense>
-											<div class="flex w-full flex-col items-center justify-start gap-6 border border-t-4 border-gray-200 border-t-green-500 bg-white p-2 shadow-md">
-												<p class="text-2xl font-light">Completed todos</p>
+											<div class="flex w-full flex-col items-center justify-start gap-6 rounded-lg border border-t-4 border-gray-200 border-t-green-500 bg-white p-8 shadow-md">
+												<p class="text-4xl font-light">
+													Stats and completed todos
+												</p>
 												<div class="flex w-full flex-col lg:flex-row">
-													<div class="flex-1"></div>
-													<div class=" grid flex-1  grid-cols-2">
+													<div class="flex flex-1 flex-col items-center justify-center gap-4">
+														<Button
+															onClick={() => {
+																setFilterDialog(true);
+															}}
+															class="w-48"
+															variant={"secondary"}
+														>
+															Filters
+														</Button>
+														<BackNav
+															open={filterDialog()}
+															setOpen={setFilterDialog}
+														>
+															<Dialog
+																open={filterDialog()}
+																onOpenChange={() =>
+																	setFilterDialog(!filterDialog())
+																}
+															>
+																<DialogTrigger></DialogTrigger>
+																<DialogContent
+																	onOpenAutoFocus={(e) => e.preventDefault()}
+																>
+																	<div class="flex h-[110px] items-start justify-between">
+																		<div class="flex-1">
+																			<h5 class="text-lg font-semibold">
+																				Year
+																			</h5>
+																			<Button
+																				variant={"outline"}
+																				onClick={() =>
+																					filterYear()
+																						? setFilterYear(null)
+																						: setFilterYear(curYear())
+																				}
+																			>
+																				{filterYear() ? "All" : "Filter"}
+																			</Button>
+																			<Show when={filterYear()}>
+																				<NumberField
+																					defaultValue={filterYear()}
+																					onRawValueChange={setFilterYear}
+																				>
+																					<NumberFieldGroup>
+																						<NumberFieldInput />
+																						<NumberFieldIncrementTrigger />
+																						<NumberFieldDecrementTrigger />
+																					</NumberFieldGroup>
+																				</NumberField>
+																			</Show>
+																		</div>
+
+																		<div class="flex-1">
+																			<Show when={filterYear()}>
+																				<h5 class="text-lg font-semibold">
+																					Month
+																				</h5>
+																				<Button
+																					variant={"outline"}
+																					onClick={() =>
+																						filterMonth()
+																							? setFilterMonth(null)
+																							: setFilterMonth(curMonth())
+																					}
+																				>
+																					{filterMonth() ? "All" : "Filter"}
+																				</Button>
+																				<Show
+																					when={filterMonth() && filterYear()}
+																				>
+																					<NumberField
+																						defaultValue={filterMonth() + 1}
+																						onRawValueChange={(e) =>
+																							setFilterMonth(e - 1)
+																						}
+																					>
+																						<NumberFieldGroup>
+																							<NumberFieldInput />
+																							<NumberFieldIncrementTrigger />
+																							<NumberFieldDecrementTrigger />
+																						</NumberFieldGroup>
+																					</NumberField>
+																				</Show>
+																			</Show>
+																		</div>
+																	</div>
+																	<div class="flex items-center justify-between">
+																		<div class="flex-1">
+																			<h5 class="text-lg font-semibold">Tag</h5>
+																			<Select
+																				value={tagSelect()}
+																				onChange={(e) => {
+																					if (!e) {
+																						setFilterTag(undefined);
+																						setTagSelect("All");
+																						return;
+																					}
+																					if (e === "None") {
+																						setFilterTag(null);
+																						setTagSelect(e);
+																						return;
+																					}
+																					setFilterTag(
+																						tags.data?.find(
+																							(el) => el.tag === e,
+																						)?.id,
+																					);
+																					setTagSelect(e);
+																					return;
+																				}}
+																				options={[
+																					"All",
+																					"None",
+																					...tags.data?.map((e) => e.tag),
+																				]}
+																				placeholder="Tag"
+																				itemComponent={(props) => (
+																					<SelectItem item={props.item}>
+																						{props.item.rawValue}
+																					</SelectItem>
+																				)}
+																			>
+																				<SelectTrigger aria-label="Tag">
+																					<SelectValue<string>>
+																						{(state) => state.selectedOption()}
+																					</SelectValue>
+																				</SelectTrigger>
+																				<SelectContent />
+																			</Select>
+																		</div>
+																		<div class="flex-1">
+																			<h5 class="text-lg font-semibold">
+																				Tag group
+																			</h5>
+																			<Select
+																				value={tagGroupSelect()}
+																				onChange={(e) => {
+																					if (!e) {
+																						setFilterTagGroup(null);
+																						setTagGroupSelect("All");
+																						return;
+																					}
+
+																					const temp =
+																						tagGroups.data?.find(
+																							(el) => el.tagGroup === e,
+																						)?.id || null;
+
+																					setFilterTagGroup(temp);
+																					setTagGroupSelect(e);
+																					return;
+																				}}
+																				options={[
+																					"All",
+																					...tagGroups.data?.map(
+																						(e) => e.tagGroup,
+																					),
+																				]}
+																				placeholder="Tag group"
+																				itemComponent={(props) => (
+																					<SelectItem item={props.item}>
+																						{props.item.rawValue}
+																					</SelectItem>
+																				)}
+																			>
+																				<SelectTrigger aria-label="Tag group">
+																					<SelectValue<string>>
+																						{(state) => state.selectedOption()}
+																					</SelectValue>
+																				</SelectTrigger>
+																				<SelectContent />
+																			</Select>
+																		</div>
+																	</div>
+																</DialogContent>
+															</Dialog>
+														</BackNav>
+
+														<Button variant={"secondary"} class="w-48">
+															More statistics
+														</Button>
+													</div>
+													<div class=" grid flex-1  grid-cols-2 gap-4">
 														<div>
-															<h4>Total time</h4>
+															<h4>Total spent</h4>
 															<p class="mx-auto flex w-fit items-center justify-center">
 																<FormatTime
 																	hours={baseStats.data?.totalTime}
@@ -502,7 +524,7 @@ export default function Home() {
 															</p>
 														</div>
 														<div>
-															<h4>Avg. time</h4>
+															<h4>Avg. per day</h4>
 															<p class="mx-auto flex w-fit items-center justify-center">
 																<FormatTime
 																	hours={baseStats.data?.avgTime}
@@ -524,14 +546,7 @@ export default function Home() {
 											</div>
 											<For each={doneTodos.data?.pages}>
 												{(page) => (
-													<Show
-														when={page}
-														fallback={
-															<div class="h-96">
-																Nothing found """Clear filters""""
-															</div>
-														}
-													>
+													<Show when={page}>
 														{(pageEl) => (
 															<For each={pageEl().doneTodos}>
 																{(todoDone) => (
