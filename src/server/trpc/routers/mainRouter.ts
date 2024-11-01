@@ -16,6 +16,7 @@ import {
 	newProject,
 	setDefault,
 } from "./projectRoutes";
+import { statsTodosFiltered } from "./statsRoutes";
 import {
 	addTodo,
 	editTagOrGroupName,
@@ -59,6 +60,7 @@ export const appRouter = router({
 	toggleTagActive: toggleTagActive,
 	toggleTagGroupActive: toggleTagGroupActive,
 	setDefault: setDefault,
+	statsTodosFiltered: statsTodosFiltered
 });
 
 export type IAppRouter = typeof appRouter;

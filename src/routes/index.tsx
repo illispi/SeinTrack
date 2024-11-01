@@ -157,6 +157,14 @@ export default function Home() {
 		projectId: curProjectId(),
 	}));
 
+	const baseStats = trpc.statsTodosFiltered.createQuery(() => ({
+		projectId: curProjectId(),
+		tagId: filterTag(),
+		month: filterMonth(),
+		year: filterYear(),
+		tagGroupId: filterTagGroup(),
+	}));
+
 	return (
 		<>
 			{/* <A class="fixed bottom-0 left-12" href="/testing/test/">
@@ -469,6 +477,30 @@ export default function Home() {
 									</BackNav>
 									<div class="flex w-11/12 flex-col items-center justify-center gap-4">
 										<Suspense>
+											<div class="flex w-full flex-col items-center justify-start gap-6 border border-t-4 border-gray-200 border-t-green-500 bg-white p-2 shadow-md">
+												<p class="text-2xl font-light">Completed todos</p>
+												<div class="flex w-full flex-col lg:flex-row">
+													<div class="flex-1"></div>
+													<div class=" grid flex-1  grid-cols-2">
+														<div>
+															<h4>Total time</h4>
+															<p>{baseStats.data?.totalTime}</p>
+														</div>
+														<div>
+															<h4>Todo time</h4>
+															<p>{baseStats.data?.totalTodoTime}</p>
+														</div>
+														<div>
+															<h4>Avg. time</h4>
+															<p>{baseStats.data?.avgTime}</p>
+														</div>
+														<div>
+															<h4>Avg. todo</h4>
+															<p>{baseStats.data?.avgTodoTime}</p>
+														</div>
+													</div>
+												</div>
+											</div>
 											<For each={doneTodos.data?.pages}>
 												{(page) => (
 													<Show
