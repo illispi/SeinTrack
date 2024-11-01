@@ -50,6 +50,7 @@ export default function Home() {
 	const [start, setStart] = createSignal(true);
 	const [dirCalendar, setDirCalendar] = createSignal(1);
 	const [pageCalendar, setPageCalendar] = createSignal(0);
+	const [difMonth, setDifMonth] = createSignal(curMonth());
 
 	const [dirStats, setDirStats] = createSignal(1);
 	const [pageStats, setPageStats] = createSignal(0);
@@ -261,7 +262,11 @@ export default function Home() {
 								>
 									<h2 class="text-lg font-semibold">{`${monthsArr[curMonth()]} ${curYear()}`}</h2>
 									<Suspense>
-										<TransitionSlide dir={dirCalendar()}>
+										<TransitionSlide
+											setDifMonth={setDifMonth}
+											curMonth={curMonth()}
+											dir={dirCalendar()}
+										>
 											<Show
 												when={pageCalendar() === 0 ? true : pageCalendar()}
 												keyed
@@ -269,7 +274,7 @@ export default function Home() {
 												<Suspense>
 													<ListMonth
 														setDayEditorOpen={setDayEditorOpen}
-														month={curMonth()}
+														month={difMonth()}
 														year={curYear()}
 														projectId={curProjectId()}
 														setCurDate={setCurDate}
@@ -491,7 +496,11 @@ export default function Home() {
 									</BackNav>
 									<div class="flex w-11/12 flex-col items-center justify-center gap-3">
 										<Suspense>
-											<TransitionSlide dir={dirStats()}>
+											<TransitionSlide
+												setDifMonth={setDifMonth}
+												curMonth={curMonth()}
+												dir={dirStats()}
+											>
 												<Show
 													when={pageStats() === 0 ? true : pageStats()}
 													keyed

@@ -1,7 +1,11 @@
-import type { ParentComponent } from "solid-js";
+import type { ParentComponent, Setter } from "solid-js";
 import { Transition } from "solid-transition-group";
 
-const TransitionSlide: ParentComponent<{ dir: number }> = (props) => {
+const TransitionSlide: ParentComponent<{
+	dir: number;
+	setDifMonth: Setter<number>;
+	curMonth: number;
+}> = (props) => {
 	return (
 		<Transition
 			onEnter={(el, done) => {
@@ -14,10 +18,11 @@ const TransitionSlide: ParentComponent<{ dir: number }> = (props) => {
 						{ opacity: 1, transform: "translate(0)" },
 					],
 					{
-						duration: 300,
+						duration: 400,
 						easing: "ease-out",
 					},
 				);
+
 				a.finished.then(done);
 			}}
 			onExit={(el, done) => {
@@ -30,11 +35,12 @@ const TransitionSlide: ParentComponent<{ dir: number }> = (props) => {
 						{ opacity: 0, transform: `translate(${props.dir * -100}px)` },
 					],
 					{
-						duration: 300,
+						duration: 400,
 						easing: "ease-in",
 					},
 				);
 				a.finished.then(done);
+				props.setDifMonth(props.curMonth);
 			}}
 			mode="outin"
 		>
