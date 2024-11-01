@@ -7,6 +7,7 @@ import ListMonth from "~/components/ListMonth";
 import MenuPanel from "~/components/MenuPanel";
 import NewProject from "~/components/NewProject";
 import TodoPanel from "~/components/TodoPanel";
+import TransitionSlide from "~/components/TransitionSlide";
 import { massageTagsAndGroupsToArr } from "~/components/UnDoneTodos";
 import { Button } from "~/components/ui/button";
 import {
@@ -47,6 +48,8 @@ export default function Home() {
 	const [curDate, setCurDate] = createSignal<Date>(new Date());
 	const [openFirst, setOpenFirst] = createSignal(false);
 	const [start, setStart] = createSignal(true);
+	const [dirCalendar, setDirCalendar] = createSignal(1);
+	const [pageCalendar, setPageCalendar] = createSignal(0);
 
 	const [filterDialog, setFilterDialog] = createSignal(false);
 	const [filterMonth, setFilterMonth] = createSignal<number | null>(null);
@@ -171,7 +174,7 @@ export default function Home() {
 			{/* <A class="fixed bottom-0 left-12" href="/testing/test/">
 				Testing
 			</A> */}
-			<div class="sticky top-0 mx-auto flex h-12 w-full items-center justify-between bg-gradient-to-t from-green-500 to-green-400 shadow-md">
+			<div class="sticky top-0 z-50 mx-auto flex h-12 w-full items-center justify-between bg-gradient-to-t from-green-500 to-green-400 shadow-md">
 				<div class="flex-1">
 					<div class="flex h-12 max-w-20 items-center justify-end rounded-e-full pr-5">
 						<A href="/">
@@ -250,14 +253,23 @@ export default function Home() {
 								>
 									<h2 class="text-lg font-semibold">{`${monthsArr[curMonth()]} ${curYear()}`}</h2>
 									<Suspense>
-										<ListMonth
-											setDayEditorOpen={setDayEditorOpen}
-											month={curMonth()}
-											year={curYear()}
-											projectId={curProjectId()}
-											setCurDate={setCurDate}
-											curDate={curDate()}
-										/>
+										<TransitionSlide dir={dirCalendar()}>
+											<Show
+												when={pageCalendar() === 0 ? true : pageCalendar()}
+												keyed
+											>
+												<Suspense>
+													<ListMonth
+														setDayEditorOpen={setDayEditorOpen}
+														month={curMonth()}
+														year={curYear()}
+														projectId={curProjectId()}
+														setCurDate={setCurDate}
+														curDate={curDate()}
+													/>
+												</Suspense>
+											</Show>
+										</TransitionSlide>
 									</Suspense>
 									<div class="flex w-11/12 max-w-96 flex-col gap-12">
 										<div class="flex w-full items-center justify-between gap-8">
@@ -272,6 +284,8 @@ export default function Home() {
 													);
 													setCurMonth(back.month);
 													setCurYear(back.year);
+													setDirCalendar(-1);
+													setPageCalendar(pageCalendar() - 1);
 												}}
 											>
 												Back
@@ -291,6 +305,8 @@ export default function Home() {
 													);
 													setCurMonth(forward.month);
 													setCurYear(forward.year);
+													setDirCalendar(1);
+													setPageCalendar(pageCalendar() + 1);
 												}}
 											>
 												Next

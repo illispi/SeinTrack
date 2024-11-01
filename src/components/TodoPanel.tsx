@@ -183,7 +183,7 @@ const TodoPanel: Component<{
 				</BackNav>
 			</div>
 			<div class="flex w-full justify-start">
-				<div class="my-8 hidden min-h-screen w-11/12 max-w-md grow flex-col items-center rounded-xl border border-t-4 border-gray-200 border-t-green-500 bg-white shadow-md lg:flex">
+				<div class="z-40 my-8 hidden min-h-screen w-11/12 max-w-md grow flex-col items-center rounded-xl border border-t-4 border-gray-200 border-t-green-500 bg-white shadow-md lg:flex">
 					<UnDoneTodos
 						newTag={newTag()}
 						newTagGroup={newTagGroup()}
