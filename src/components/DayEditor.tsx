@@ -50,21 +50,22 @@ const DayEditor: Component<{
 				variant: "error",
 			});
 		}
-		const test = hours.data?.hoursWorked || 0;
-		if (
-			test < targetHours.data?.targetHours &&
-			test + addHours() + addMinutes() / 60 >= targetHours.data?.targetHours &&
-			active()
-		) {
-			jsConfetti.addConfetti();
-			audio.play();
-			setActive(false);
-		}
 	});
 
 	const changeHours = trpc.changeDayHours.createMutation(() => ({
 		onSuccess: () => {
 			setActive(true);
+			const test = hours.data?.hoursWorked || 0;
+			if (
+				test < targetHours.data?.targetHours &&
+				test + addHours() + addMinutes() / 60 >=
+					targetHours.data?.targetHours &&
+				active()
+			) {
+				jsConfetti.addConfetti();
+				audio.play();
+				setActive(false);
+			}
 			setAddHours(0);
 			setAddMinutes(0);
 			props.setDayEditorOpen(false);
