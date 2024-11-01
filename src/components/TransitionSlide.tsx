@@ -3,8 +3,8 @@ import { Transition } from "solid-transition-group";
 
 const TransitionSlide: ParentComponent<{
 	dir: number;
-	setDifMonth: Setter<number>;
-	curMonth: number;
+	setDifMonth?: Setter<number>;
+	curMonth?: number;
 }> = (props) => {
 	return (
 		<Transition
@@ -40,7 +40,9 @@ const TransitionSlide: ParentComponent<{
 					},
 				);
 				a.finished.then(done);
-				props.setDifMonth(props.curMonth);
+				if (props.setDifMonth && props.curMonth) {
+					props.setDifMonth(props.curMonth);
+				}
 			}}
 			mode="outin"
 		>

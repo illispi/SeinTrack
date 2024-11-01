@@ -90,7 +90,7 @@ export default function Home() {
 	}));
 
 	createEffect(() => {
-		setFilterMonth(curMonth());
+		setFilterMonth(difMonth());
 		setFilterYear(curYear());
 	});
 
@@ -496,11 +496,7 @@ export default function Home() {
 									</BackNav>
 									<div class="flex w-11/12 flex-col items-center justify-center gap-3">
 										<Suspense>
-											<TransitionSlide
-												setDifMonth={setDifMonth}
-												curMonth={curMonth()}
-												dir={dirStats()}
-											>
+											<TransitionSlide dir={dirStats()}>
 												<Show
 													when={pageStats() === 0 ? true : pageStats()}
 													keyed
@@ -573,7 +569,6 @@ export default function Home() {
 																		<For each={pageEl().doneTodos}>
 																			{(todoDone) => (
 																				<div class="flex size-full min-h-28 items-start justify-between rounded-lg border border-t-2 border-gray-200 bg-white p-4 shadow-md">
-																					{console.log(todoDone)}
 																					<div class="flex min-h-24 flex-col items-start justify-between">
 																						<p class="mr-2 text-wrap break-words text-left text-sm lg:text-base">
 																							{todoDone.todo}
