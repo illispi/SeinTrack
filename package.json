@@ -4,7 +4,7 @@
 	"scripts": {
 		"dev": "vinxi dev --host",
 		"build": "vinxi build",
-		"start": "vinxi start --host",
+		"start": "vinxi start",
 		"sql": "kysely-codegen --dialect postgres --camel-case",
 		"migrate:latest": "tsx ./src/tools/migrate.ts",
 		"migrate:down": "tsx ./src/tools/migrate.ts down",
