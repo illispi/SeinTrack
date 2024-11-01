@@ -332,7 +332,7 @@ export default function Home() {
 											open={dayEditorOpen()}
 											onOpenChange={() => setDayEditorOpen(!dayEditorOpen())}
 										>
-											<DialogTrigger></DialogTrigger>
+											<DialogTrigger class="hidden"></DialogTrigger>
 											<DialogContent>
 												<DayEditor
 													hoursWorkedPrev={hours.data?.hoursWorked || 0}
@@ -348,7 +348,7 @@ export default function Home() {
 											open={filterDialog()}
 											onOpenChange={() => setFilterDialog(!filterDialog())}
 										>
-											<DialogTrigger></DialogTrigger>
+											<DialogTrigger class="hidden"></DialogTrigger>
 											<DialogContent
 												onOpenAutoFocus={(e) => e.preventDefault()}
 											>

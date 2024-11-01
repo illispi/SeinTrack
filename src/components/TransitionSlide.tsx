@@ -18,7 +18,7 @@ const TransitionSlide: ParentComponent<{
 						{ opacity: 1, transform: "translate(0)" },
 					],
 					{
-						duration: 400,
+						duration: 350,
 						easing: "ease-out",
 					},
 				);
@@ -35,7 +35,7 @@ const TransitionSlide: ParentComponent<{
 						{ opacity: 0, transform: `translate(${props.dir * -100}px)` },
 					],
 					{
-						duration: 400,
+						duration: 350,
 						easing: "ease-in",
 					},
 				);
