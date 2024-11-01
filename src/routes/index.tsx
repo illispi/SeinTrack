@@ -2,6 +2,7 @@ import { A } from "@solidjs/router";
 import { For, Show, Suspense, createEffect, createSignal } from "solid-js";
 import BackNav from "~/components/BackNav";
 import DayEditor from "~/components/DayEditor";
+import FormatTime from "~/components/FormatTime";
 import ListMonth from "~/components/ListMonth";
 import MenuPanel from "~/components/MenuPanel";
 import NewProject from "~/components/NewProject";
@@ -484,19 +485,39 @@ export default function Home() {
 													<div class=" grid flex-1  grid-cols-2">
 														<div>
 															<h4>Total time</h4>
-															<p>{baseStats.data?.totalTime}</p>
+															<p class="mx-auto flex w-fit items-center justify-center">
+																<FormatTime
+																	hours={baseStats.data?.totalTime}
+																></FormatTime>{" "}
+																h
+															</p>
 														</div>
 														<div>
 															<h4>Todo time</h4>
-															<p>{baseStats.data?.totalTodoTime}</p>
+															<p class="mx-auto flex w-fit items-center justify-center">
+																<FormatTime
+																	hours={baseStats.data?.totalTodoTime}
+																></FormatTime>{" "}
+																h
+															</p>
 														</div>
 														<div>
 															<h4>Avg. time</h4>
-															<p>{baseStats.data?.avgTime}</p>
+															<p class="mx-auto flex w-fit items-center justify-center">
+																<FormatTime
+																	hours={baseStats.data?.avgTime}
+																></FormatTime>{" "}
+																h
+															</p>
 														</div>
 														<div>
 															<h4>Avg. todo</h4>
-															<p>{baseStats.data?.avgTodoTime}</p>
+															<p class="mx-auto flex w-fit items-center justify-center">
+																<FormatTime
+																	hours={baseStats.data?.avgTodoTime}
+																></FormatTime>{" "}
+																h
+															</p>
 														</div>
 													</div>
 												</div>
