@@ -18,11 +18,14 @@ export const tagsDistribution = publicProcedure
 		let baseTagsSelect = ctx.db
 			.selectFrom("todos")
 			.leftJoin("tags", "todos.tagId", "tags.id")
-			.select([
+			.select(({ eb }) => [
 				"tags.tag",
-				sql<number>`sum(case when todos.tag_id is null then 1 else 1 end)`.as(
-					"tagCount",
-				),
+				eb.fn
+					.sum("todos.hoursWorked")
+					.as("hoursTotal"),
+				// sql<number>`sum(case when todos.tag_id is null then 1 else 1 end)`.as(
+				// 	"tagCount",
+				// ),
 			])
 			.where("todos.projectId", "=", input.projectId)
 			.where("completed", "=", true)
@@ -47,11 +50,9 @@ export const tagsDistribution = publicProcedure
 		let baseTagGroupsSelect = ctx.db
 			.selectFrom("todos")
 			.innerJoin("tagGroups", "todos.tagGroupId", "tagGroups.id")
-			.select([
+			.select(({ eb }) => [
 				"tagGroups.tagGroup",
-				sql<number>`sum(case when todos.tag_group_id is null then 1 else 1 end)`.as(
-					"tagCount",
-				),
+				eb.fn.sum("todos.hoursWorked").as("hoursTotal"),
 			])
 			.where("todos.projectId", "=", input.projectId)
 			.where("completed", "=", true)

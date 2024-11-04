@@ -41,7 +41,7 @@ import {
 	monthsArr,
 } from "~/utils/functionsAndVariables";
 import { trpc } from "~/utils/trpc";
-import Chart from "chart.js/auto";
+import Chart, { type ChartTypeRegistry } from "chart.js/auto";
 
 const countFilters = (
 	month: number | null,
@@ -201,22 +201,35 @@ export default function Home() {
 		projectId: curProjectId(),
 	}));
 
-	const [element, setElement] = createSignal();
+	const [chartElA, setChartElA] = createSignal();
+	const [chartElB, setChartElB] = createSignal();
+	let chartA: Chart<
+		keyof ChartTypeRegistry,
+		(string | number | bigint)[],
+		string
+	>;
+	let chartB: Chart<
+		keyof ChartTypeRegistry,
+		(string | number | bigint)[],
+		string
+	>;
+
+	const [prevCtx, setPrevCtx] = createSignal(null);
 
 	createEffect(() => {
 		if (tagStats.data) {
-			const data = {
+			const dataA = {
 				labels: tagStats.data.tags.map((el) => {
 					if (el.tag) {
 						return el.tag;
 					}
 					return "none";
 				}),
-				datasets: [{ data: tagStats.data.tags.map((el) => el.tagCount) }],
+				datasets: [{ data: tagStats.data.tags.map((el) => el.hoursTotal) }],
 			};
-			const config = {
+			const configA = {
 				type: "pie",
-				data: data,
+				data: dataA,
 				options: {
 					responsive: true,
 					plugins: {
@@ -225,17 +238,45 @@ export default function Home() {
 						},
 						title: {
 							display: true,
-							text: "Chart.js Pie Chart",
+							text: "Total hours per tag",
 						},
 					},
 				},
 			};
-			console.log(data);
-			if (element()) {
-				const ctx = element().getContext("2d");
-				if (ctx) {
-					const test = new Chart(ctx, config);
-					console.log(test);
+			const dataB = {
+				labels: tagStats.data.tagGroups.map((el) => el.tagGroup),
+				datasets: [
+					{ data: tagStats.data.tagGroups.map((el) => el.hoursTotal) },
+				],
+			};
+			const configB = {
+				type: "pie",
+				data: dataB,
+				options: {
+					responsive: true,
+					plugins: {
+						legend: {
+							position: "top",
+						},
+						title: {
+							display: true,
+							text: "Total hours per tag group",
+						},
+					},
+				},
+			};
+			if (chartElA() && chartElB()) {
+				const ctxA = chartElA().getContext("2d");
+				const ctxB = chartElB().getContext("2d");
+
+				if (!chartA && !chartB) {
+					chartA = new Chart(ctxA, configA);
+					chartB = new Chart(ctxB, configB);
+				} else {
+					chartA.destroy();
+					chartB.destroy();
+					chartA = new Chart(ctxA, configA);
+					chartB = new Chart(ctxB, configB);
 				}
 			}
 		}
@@ -398,8 +439,9 @@ export default function Home() {
 											<DialogContent
 												onOpenAutoFocus={(e) => e.preventDefault()}
 											>
-												<div class="h-96 w-full">
-													<canvas ref={setElement} />
+												<div class="flex w-full flex-col items-center justify-start">
+													<canvas ref={setChartElA} />
+													<canvas ref={setChartElB} />
 												</div>
 											</DialogContent>
 										</Dialog>
