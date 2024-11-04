@@ -614,7 +614,11 @@ export default function Home() {
 																							>{`tag: ${todoDone.tag ? todoDone.tag : "none"}`}</button>
 																							<button
 																								type="button"
-																								// onClick={}
+																								onClick={() => {
+																									setFilterTagGroup(
+																										todoDone.tagGroupId,
+																									);
+																								}}
 																								class="mt-4 text-sm italic"
 																							>{`group: ${todoDone.tagGroup}`}</button>
 																						</div>
