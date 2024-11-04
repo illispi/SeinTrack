@@ -40,7 +40,11 @@ const TransitionSlide: ParentComponent<{
 					},
 				);
 				a.finished.then(done);
-				if (props.setDifMonth && props.curMonth) {
+				if (
+					props.setDifMonth &&
+					props.curMonth !== null &&
+					props.curMonth !== undefined
+				) {
 					props.setDifMonth(props.curMonth);
 				}
 			}}

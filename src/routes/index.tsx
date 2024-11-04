@@ -1,5 +1,12 @@
 import { A } from "@solidjs/router";
-import { For, Show, Suspense, createEffect, createSignal } from "solid-js";
+import {
+	For,
+	Show,
+	Suspense,
+	batch,
+	createEffect,
+	createSignal,
+} from "solid-js";
 import BackNav from "~/components/BackNav";
 import DayEditor from "~/components/DayEditor";
 import FormatTime from "~/components/FormatTime";
@@ -260,9 +267,9 @@ export default function Home() {
 								0,
 							);
 							const percentage = (value / total) * 100;
-							return percentage.toFixed(2) + "%";
+							return `${percentage.toFixed(2)}%`;
 						},
-						color: "#fff",
+						color: "#000",
 					},
 				},
 			};
@@ -412,8 +419,10 @@ export default function Home() {
 														curMonth(),
 														false,
 													);
-													setCurMonth(back.month);
-													setCurYear(back.year);
+													batch(() => {
+														setCurYear(back.year);
+														setCurMonth(back.month);
+													});
 													setDirCalendar(-1);
 													setPageCalendar(pageCalendar() - 1);
 												}}
@@ -433,8 +442,10 @@ export default function Home() {
 														curMonth(),
 														true,
 													);
-													setCurMonth(forward.month);
-													setCurYear(forward.year);
+													batch(() => {
+														setCurYear(forward.year);
+														setCurMonth(forward.month);
+													});
 													setDirCalendar(1);
 													setPageCalendar(pageCalendar() + 1);
 												}}
