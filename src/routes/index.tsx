@@ -41,7 +41,14 @@ import {
 	monthsArr,
 } from "~/utils/functionsAndVariables";
 import { trpc } from "~/utils/trpc";
-import Chart, { type ChartTypeRegistry } from "chart.js/auto";
+import Chart from "chart.js/auto";
+import type {
+	ChartConfiguration,
+	ChartData,
+	ChartOptions,
+	ChartTypeRegistry,
+} from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
 const countFilters = (
 	month: number | null,
@@ -203,6 +210,7 @@ export default function Home() {
 
 	const [chartElA, setChartElA] = createSignal();
 	const [chartElB, setChartElB] = createSignal();
+
 	let chartA: Chart<
 		keyof ChartTypeRegistry,
 		(string | number | bigint)[],
@@ -214,56 +222,62 @@ export default function Home() {
 		string
 	>;
 
-	const [prevCtx, setPrevCtx] = createSignal(null);
-
 	createEffect(() => {
 		if (tagStats.data) {
-			const dataA = {
+			const dataA: ChartData<"pie"> = {
 				labels: tagStats.data.tags.map((el) => {
 					if (el.tag) {
 						return el.tag;
 					}
 					return "none";
 				}),
-				datasets: [{ data: tagStats.data.tags.map((el) => el.hoursTotal) }],
-			};
-			const configA = {
-				type: "pie",
-				data: dataA,
-				options: {
-					responsive: true,
-					plugins: {
-						legend: {
-							position: "top",
-						},
-						title: {
-							display: true,
-							text: "Total hours per tag",
-						},
-					},
-				},
-			};
-			const dataB = {
-				labels: tagStats.data.tagGroups.map((el) => el.tagGroup),
 				datasets: [
-					{ data: tagStats.data.tagGroups.map((el) => el.hoursTotal) },
+					{ data: tagStats.data.tags.map((el) => Number(el.hoursTotal)) },
 				],
 			};
-			const configB = {
-				type: "pie",
-				data: dataB,
-				options: {
-					responsive: true,
-					plugins: {
-						legend: {
-							position: "top",
+			const dataB: ChartData<"pie"> = {
+				labels: tagStats.data.tagGroups.map((el) => el.tagGroup),
+				datasets: [
+					{ data: tagStats.data.tagGroups.map((el) => Number(el.hoursTotal)) },
+				],
+			};
+
+			const options: ChartOptions<"pie"> = {
+				responsive: true,
+				plugins: {
+					legend: {
+						position: "top",
+					},
+					title: {
+						display: true,
+						text: "Total hours per tag or group",
+					},
+					datalabels: {
+						formatter: (value, ctx) => {
+							const datapoints = ctx.chart.data.datasets[0].data;
+							const total = datapoints.reduce(
+								(total, datapoint) => total + datapoint,
+								0,
+							);
+							const percentage = (value / total) * 100;
+							return percentage.toFixed(2) + "%";
 						},
-						title: {
-							display: true,
-							text: "Total hours per tag group",
-						},
+						color: "#fff",
 					},
 				},
+			};
+			const configA: ChartConfiguration<"pie"> = {
+				type: "pie",
+				data: dataA,
+				options,
+				plugins: [ChartDataLabels],
+			};
+
+			const configB: ChartConfiguration<"pie"> = {
+				type: "pie",
+				data: dataB,
+				options,
+				plugins: [ChartDataLabels],
 			};
 			if (chartElA() && chartElB()) {
 				const ctxA = chartElA().getContext("2d");
