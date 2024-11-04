@@ -398,16 +398,14 @@ export default function Home() {
 												when={pageCalendar() === 0 ? true : pageCalendar()}
 												keyed
 											>
-												<Suspense>
-													<ListMonth
-														setDayEditorOpen={setDayEditorOpen}
-														month={difMonth()}
-														year={difYear()}
-														projectId={curProjectId()}
-														setCurDate={setCurDate}
-														curDate={curDate()}
-													/>
-												</Suspense>
+												<ListMonth
+													setDayEditorOpen={setDayEditorOpen}
+													month={difMonth()}
+													year={difYear()}
+													projectId={curProjectId()}
+													setCurDate={setCurDate}
+													curDate={curDate()}
+												/>
 											</Show>
 										</TransitionSlide>
 									</Suspense>
