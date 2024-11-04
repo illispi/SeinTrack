@@ -3,6 +3,49 @@ import * as v from "valibot";
 import { adjustDateByOne } from "~/utils/functionsAndVariables";
 import { publicProcedure } from "../initTrpc";
 
+export const tagsDistribution = publicProcedure
+	.input(
+		v.parser(
+			v.object({
+				projectId: v.number(),
+				month: v.nullable(v.number()),
+				year: v.nullable(v.number()),
+			}),
+		),
+	)
+	.query(async ({ input, ctx }) => {
+		let baseTagsSelect = ctx.db
+			.selectFrom("todos")
+			.leftJoin("tags", "tags.projectId", "todos.tagId")
+			.select(({ fn, val, ref }) => [
+				"todos.tagId",
+				fn.count<number>("todos.tagId").as("tag_count"),
+				fn.agg("total", ["tagId"]),
+			])
+			.where("projectId", "=", input.projectId)
+			.groupBy("todos.tagId");
+
+		if (input.year) {
+			if (input.month) {
+				const nextMonth = adjustDateByOne(input.year, input.month, true);
+				baseTagsSelect = baseTagsSelect
+					.where("dateCompleted", ">=", new Date(input.year, input.month, 1))
+					.where(
+						"dateCompleted",
+						"<",
+						new Date(nextMonth.year, nextMonth.month, 1),
+					);
+			} else {
+				baseTagsSelect = baseTagsSelect
+					.where("dateCompleted", ">=", new Date(input.year, 0, 1))
+					.where("dateCompleted", "<", new Date(input.year + 1, 0, 1));
+			}
+		}
+
+		const baseTags = await baseTagsSelect.execute();
+		console.log(baseTags)
+	});
+
 export const statsTodosFiltered = publicProcedure
 	.input(
 		v.parser(

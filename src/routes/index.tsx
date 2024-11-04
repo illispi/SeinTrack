@@ -66,6 +66,7 @@ export default function Home() {
 	const [dirCalendar, setDirCalendar] = createSignal(1);
 	const [pageCalendar, setPageCalendar] = createSignal(0);
 	const [difMonth, setDifMonth] = createSignal(curMonth());
+	const [todoStatsOpen, setTodoStatsOpen] = createSignal(false);
 
 	const [dirStats, setDirStats] = createSignal(1);
 	const [pageStats, setPageStats] = createSignal(0);
@@ -342,6 +343,20 @@ export default function Home() {
 										</div>
 									</div>
 
+									<BackNav open={todoStatsOpen()} setOpen={setTodoStatsOpen}>
+										<Dialog
+											open={todoStatsOpen()}
+											onOpenChange={() => setTodoStatsOpen(!todoStatsOpen())}
+										>
+											<DialogTrigger class="hidden"></DialogTrigger>
+											<DialogContent
+												onOpenAutoFocus={(e) => e.preventDefault()}
+								
+											>
+												
+											</DialogContent>
+										</Dialog>
+									</BackNav>
 									<BackNav open={dayEditorOpen()} setOpen={setDayEditorOpen}>
 										<Dialog
 											open={dayEditorOpen()}
@@ -547,7 +562,13 @@ export default function Home() {
 																		{`Filters (${countFilters(filterMonth(), filterYear(), filterTag(), filterTagGroup())} on)`}
 																	</Button>
 
-																	<Button variant={"secondary"} class="w-48">
+																	<Button
+																		onClick={() => {
+																			setTodoStatsOpen(true);
+																		}}
+																		variant={"secondary"}
+																		class="w-48"
+																	>
 																		More statistics
 																	</Button>
 																</div>
