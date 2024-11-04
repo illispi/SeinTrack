@@ -17,20 +17,17 @@ export const tagsDistribution = publicProcedure
 	.query(async ({ input, ctx }) => {
 		let baseTagsSelect = ctx.db
 			.selectFrom("todos")
-			.select(({ eb, ref }) => [
-				"todos.tagId",
+			.leftJoin("tags", "todos.tagId", "tags.id")
+			.select([
+				"tags.tag",
+				// "tags.tag",
 				sql`sum(case when todos.tag_id is null then 1 else 1 end)`.as(
 					"tagCount",
 				),
-				eb
-					.selectFrom("todos")
-					.select(({ eb: ebI }) => [
-						ebI.fn.count<number>("todos.id").as("todosTotal"),
-					]),
 			])
 			.where("todos.projectId", "=", input.projectId)
 			.where("completed", "=", true)
-			.groupBy("todos.tagId");
+			.groupBy("tags.tag");
 
 		if (input.year) {
 			if (input.month) {
@@ -48,9 +45,39 @@ export const tagsDistribution = publicProcedure
 					.where("dateCompleted", "<", new Date(input.year + 1, 0, 1));
 			}
 		}
+		let baseTagGroupsSelect = ctx.db
+			.selectFrom("todos")
+			.innerJoin("tagGroups", "todos.tagGroupId", "tagGroups.id")
+			.select([
+				"tagGroups.tagGroup",
+				sql`sum(case when todos.tag_group_id is null then 1 else 1 end)`.as(
+					"tagCount",
+				),
+			])
+			.where("todos.projectId", "=", input.projectId)
+			.where("completed", "=", true)
+			.groupBy("tagGroups.tagGroup");
+
+		if (input.year) {
+			if (input.month) {
+				const nextMonth = adjustDateByOne(input.year, input.month, true);
+				baseTagGroupsSelect = baseTagGroupsSelect
+					.where("dateCompleted", ">=", new Date(input.year, input.month, 1))
+					.where(
+						"dateCompleted",
+						"<",
+						new Date(nextMonth.year, nextMonth.month, 1),
+					);
+			} else {
+				baseTagGroupsSelect = baseTagGroupsSelect
+					.where("dateCompleted", ">=", new Date(input.year, 0, 1))
+					.where("dateCompleted", "<", new Date(input.year + 1, 0, 1));
+			}
+		}
 
 		const baseTags = await baseTagsSelect.execute();
-		console.log(baseTags);
+		const baseTagGroups = await baseTagGroupsSelect.execute();
+		console.log(baseTags, baseTagGroups);
 	});
 
 export const statsTodosFiltered = publicProcedure
