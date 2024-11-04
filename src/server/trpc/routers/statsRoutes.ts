@@ -20,8 +20,7 @@ export const tagsDistribution = publicProcedure
 			.leftJoin("tags", "todos.tagId", "tags.id")
 			.select([
 				"tags.tag",
-				// "tags.tag",
-				sql`sum(case when todos.tag_id is null then 1 else 1 end)`.as(
+				sql<number>`sum(case when todos.tag_id is null then 1 else 1 end)`.as(
 					"tagCount",
 				),
 			])
@@ -50,7 +49,7 @@ export const tagsDistribution = publicProcedure
 			.innerJoin("tagGroups", "todos.tagGroupId", "tagGroups.id")
 			.select([
 				"tagGroups.tagGroup",
-				sql`sum(case when todos.tag_group_id is null then 1 else 1 end)`.as(
+				sql<number>`sum(case when todos.tag_group_id is null then 1 else 1 end)`.as(
 					"tagCount",
 				),
 			])
@@ -77,7 +76,17 @@ export const tagsDistribution = publicProcedure
 
 		const baseTags = await baseTagsSelect.execute();
 		const baseTagGroups = await baseTagGroupsSelect.execute();
-		console.log(baseTags, baseTagGroups);
+		const sumTags = baseTags.reduce((accumulator, currentValue) => {
+			return accumulator + currentValue.tagCount;
+		}, 0);
+		const sumTagGroups = baseTagGroups.reduce((accumulator, currentValue) => {
+			return accumulator + currentValue.tagCount;
+		}, 0);
+
+		return {
+			tags: { ...baseTags, total: sumTags },
+			tagGroups: { ...baseTagGroups, total: sumTagGroups },
+		};
 	});
 
 export const statsTodosFiltered = publicProcedure
