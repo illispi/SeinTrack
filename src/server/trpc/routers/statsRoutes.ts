@@ -76,16 +76,21 @@ export const tagsDistribution = publicProcedure
 
 		const baseTags = await baseTagsSelect.execute();
 		const baseTagGroups = await baseTagGroupsSelect.execute();
-		const sumTags = baseTags.reduce((accumulator, currentValue) => {
-			return accumulator + currentValue.tagCount;
-		}, 0);
-		const sumTagGroups = baseTagGroups.reduce((accumulator, currentValue) => {
-			return accumulator + currentValue.tagCount;
-		}, 0);
+		// const sumTags = baseTags.reduce((accumulator, currentValue) => {
+		// 	return accumulator + currentValue.tagCount;
+		// }, 0);
+		// const sumTagGroups = baseTagGroups.reduce((accumulator, currentValue) => {
+		// 	return accumulator + currentValue.tagCount;
+		// }, 0);
+
+		// return {
+		// 	tags: { ...baseTags, total: sumTags },
+		// 	tagGroups: { ...baseTagGroups, total: sumTagGroups },
+		// };
 
 		return {
-			tags: { ...baseTags, total: sumTags },
-			tagGroups: { ...baseTagGroups, total: sumTagGroups },
+			tags: baseTags,
+			tagGroups: baseTagGroups,
 		};
 	});
 

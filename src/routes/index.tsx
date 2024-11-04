@@ -41,6 +41,7 @@ import {
 	monthsArr,
 } from "~/utils/functionsAndVariables";
 import { trpc } from "~/utils/trpc";
+import Chart from "chart.js/auto";
 
 const countFilters = (
 	month: number | null,
@@ -199,6 +200,48 @@ export default function Home() {
 		year: filterYear(),
 		projectId: curProjectId(),
 	}));
+
+	const [element, setElement] = createSignal();
+
+	createEffect(() => {
+		if (tagStats.data) {
+			const data = {
+				labels: tagStats.data.tags.map((el) => {
+					if (el.tag) {
+						return el.tag;
+					}
+					return "none";
+				}),
+				datasets: { data: tagStats.data.tags.map((el) => el.tagCount) },
+			};
+			const config = {
+				type: "pie",
+				data: data,
+				options: {
+					responsive: true,
+					plugins: {
+						legend: {
+							position: "top",
+						},
+						title: {
+							display: true,
+							text: "Chart.js Pie Chart",
+						},
+					},
+				},
+			};
+			console.log(data);
+			if (element()) {
+				const ctx = element().getContext("2d");
+				if (ctx) {
+					const test = new Chart(ctx, {
+						config,
+					});
+					console.log(test);
+				}
+			}
+		}
+	});
 	return (
 		<>
 			{/* <A class="fixed bottom-0 left-12" href="/testing/test/">
@@ -357,7 +400,9 @@ export default function Home() {
 											<DialogContent
 												onOpenAutoFocus={(e) => e.preventDefault()}
 											>
-												<p>{tagStats.data}</p>
+												<div class="h-96 w-full">
+													<canvas ref={setElement} />
+												</div>
 											</DialogContent>
 										</Dialog>
 									</BackNav>
