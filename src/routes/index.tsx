@@ -194,6 +194,11 @@ export default function Home() {
 		tagGroupId: filterTagGroup(),
 	}));
 
+	const tagStats = trpc.tagsDistribution.createQuery(() => ({
+		month: filterMonth(),
+		year: filterYear(),
+		projectId: curProjectId(),
+	}));
 	return (
 		<>
 			{/* <A class="fixed bottom-0 left-12" href="/testing/test/">
@@ -351,9 +356,8 @@ export default function Home() {
 											<DialogTrigger class="hidden"></DialogTrigger>
 											<DialogContent
 												onOpenAutoFocus={(e) => e.preventDefault()}
-								
 											>
-												
+												<p>{tagStats.data}</p>
 											</DialogContent>
 										</Dialog>
 									</BackNav>

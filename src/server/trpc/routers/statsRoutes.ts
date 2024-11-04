@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import * as v from "valibot";
 import { adjustDateByOne } from "~/utils/functionsAndVariables";
 import { publicProcedure } from "../initTrpc";
+import { sql } from "kysely";
 
 export const tagsDistribution = publicProcedure
 	.input(
@@ -16,13 +17,19 @@ export const tagsDistribution = publicProcedure
 	.query(async ({ input, ctx }) => {
 		let baseTagsSelect = ctx.db
 			.selectFrom("todos")
-			.leftJoin("tags", "tags.projectId", "todos.tagId")
-			.select(({ fn, val, ref }) => [
+			.select(({ eb, ref }) => [
 				"todos.tagId",
-				fn.count<number>("todos.tagId").as("tag_count"),
-				fn.agg("total", ["todos.id"]),
+				sql`sum(case when todos.tag_id is null then 1 else 1 end)`.as(
+					"tagCount",
+				),
+				eb
+					.selectFrom("todos")
+					.select(({ eb: ebI }) => [
+						ebI.fn.count<number>("todos.id").as("todosTotal"),
+					]),
 			])
-			.where("projectId", "=", input.projectId)
+			.where("todos.projectId", "=", input.projectId)
+			.where("completed", "=", true)
 			.groupBy("todos.tagId");
 
 		if (input.year) {
