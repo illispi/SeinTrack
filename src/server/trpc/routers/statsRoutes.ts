@@ -20,7 +20,7 @@ export const tagsDistribution = publicProcedure
 			.select(({ fn, val, ref }) => [
 				"todos.tagId",
 				fn.count<number>("todos.tagId").as("tag_count"),
-				fn.agg("total", ["tagId"]),
+				fn.agg("total", ["todos.id"]),
 			])
 			.where("projectId", "=", input.projectId)
 			.groupBy("todos.tagId");
@@ -43,7 +43,7 @@ export const tagsDistribution = publicProcedure
 		}
 
 		const baseTags = await baseTagsSelect.execute();
-		console.log(baseTags)
+		console.log(baseTags);
 	});
 
 export const statsTodosFiltered = publicProcedure
