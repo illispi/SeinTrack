@@ -42,6 +42,21 @@ import {
 } from "~/utils/functionsAndVariables";
 import { trpc } from "~/utils/trpc";
 
+const countFilters = (
+	month: number | null,
+	year: number | null,
+	tag: number | null | undefined,
+	tagGroup: number | null,
+) => {
+	let total = 0;
+	total += month ? 1 : 0;
+	total += year ? 1 : 0;
+	total += tagGroup ? 1 : 0;
+	total += tag !== undefined ? 1 : 0;
+
+	return total;
+};
+
 export default function Home() {
 	const [curMonth, setCurMonth] = createSignal(new Date().getMonth());
 	const [curYear, setCurYear] = createSignal(new Date().getFullYear());
@@ -434,7 +449,9 @@ export default function Home() {
 															options={[
 																"All",
 																"None",
-																...tags.data?.map((e) => e.tag),
+																tags.data
+																	? [...tags.data?.map((e) => e.tag)]
+																	: "",
 															]}
 															placeholder="Tag"
 															itemComponent={(props) => (
@@ -491,6 +508,18 @@ export default function Home() {
 														</Select>
 													</div>
 												</div>
+												<Button
+													onClick={() => {
+														setFilterDialog(false);
+														setFilterMonth(null);
+														setFilterYear(null);
+														setFilterTag(undefined);
+														setFilterTagGroup(null);
+													}}
+													variant={"secondary"}
+												>
+													Clear filters
+												</Button>
 											</DialogContent>
 										</Dialog>
 									</BackNav>
@@ -506,7 +535,7 @@ export default function Home() {
 															<p class="text-4xl font-light">
 																Stats and completed todos
 															</p>
-															<div class="flex w-full flex-col lg:flex-row">
+															<div class="flex w-full  flex-col-reverse gap-8 lg:flex-row">
 																<div class="flex flex-1 flex-col items-center justify-center gap-4">
 																	<Button
 																		onClick={() => {
@@ -515,7 +544,7 @@ export default function Home() {
 																		class="w-48"
 																		variant={"secondary"}
 																	>
-																		Filters
+																		{`Filters (${countFilters(filterMonth(), filterYear(), filterTag(), filterTagGroup())} on)`}
 																	</Button>
 
 																	<Button variant={"secondary"} class="w-48">
@@ -791,7 +820,6 @@ export default function Home() {
 																			(e) => e.tagGroup === selectedTagGroup(),
 																		)?.id as number,
 																	});
-																	console.log(todoText(), todo());
 																}}
 																class="w-full"
 																variant={"secondary"}
