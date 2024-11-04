@@ -212,7 +212,7 @@ export default function Home() {
 					}
 					return "none";
 				}),
-				datasets: { data: tagStats.data.tags.map((el) => el.tagCount) },
+				datasets: [{ data: tagStats.data.tags.map((el) => el.tagCount) }],
 			};
 			const config = {
 				type: "pie",
@@ -234,9 +234,7 @@ export default function Home() {
 			if (element()) {
 				const ctx = element().getContext("2d");
 				if (ctx) {
-					const test = new Chart(ctx, {
-						config,
-					});
+					const test = new Chart(ctx, config);
 					console.log(test);
 				}
 			}
