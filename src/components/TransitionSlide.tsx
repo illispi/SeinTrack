@@ -5,6 +5,8 @@ const TransitionSlide: ParentComponent<{
 	dir: number;
 	setDifMonth?: Setter<number>;
 	curMonth?: number;
+	setDifYear?: Setter<number>;
+	curYear?: number;
 }> = (props) => {
 	return (
 		<Transition
@@ -43,9 +45,12 @@ const TransitionSlide: ParentComponent<{
 				if (
 					props.setDifMonth &&
 					props.curMonth !== null &&
-					props.curMonth !== undefined
+					props.curMonth !== undefined &&
+					props.setDifYear &&
+					props.curYear
 				) {
 					props.setDifMonth(props.curMonth);
+					props.setDifYear(props.curYear);
 				}
 			}}
 			mode="outin"

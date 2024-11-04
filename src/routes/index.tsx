@@ -81,6 +81,7 @@ export default function Home() {
 	const [dirCalendar, setDirCalendar] = createSignal(1);
 	const [pageCalendar, setPageCalendar] = createSignal(0);
 	const [difMonth, setDifMonth] = createSignal(curMonth());
+	const [difYear, setDifYear] = createSignal(curYear());
 	const [todoStatsOpen, setTodoStatsOpen] = createSignal(false);
 
 	const [dirStats, setDirStats] = createSignal(1);
@@ -390,6 +391,8 @@ export default function Home() {
 											setDifMonth={setDifMonth}
 											curMonth={curMonth()}
 											dir={dirCalendar()}
+											curYear={curYear()}
+											setDifYear={setDifYear}
 										>
 											<Show
 												when={pageCalendar() === 0 ? true : pageCalendar()}
@@ -399,7 +402,7 @@ export default function Home() {
 													<ListMonth
 														setDayEditorOpen={setDayEditorOpen}
 														month={difMonth()}
-														year={curYear()}
+														year={difYear()}
 														projectId={curProjectId()}
 														setCurDate={setCurDate}
 														curDate={curDate()}
