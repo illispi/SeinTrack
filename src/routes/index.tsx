@@ -83,6 +83,7 @@ export default function Home() {
 	const [difMonth, setDifMonth] = createSignal(curMonth());
 	const [difYear, setDifYear] = createSignal(curYear());
 	const [todoStatsOpen, setTodoStatsOpen] = createSignal(false);
+	const [monthDialog, setMonthDialog] = createSignal(false);
 
 	const [dirStats, setDirStats] = createSignal(1);
 	const [pageStats, setPageStats] = createSignal(0);
@@ -303,6 +304,7 @@ export default function Home() {
 			}
 		}
 	});
+
 	return (
 		<>
 			{/* <A class="fixed bottom-0 left-12" href="/testing/test/">
@@ -431,6 +433,7 @@ export default function Home() {
 												Back
 											</Button>
 											<Button
+												onClick={() => setMonthDialog(true)}
 												class="flex-1"
 												variant={"outline"}
 											>{`${curMonth() + 1}/${curYear()}`}</Button>
@@ -456,6 +459,57 @@ export default function Home() {
 										</div>
 									</div>
 
+									<BackNav open={monthDialog()} setOpen={setMonthDialog}>
+										<Dialog
+											open={monthDialog()}
+											onOpenChange={() => setMonthDialog(!monthDialog())}
+										>
+											<DialogTrigger class="hidden"></DialogTrigger>
+											<DialogContent
+												onOpenAutoFocus={(e) => e.preventDefault()}
+											>
+												<div class="grid grid-cols-2">
+													<h4>Month</h4>
+													<h4>Year</h4>
+													<Select
+														value={curMonth() + 1}
+														onChange={(e) => {
+															setCurMonth(e - 1);
+															setDifMonth(e - 1);
+														}}
+														options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
+														defaultValue={curMonth() + 1}
+														itemComponent={(props) => (
+															<SelectItem item={props.item}>
+																{props.item.rawValue}
+															</SelectItem>
+														)}
+													>
+														<SelectTrigger aria-label="Tag">
+															<SelectValue<string>>
+																{(state) => state.selectedOption()}
+															</SelectValue>
+														</SelectTrigger>
+														<SelectContent />
+													</Select>
+
+													<NumberField
+														defaultValue={curYear()}
+														onRawValueChange={(e) => {
+															setCurYear(e);
+															setDifYear(e);
+														}}
+													>
+														<NumberFieldGroup>
+															<NumberFieldInput />
+															<NumberFieldIncrementTrigger />
+															<NumberFieldDecrementTrigger />
+														</NumberFieldGroup>
+													</NumberField>
+												</div>
+											</DialogContent>
+										</Dialog>
+									</BackNav>
 									<BackNav open={todoStatsOpen()} setOpen={setTodoStatsOpen}>
 										<Dialog
 											open={todoStatsOpen()}
