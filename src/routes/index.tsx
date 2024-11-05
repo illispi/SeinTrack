@@ -56,6 +56,7 @@ import type {
 	ChartTypeRegistry,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import { createVisibilityObserver } from "@solid-primitives/intersection-observer";
 
 const countFilters = (
 	month: number | null,
@@ -124,7 +125,7 @@ export default function Home() {
 
 	createEffect(() => {
 		setFilterMonth(difMonth());
-		setFilterYear(curYear());
+		setFilterYear(difYear());
 	});
 
 	createEffect(() => {
@@ -140,6 +141,12 @@ export default function Home() {
 			}
 		}
 	});
+
+	const [infEl, setInfEl] = createSignal();
+
+	const useVisibilityObserver = createVisibilityObserver({ threshold: 0.8 });
+
+	const visible = useVisibilityObserver(() => infEl());
 
 	const [todoEditOpen, setTodoEditOpen] = createSignal(false);
 	const [menuOpen, setMenuOpen] = createSignal(false);
@@ -195,6 +202,12 @@ export default function Home() {
 			initialPageParam: 0,
 		}),
 	);
+
+	createEffect(() => {
+		if (visible()) {
+			doneTodos.fetchNextPage();
+		}
+	});
 
 	const tags = trpc.getAllTags.createQuery(() => ({
 		projectId: curProjectId(),
@@ -865,6 +878,10 @@ export default function Home() {
 																</Show>
 															)}
 														</For>
+
+														<div ref={setInfEl}>
+															{visible() ? "Visible" : "Hidden"}
+														</div>
 													</div>
 												</Show>
 											</TransitionSlide>
