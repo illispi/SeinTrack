@@ -235,11 +235,11 @@ export const doneTodosInf = publicProcedure
 				"todos.dateCompleted",
 			])
 			.select("tagGroups.id as tagGroupId")
-			.where("todos.id", ">=", cursor)
 			.where("todos.completed", "=", true)
 			.where("todos.projectId", "=", input.projectId)
 			.orderBy("todos.dateCompleted")
-			.limit(input.limit + 1);
+			.limit(input.limit)
+			.offset(cursor * input.limit);
 
 		if (input.year) {
 			if (input.month) {
@@ -284,9 +284,8 @@ export const doneTodosInf = publicProcedure
 
 		let nextCursor: typeof input.cursor | undefined = undefined;
 
-		if (doneTodos.length > input.limit) {
-			const nextItem = doneTodos.pop();
-			nextCursor = nextItem?.id;
+		if (doneTodos.length === input.limit) {
+			nextCursor = cursor + 1;
 		}
 		return { doneTodos: doneTodos, nextCursor };
 	});
