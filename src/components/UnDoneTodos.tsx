@@ -58,6 +58,24 @@ export const massageTagsAndGroupsToArr = (
 	return arr;
 };
 
+const tags = (filterTag: number, data: any): string => {
+	if (filterTag === undefined) {
+		return "all";
+	}
+	if (filterTag === null) {
+		return "none";
+	}
+
+	return data?.find((el) => el.id === filterTag).tag;
+};
+
+const tagGroups = (filterTagGroup: number, data: any) => {
+	if (filterTagGroup === null) {
+		return "all";
+	}
+
+	return data?.find((el) => el.id === filterTagGroup).tagGroup;
+};
 const UnDoneTodos: Component<{
 	openSecond: boolean;
 	setOpenSecond: Setter<boolean>;
@@ -340,7 +358,7 @@ const UnDoneTodos: Component<{
 							as={Button<"button">}
 							variant={"secondary"}
 						>
-							{`Filters (${filterTag() !== undefined ? 1 : 0 + filterTagGroup() ? 1 : 0} on)`}
+							{`Filters (${(filterTag() !== undefined ? 1 : 0) + (filterTagGroup() ? 1 : 0)} on)`}
 						</DialogTrigger>
 						<DialogContent
 							onOpenAutoFocus={(e) => e.preventDefault()}
@@ -355,16 +373,7 @@ const UnDoneTodos: Component<{
 									<Select
 										class="flex"
 										defaultValue={"all"}
-										value={(e) => {
-											if (filterTag() === undefined) {
-												return "all";
-											}
-											if (filterTag() === null) {
-												return "none";
-											}
-
-											props.tagsActive?.find((el) => el.id === e).tag;
-										}}
+										value={tags(filterTag(), props.tagsActive)}
 										onChange={(e) => {
 											if (e === "none") {
 												setFilterTag(null);
@@ -397,18 +406,12 @@ const UnDoneTodos: Component<{
 									<Select
 										class="flex"
 										defaultValue={"all"}
-										value={(e) => {
-											if (filterTagGroup() === null) {
-												return "all";
-											}
-
-											props.tagGroupsActive?.find((el) => el.id === e).tagGroup;
-										}}
+										value={tagGroups(filterTagGroup(), props.tagGroupsActive)}
 										onChange={(e) => {
 											if (e === "all") {
 												setFilterTagGroup(null);
 											} else {
-												setFilterTag(
+												setFilterTagGroup(
 													props.tagGroupsActive.find((el) => e === el.tagGroup)
 														?.id,
 												);
