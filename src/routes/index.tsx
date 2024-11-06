@@ -739,7 +739,7 @@ export default function Home() {
 																			setFilterDialog(true);
 																		}}
 																		class="w-48"
-																		variant={"secondary"}
+																		variant={"outline"}
 																	>
 																		{`Filters (${countFilters(filterMonth(), filterYear(), filterTag(), filterTagGroup())} on)`}
 																	</Button>

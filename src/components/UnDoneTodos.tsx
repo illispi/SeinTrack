@@ -356,12 +356,14 @@ const UnDoneTodos: Component<{
 						</DialogContent>
 					</Dialog>
 				</BackNav>
+			</div>
+			<div>
 				<BackNav open={filterDialog()} setOpen={setFilterDialog}>
 					<Dialog open={filterDialog()} onOpenChange={setFilterDialog}>
 						<DialogTrigger
-							class="flex-1 p-0"
+							class="px-8 py-4"
 							as={Button<"button">}
-							variant={"secondary"}
+							variant={"outline"}
 						>
 							{`Filters (${(filterTag() !== undefined ? 1 : 0) + (filterTagGroup() ? 1 : 0)} on)`}
 						</DialogTrigger>
@@ -370,8 +372,7 @@ const UnDoneTodos: Component<{
 							class=" "
 						>
 							<DialogHeader>
-								<DialogTitle>Filters</DialogTitle>
-								<div class="grid grid-cols-2">
+								<div class="grid grid-cols-2 gap-4">
 									<h3 class="font-semibold">Tag:</h3>
 									<h3 class="font-semibold">Tag group:</h3>
 
@@ -441,6 +442,16 @@ const UnDoneTodos: Component<{
 										</SelectTrigger>
 										<SelectContent />
 									</Select>
+									<Button
+										class="col-span-2"
+										variant={"secondary"}
+										onClick={() => {
+											setFilterTag(undefined);
+											setFilterTagGroup(null);
+										}}
+									>
+										Clear filters
+									</Button>
 								</div>
 							</DialogHeader>
 						</DialogContent>
