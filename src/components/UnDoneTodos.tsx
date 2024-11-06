@@ -361,7 +361,7 @@ const UnDoneTodos: Component<{
 				<BackNav open={filterDialog()} setOpen={setFilterDialog}>
 					<Dialog open={filterDialog()} onOpenChange={setFilterDialog}>
 						<DialogTrigger
-							class="px-8 py-4"
+							class="px-12 py-4"
 							as={Button<"button">}
 							variant={"outline"}
 						>
@@ -467,7 +467,31 @@ const UnDoneTodos: Component<{
 							<p class="mr-2 text-wrap break-words text-sm lg:text-base">
 								{unDoneTodo.todo}
 							</p>
-							<p class="mt-4 text-sm italic">{`tag: ${unDoneTodo.tag ? unDoneTodo.tag : "none"} || group: ${unDoneTodo.tagGroup}`}</p>
+							<button
+								type="button"
+								onClick={() => {
+									if (unDoneTodo.tag === null) {
+										setFilterTag(null);
+									} else {
+										setFilterTag(
+											props.tagsActive.find((el) => unDoneTodo.tag === el.tag)
+												?.id,
+										);
+									}
+								}}
+								class="mt-4 text-sm italic"
+							>{`tag: ${unDoneTodo.tag ? unDoneTodo.tag : "none"}`}</button>
+							<button
+								type="button"
+								onClick={() => {
+									setFilterTagGroup(
+										props.tagGroupsActive.find(
+											(el) => unDoneTodo.tagGroup === el.tagGroup,
+										)?.id,
+									);
+								}}
+								class="mt-4 text-sm italic"
+							>{`tag group: ${unDoneTodo.tagGroup}`}</button>
 						</div>
 						<div class="flex flex-col items-center justify-center gap-4">
 							<Button
