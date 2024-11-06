@@ -15,6 +15,7 @@ import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Switch, SwitchControl, SwitchThumb } from "./ui/switch";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 
 const Menu: Component<{
 	selectedProjectId: number;
@@ -59,16 +60,19 @@ const Menu: Component<{
 					<A href="stastics">Statistics</A>
 				</Button>
 				<BackNav setOpen={setOpenEditProjects} open={openEditProjects()}>
-					<Sheet onOpenChange={setOpenEditProjects} open={openEditProjects()}>
-						<SheetTrigger
+					<Dialog onOpenChange={setOpenEditProjects} open={openEditProjects()}>
+						<DialogTrigger
 							class="w-full flex-1"
 							as={Button<"button">}
 							variant={"secondary"}
 						>
 							Edit Projects
-						</SheetTrigger>
-						<SheetContent class="w-full max-w-96 p-0">
-							<div class="flex min-h-screen grow flex-col items-center gap-6 border border-t-4 border-gray-200 border-t-green-500 bg-white py-8 shadow-md">
+						</DialogTrigger>
+						<DialogContent
+							onOpenAutoFocus={(e) => e.preventDefault()}
+							class="w-full max-w-96 p-0"
+						>
+							<div class="flex  grow flex-col items-center gap-6 border border-t-4 border-gray-200 border-t-green-500 bg-white py-8 shadow-md">
 								<h3 class="text-xl">Edit Projects</h3>
 								<div class="flex w-11/12 flex-col items-center justify-start gap-6 rounded-lg border px-4 py-8 shadow-md">
 									<h3 class="text-xl">Create New Project</h3>
@@ -131,8 +135,8 @@ const Menu: Component<{
 									)}
 								</For>
 							</div>
-						</SheetContent>
-					</Sheet>
+						</DialogContent>
+					</Dialog>
 				</BackNav>
 			</div>
 			<div class="flex w-11/12 flex-col gap-8">
