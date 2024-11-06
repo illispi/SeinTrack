@@ -205,60 +205,52 @@ const UnDoneTodos: Component<{
 							<div class="grid grid-cols-2">
 								<h3 class="font-semibold">Tag:</h3>
 								<h3 class="font-semibold">Tag group:</h3>
-								<Show when={props.tagsActive} fallback="No tags found">
-									{(tags) => (
-										<>
-											<Select
-												class="flex"
-												defaultValue={"none"}
-												value={props.selectedTag}
-												onChange={props.setSelectedTag}
-												options={["none", ...massageTagsAndGroupsToArr(tags())]}
-												placeholder="Select a tag"
-												itemComponent={(props) => (
-													<SelectItem item={props.item}>
-														{props.item.rawValue}
-													</SelectItem>
-												)}
-											>
-												<SelectTrigger aria-label="Tag">
-													<SelectValue<string>>
-														{(state) => state.selectedOption()}
-													</SelectValue>
-												</SelectTrigger>
-												<SelectContent />
-											</Select>
-										</>
+
+								<Select
+									class="flex"
+									defaultValue={"none"}
+									value={props.selectedTag}
+									onChange={props.setSelectedTag}
+									options={[
+										"none",
+										...massageTagsAndGroupsToArr(props.tagsActive),
+									]}
+									placeholder="Select a tag"
+									itemComponent={(props) => (
+										<SelectItem item={props.item}>
+											{props.item.rawValue}
+										</SelectItem>
 									)}
-								</Show>
-								<Show
-									when={props.tagGroupsActive}
-									fallback="No tag groups found"
 								>
-									{(tagGroups) => (
-										<>
-											<Select
-												class="flex"
-												value={props.selectedTagGroup}
-												onChange={props.setSelectedTagGroup}
-												options={[...massageTagsAndGroupsToArr(tagGroups())]}
-												placeholder="Select a tag group"
-												itemComponent={(props) => (
-													<SelectItem item={props.item}>
-														{props.item.rawValue}
-													</SelectItem>
-												)}
-											>
-												<SelectTrigger aria-label="TagGroup">
-													<SelectValue<string>>
-														{(state) => state.selectedOption()}
-													</SelectValue>
-												</SelectTrigger>
-												<SelectContent />
-											</Select>
-										</>
+									<SelectTrigger aria-label="Tag">
+										<SelectValue<string>>
+											{(state) => state.selectedOption()}
+										</SelectValue>
+									</SelectTrigger>
+									<SelectContent />
+								</Select>
+
+								<Select
+									class="flex"
+									value={props.selectedTagGroup}
+									onChange={props.setSelectedTagGroup}
+									options={[
+										...massageTagsAndGroupsToArr(props.tagGroupsActive),
+									]}
+									placeholder="Select a tag group"
+									itemComponent={(props) => (
+										<SelectItem item={props.item}>
+											{props.item.rawValue}
+										</SelectItem>
 									)}
-								</Show>
+								>
+									<SelectTrigger aria-label="TagGroup">
+										<SelectValue<string>>
+											{(state) => state.selectedOption()}
+										</SelectValue>
+									</SelectTrigger>
+									<SelectContent />
+								</Select>
 							</div>
 
 							<DialogFooter>
@@ -356,6 +348,92 @@ const UnDoneTodos: Component<{
 						>
 							<DialogHeader>
 								<DialogTitle>Filters</DialogTitle>
+								<div class="grid grid-cols-2">
+									<h3 class="font-semibold">Tag:</h3>
+									<h3 class="font-semibold">Tag group:</h3>
+
+									<Select
+										class="flex"
+										defaultValue={"all"}
+										value={(e) => {
+											if (filterTag() === undefined) {
+												return "all";
+											}
+											if (filterTag() === null) {
+												return "none";
+											}
+
+											props.tagsActive?.find((el) => el.id === e).tag;
+										}}
+										onChange={(e) => {
+											if (e === "none") {
+												setFilterTag(null);
+											} else {
+												setFilterTag(
+													props.tagsActive.find((el) => e === el.tag)?.id,
+												);
+											}
+										}}
+										options={[
+											"all",
+											"none",
+											...massageTagsAndGroupsToArr(props.tagsActive),
+										]}
+										placeholder="Select a tag"
+										itemComponent={(props) => (
+											<SelectItem item={props.item}>
+												{props.item.rawValue}
+											</SelectItem>
+										)}
+									>
+										<SelectTrigger aria-label="Tag">
+											<SelectValue<string>>
+												{(state) => state.selectedOption()}
+											</SelectValue>
+										</SelectTrigger>
+										<SelectContent />
+									</Select>
+
+									<Select
+										class="flex"
+										defaultValue={"all"}
+										value={(e) => {
+											if (filterTagGroup() === null) {
+												return "all";
+											}
+
+											props.tagGroupsActive?.find((el) => el.id === e).tagGroup;
+										}}
+										onChange={(e) => {
+											if (e === "all") {
+												setFilterTagGroup(null);
+											} else {
+												setFilterTag(
+													props.tagGroupsActive.find((el) => e === el.tagGroup)
+														?.id,
+												);
+											}
+										}}
+										options={[
+											"all",
+											"none",
+											...massageTagsAndGroupsToArr(props.tagGroupsActive),
+										]}
+										placeholder="Select a tag group"
+										itemComponent={(props) => (
+											<SelectItem item={props.item}>
+												{props.item.rawValue}
+											</SelectItem>
+										)}
+									>
+										<SelectTrigger aria-label="TagGroup">
+											<SelectValue<string>>
+												{(state) => state.selectedOption()}
+											</SelectValue>
+										</SelectTrigger>
+										<SelectContent />
+									</Select>
+								</div>
 							</DialogHeader>
 						</DialogContent>
 					</Dialog>
