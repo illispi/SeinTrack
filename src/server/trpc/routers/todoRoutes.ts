@@ -173,6 +173,8 @@ export const getUnDoneTodos = publicProcedure
 		v.parser(
 			v.object({
 				projectId: v.nullish(v.number()),
+				filterTag: v.nullish(v.number()),
+				filterTagGroup: v.nullish(v.number()),
 			}),
 		),
 	)
@@ -180,7 +182,7 @@ export const getUnDoneTodos = publicProcedure
 		if (!input.projectId) {
 			throw new TRPCError({ code: "BAD_REQUEST" });
 		}
-		const unDoneTodos = await ctx.db
+		const unDoneTodosSelect = ctx.db
 			.selectFrom("todos")
 			.innerJoin("tagGroups", "tagGroups.id", "todos.tagGroupId")
 			.leftJoin("tags", "tags.id", "todos.tagId")
@@ -188,13 +190,25 @@ export const getUnDoneTodos = publicProcedure
 				"todos.id",
 				"todos.tagId",
 				"todos.todo",
+				"todos.tagGroupId",
 				"tagGroups.tagGroup",
 				"tags.tag",
 			])
 			.where("todos.completed", "=", false)
 			.where("todos.projectId", "=", input.projectId)
-			.orderBy("id asc")
-			.execute();
+			.orderBy("id asc");
+
+		if (input.filterTag === null) {
+			unDoneTodosSelect.where("todos.tagId", "is", null);
+		}
+		if (input.filterTag) {
+			unDoneTodosSelect.where("todos.tagId", "=", input.filterTag);
+		}
+		if (input.filterTagGroup) {
+			unDoneTodosSelect.where("todos.tagGroupId", "=", input.filterTagGroup);
+		}
+
+		const unDoneTodos = await unDoneTodosSelect.execute();
 
 		if (unDoneTodos.length === 0) {
 			return null;
