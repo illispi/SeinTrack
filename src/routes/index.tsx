@@ -65,7 +65,7 @@ const countFilters = (
 	tagGroup: number | null,
 ) => {
 	let total = 0;
-	total += month ? 1 : 0;
+	total += month !== null ? 1 : 0;
 	total += year ? 1 : 0;
 	total += tagGroup ? 1 : 0;
 	total += tag !== undefined ? 1 : 0;
@@ -564,10 +564,11 @@ export default function Home() {
 											<DialogContent
 												onOpenAutoFocus={(e) => e.preventDefault()}
 											>
-												<div class="flex h-[110px] items-start justify-between">
+												<div class="flex h-[110px] items-start justify-between gap-4">
 													<div class="flex-1">
 														<h5 class="text-lg font-semibold">Year</h5>
 														<Button
+															class="w-full"
 															variant={"outline"}
 															onClick={() =>
 																filterYear()
@@ -595,16 +596,25 @@ export default function Home() {
 														<Show when={filterYear()}>
 															<h5 class="text-lg font-semibold">Month</h5>
 															<Button
+																class="w-full"
 																variant={"outline"}
 																onClick={() =>
-																	filterMonth()
-																		? setFilterMonth(null)
-																		: setFilterMonth(curMonth())
+																	filterMonth() === null
+																		? setFilterMonth(curMonth())
+																		: setFilterMonth(null)
 																}
 															>
-																{filterMonth() ? "All" : "Filter"}
+																{filterMonth() >= 0 && filterMonth() !== null
+																	? "All"
+																	: "Filter"}
 															</Button>
-															<Show when={filterMonth() && filterYear()}>
+															<Show
+																when={
+																	filterMonth() >= 0 &&
+																	filterMonth() !== null &&
+																	filterYear()
+																}
+															>
 																<NumberField
 																	defaultValue={filterMonth() + 1}
 																	onRawValueChange={(e) =>
