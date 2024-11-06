@@ -88,6 +88,12 @@ const UnDoneTodos: Component<{
 	let datePickerInstance: Instance;
 	const [datePickerRef, setDatePickerRef] = createSignal("");
 
+	const [filterDialog, setFilterDialog] = createSignal(false);
+	const [filterTag, setFilterTag] = createSignal<number | null | undefined>(
+		undefined,
+	);
+	const [filterTagGroup, setFilterTagGroup] = createSignal<number | null>(null);
+
 	createEffect(() => {
 		if (datePickerRef() !== "") {
 			datePickerInstance = flatpickr(datePickerRef(), {
@@ -332,6 +338,25 @@ const UnDoneTodos: Component<{
 									</div>
 								</TextField>
 							</div>
+						</DialogContent>
+					</Dialog>
+				</BackNav>
+				<BackNav open={filterDialog()} setOpen={setFilterDialog}>
+					<Dialog open={filterDialog()} onOpenChange={setFilterDialog}>
+						<DialogTrigger
+							class="flex-1 p-0"
+							as={Button<"button">}
+							variant={"secondary"}
+						>
+							{`Filters (${filterTag() !== undefined ? 1 : 0 + filterTagGroup() ? 1 : 0} on)`}
+						</DialogTrigger>
+						<DialogContent
+							onOpenAutoFocus={(e) => e.preventDefault()}
+							class=" "
+						>
+							<DialogHeader>
+								<DialogTitle>Filters</DialogTitle>
+							</DialogHeader>
 						</DialogContent>
 					</Dialog>
 				</BackNav>
