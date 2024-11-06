@@ -31,10 +31,6 @@ const TodoPanel: Component<{
 
 	const [openSecond, setOpenSecond] = createSignal(false);
 
-	const unDoneTodos = trpc.getUnDoneTodos.createQuery(() => ({
-		projectId: props.curProjectId,
-	}));
-
 	const addTodo = trpc.addTodo.createMutation(() => ({
 		onSuccess: () => {
 			showToast({
@@ -126,6 +122,7 @@ const TodoPanel: Component<{
 						<SheetContent class="w-full max-w-96 p-0">
 							<div class=" flex min-h-screen grow flex-col items-center border border-t-4 border-gray-200 border-t-green-500 bg-white shadow-md">
 								<UnDoneTodos
+									projectId={props.curProjectId}
 									newTag={newTag()}
 									newTagGroup={newTagGroup()}
 									newTodo={newTodo()}
@@ -144,7 +141,6 @@ const TodoPanel: Component<{
 									tagsActive={tagsActive.data}
 									tagGroupsActive={tagGroupsActive.data}
 									todoOrTag={todoOrTag()}
-									unDoneTodos={unDoneTodos.data!}
 									addHours={addHours()}
 									addMinutes={addMinutes()}
 									addTagGroupOnClick={() =>
@@ -185,6 +181,7 @@ const TodoPanel: Component<{
 			<div class="flex w-full justify-start">
 				<div class="z-40 my-8 hidden min-h-screen w-11/12 max-w-md grow flex-col items-center rounded-xl border border-t-4 border-gray-200 border-t-green-500 bg-white shadow-md lg:flex">
 					<UnDoneTodos
+						projectId={props.curProjectId}
 						newTag={newTag()}
 						newTagGroup={newTagGroup()}
 						newTodo={newTodo()}
@@ -203,7 +200,6 @@ const TodoPanel: Component<{
 						tagsActive={tagsActive.data}
 						tagGroupsActive={tagGroupsActive.data}
 						todoOrTag={todoOrTag()}
-						unDoneTodos={unDoneTodos.data!}
 						addHours={addHours()}
 						addMinutes={addMinutes()}
 						addTagGroupOnClick={() =>

@@ -95,12 +95,11 @@ const UnDoneTodos: Component<{
 	setNewTag: Setter<string>;
 	newTagGroup: string;
 	setNewTagGroup: Setter<string>;
-	unDoneTodos: RouterOutput["getUnDoneTodos"];
 	addHours: number;
 	addMinutes: number;
 	setAddHours: Setter<number>;
 	setAddMinutes: Setter<number>;
-
+	projectId: number;
 	setSelectedTagGroup: Setter<string>;
 }> = (props) => {
 	let datePickerInstance: Instance;
@@ -128,6 +127,12 @@ const UnDoneTodos: Component<{
 	});
 	const [editOpen, setEditOpen] = createSignal(false);
 	const [doneOpen, setDoneOpen] = createSignal(false);
+
+	const unDoneTodos = trpc.getUnDoneTodos.createQuery(() => ({
+		filterTag: filterTag(),
+		projectId: props.projectId,
+		filterTagGroup: filterTagGroup(),
+	}));
 
 	const [curUndoneTodo, setCurUndoneTodo] = createSignal<{
 		tagGroup: string;
@@ -444,7 +449,7 @@ const UnDoneTodos: Component<{
 				<Toaster />
 			</div>
 
-			<For each={props.unDoneTodos}>
+			<For each={unDoneTodos.data}>
 				{(unDoneTodo) => (
 					<div class="my-4 flex min-h-28 w-11/12 items-start justify-between rounded-lg border border-t-2 border-gray-200 bg-white p-4 shadow-md">
 						<div class="flex min-h-24  flex-col items-start justify-between">
