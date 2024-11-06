@@ -879,9 +879,7 @@ export default function Home() {
 															)}
 														</For>
 
-														<div ref={setInfEl}>
-															{visible() ? "Visible" : "Hidden"}
-														</div>
+														<div ref={setInfEl}></div>
 													</div>
 												</Show>
 											</TransitionSlide>
