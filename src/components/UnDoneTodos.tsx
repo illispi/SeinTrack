@@ -102,15 +102,14 @@ const UnDoneTodos: Component<{
 	projectId: number;
 	setSelectedTagGroup: Setter<string>;
 }> = (props) => {
-	let datePickerInstance: Instance;
-	const [datePickerRef, setDatePickerRef] = createSignal("");
-
 	const [filterDialog, setFilterDialog] = createSignal(false);
 	const [filterTag, setFilterTag] = createSignal<number | null | undefined>(
 		undefined,
 	);
 	const [filterTagGroup, setFilterTagGroup] = createSignal<number | null>(null);
 
+	let datePickerInstance: Instance;
+	const [datePickerRef, setDatePickerRef] = createSignal("");
 	createEffect(() => {
 		if (datePickerRef() !== "") {
 			datePickerInstance = flatpickr(datePickerRef(), {

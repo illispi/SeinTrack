@@ -57,6 +57,8 @@ import type {
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { createVisibilityObserver } from "@solid-primitives/intersection-observer";
+import type { Instance } from "flatpickr/dist/types/instance";
+import flatpickr from "flatpickr";
 
 const countFilters = (
 	month: number | null,
@@ -92,6 +94,23 @@ export default function Home() {
 	createEffect(() => {
 		setDirStats(dirCalendar());
 		setPageStats(pageCalendar());
+	});
+
+	let datePickerInstance: Instance;
+	const [datePickerRef, setDatePickerRef] = createSignal("");
+	createEffect(() => {
+		if (datePickerRef() !== "") {
+			datePickerInstance = flatpickr(datePickerRef(), {
+				static: true,
+				inline: true,
+				onReady: (selectedDates, dateStr, instance) => {
+					instance.setDate(new Date());
+				},
+				altInput: true,
+				altFormat: "F j, Y",
+				dateFormat: "Y-m-d",
+			}) as Instance;
+		}
 	});
 
 	const [filterDialog, setFilterDialog] = createSignal(false);
@@ -580,7 +599,7 @@ export default function Home() {
 														</Button>
 														<Show when={filterYear()}>
 															<NumberField
-																defaultValue={filterYear()}
+																defaultValue={filterYear()!}
 																onRawValueChange={setFilterYear}
 															>
 																<NumberFieldGroup>
@@ -864,6 +883,7 @@ export default function Home() {
 																								<Button
 																									onClick={() => {
 																										setTodo(todoDone);
+
 																										setSelectedTag(
 																											todoDone.tag || "none",
 																										);
@@ -872,6 +892,9 @@ export default function Home() {
 																										);
 																										setTodoText(todoDone.todo);
 																										setTodoEditOpen(true);
+																										datePickerInstance.setDate(
+																											todoDone.dateCompleted,
+																										);
 																									}}
 																									class="flex h-8 w-12 items-center justify-center "
 																									variant={"outline"}
@@ -953,81 +976,76 @@ export default function Home() {
 															<div class="grid w-full grid-cols-2">
 																<h3 class="font-semibold">Tag</h3>
 																<h3 class="font-semibold">Tag group</h3>
-																<Show
-																	when={tagsActive.data}
-																	fallback="No tags found"
-																>
-																	{(tags) => (
-																		<>
-																			<Select
-																				class="flex"
-																				defaultValue={td().tag || "none"}
-																				value={selectedTag()}
-																				onChange={setSelectedTag}
-																				options={[
-																					"none",
-																					...massageTagsAndGroupsToArr(tags()),
-																				]}
-																				placeholder="Select a tag"
-																				itemComponent={(props) => (
-																					<SelectItem item={props.item}>
-																						{props.item.rawValue}
-																					</SelectItem>
-																				)}
-																			>
-																				<SelectTrigger aria-label="Tag">
-																					<SelectValue<string>>
-																						{(state) => state.selectedOption()}
-																					</SelectValue>
-																				</SelectTrigger>
-																				<SelectContent />
-																			</Select>
-																		</>
+
+																<Select
+																	class="flex"
+																	defaultValue={td().tag || "none"}
+																	value={selectedTag()}
+																	onChange={setSelectedTag}
+																	options={[
+																		"none",
+																		...massageTagsAndGroupsToArr(
+																			tagsActive.data,
+																		),
+																	]}
+																	placeholder="Select a tag"
+																	itemComponent={(props) => (
+																		<SelectItem item={props.item}>
+																			{props.item.rawValue}
+																		</SelectItem>
 																	)}
-																</Show>
-																<Show
-																	when={tagGroupsActive.data}
-																	fallback="No tag groups found"
 																>
-																	{(tagGroups) => (
-																		<>
-																			<Select
-																				class="flex"
-																				defaultValue={td().tagGroup}
-																				value={selectedTagGroup()}
-																				onChange={setSelectedTagGroup}
-																				options={[
-																					...massageTagsAndGroupsToArr(
-																						tagGroups(),
-																					),
-																				]}
-																				placeholder="Select a tag"
-																				itemComponent={(props) => (
-																					<SelectItem item={props.item}>
-																						{props.item.rawValue}
-																					</SelectItem>
-																				)}
-																			>
-																				<SelectTrigger aria-label="Tag">
-																					<SelectValue<string>>
-																						{(state) => state.selectedOption()}
-																					</SelectValue>
-																				</SelectTrigger>
-																				<SelectContent />
-																			</Select>
-																		</>
+																	<SelectTrigger aria-label="Tag">
+																		<SelectValue<string>>
+																			{(state) => state.selectedOption()}
+																		</SelectValue>
+																	</SelectTrigger>
+																	<SelectContent />
+																</Select>
+
+																<Select
+																	class="flex"
+																	defaultValue={td().tagGroup}
+																	value={selectedTagGroup()}
+																	onChange={setSelectedTagGroup}
+																	options={[
+																		...massageTagsAndGroupsToArr(
+																			tagGroupsActive.data,
+																		),
+																	]}
+																	placeholder="Select a tag"
+																	itemComponent={(props) => (
+																		<SelectItem item={props.item}>
+																			{props.item.rawValue}
+																		</SelectItem>
 																	)}
-																</Show>
+																>
+																	<SelectTrigger aria-label="Tag">
+																		<SelectValue<string>>
+																			{(state) => state.selectedOption()}
+																		</SelectValue>
+																	</SelectTrigger>
+																	<SelectContent />
+																</Select>
+															</div>
+															{/* NOTE calendar here */}
+															<div class="flex h-80 w-full items-center justify-center">
+																<input
+																	class="w-full"
+																	type="text"
+																	ref={setDatePickerRef}
+																></input>
 															</div>
 														</div>
 														<DialogFooter class="mx-auto w-full">
 															<Button
 																onClick={() => {
 																	editTodo.mutate({
-																		dateCompleted: td().dateCompleted,
+																		dateCompleted:
+																			datePickerInstance.selectedDates[0],
 																		hoursWorked: td().hoursWorked,
 																		todoId: td().id,
-																		completed: true,
+																		completed: true, //TODO validate backend that if false dateCompleted and hoursworked are null then
 																		tagId:
 																			selectedTag() === "none"
 																				? null
