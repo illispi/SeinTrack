@@ -38,6 +38,15 @@ export const newProject = publicProcedure
 			"learning",
 		];
 
+		const defaultTags = ["backend", "frontend"];
+
+		for (const tag of defaultTags) {
+			await ctx.db
+				.insertInto("tags")
+				.values({ projectId: project.id, tagActive: true, tag })
+				.executeTakeFirstOrThrow();
+		}
+
 		for (const group of defaultGroups) {
 			await ctx.db
 				.insertInto("tagGroups")
