@@ -59,6 +59,7 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import { createVisibilityObserver } from "@solid-primitives/intersection-observer";
 import type { Instance } from "flatpickr/dist/types/instance";
 import flatpickr from "flatpickr";
+import AddTime from "~/components/AddTime";
 
 const countFilters = (
 	month: number | null,
@@ -87,6 +88,8 @@ export default function Home() {
 	const [difYear, setDifYear] = createSignal(curYear());
 	const [todoStatsOpen, setTodoStatsOpen] = createSignal(false);
 	const [monthDialog, setMonthDialog] = createSignal(false);
+	const [addHours, setAddHours] = createSignal(0);
+	const [addMinutes, setAddMinutes] = createSignal(0);
 
 	const [dirStats, setDirStats] = createSignal(1);
 	const [pageStats, setPageStats] = createSignal(0);
@@ -883,6 +886,18 @@ export default function Home() {
 																								<Button
 																									onClick={() => {
 																										setTodo(todoDone);
+																										setAddHours(
+																											Math.floor(
+																												todoDone.hoursWorked,
+																											),
+																										);
+																										setAddMinutes(
+																											(todoDone.hoursWorked -
+																												Math.floor(
+																													todoDone.hoursWorked,
+																												)) *
+																												60,
+																										);
 
 																										setSelectedTag(
 																											todoDone.tag || "none",
@@ -931,10 +946,6 @@ export default function Home() {
 										<DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
 											<DialogHeader>
 												<DialogTitle class="mx-auto">Edit todo</DialogTitle>
-												<DialogDescription>
-													If you want to edit hours or date completed just
-													delete this todo, and create new one
-												</DialogDescription>
 											</DialogHeader>
 											<Show when={todo()}>
 												{(td) => (
@@ -1036,6 +1047,15 @@ export default function Home() {
 																	ref={setDatePickerRef}
 																></input>
 															</div>
+
+															<div>
+																<AddTime
+																	hours={addHours()}
+																	minutes={addMinutes()}
+																	setHours={setAddHours}
+																	setMinutes={setAddMinutes}
+																/>
+															</div>
 														</div>
 														<DialogFooter class="mx-auto w-full">
 															<Button
@@ -1043,7 +1063,11 @@ export default function Home() {
 																	editTodo.mutate({
 																		dateCompleted:
 																			datePickerInstance.selectedDates[0],
-																		hoursWorked: td().hoursWorked,
+																		hoursWorked: Number(
+																			Number(
+																				addHours() + addMinutes() / 60,
+																			).toFixed(2),
+																		),
 																		todoId: td().id,
 																		completed: true, //TODO validate backend that if false dateCompleted and hoursworked are null then
 																		tagId:
