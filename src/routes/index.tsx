@@ -786,7 +786,7 @@ export default function Home() {
 																		variant={"secondary"}
 																		class="w-48"
 																	>
-																		More statistics
+																		Statistics
 																	</Button>
 																</div>
 																<div class=" grid flex-1  grid-cols-2 gap-4">

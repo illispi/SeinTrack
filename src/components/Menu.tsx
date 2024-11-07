@@ -24,6 +24,7 @@ const Menu: Component<{
 	const [name, setName] = createSignal("");
 	const [hours, setHours] = createSignal("");
 	const [showHidden, setShowHidden] = createSignal(false);
+	const [statistics, setStatistics] = createSignal(false);
 
 	const [openEditProjects, setOpenEditProjects] = createSignal(false);
 
@@ -56,9 +57,18 @@ const Menu: Component<{
 		<>
 			<h2 class="m-8 text-4xl font-light">Menu</h2>
 			<div class="flex w-11/12 items-center justify-center gap-12">
-				<Button class="w-full flex-1" variant={"secondary"}>
-					<A href="stastics">Statistics</A>
-				</Button>
+				<BackNav setOpen={setStatistics} open={statistics()}>
+					<Dialog onOpenChange={setStatistics} open={statistics()}>
+						<DialogTrigger
+							class="w-full flex-1"
+							as={Button<"button">}
+							variant={"secondary"}
+						>
+							Statistics
+						</DialogTrigger>
+						<DialogContent></DialogContent>
+					</Dialog>
+				</BackNav>
 				<BackNav setOpen={setOpenEditProjects} open={openEditProjects()}>
 					<Dialog onOpenChange={setOpenEditProjects} open={openEditProjects()}>
 						<DialogTrigger
@@ -72,7 +82,7 @@ const Menu: Component<{
 							onOpenAutoFocus={(e) => e.preventDefault()}
 							class="w-full max-w-96 p-0"
 						>
-							<div class="flex  grow flex-col items-center gap-6 border border-t-4 border-gray-200 border-t-green-500 bg-white py-8 shadow-md">
+							<div class="flex  grow flex-col items-center gap-6 border border-t-2 border-gray-200 border-t-green-500 bg-white py-8 shadow-md">
 								<h3 class="text-xl">Edit Projects</h3>
 								<div class="flex w-11/12 flex-col items-center justify-start gap-6 rounded-lg border px-4 py-8 shadow-md">
 									<h3 class="text-xl">Create New Project</h3>
