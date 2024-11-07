@@ -62,6 +62,7 @@ export const newProject = publicProcedure
 			.selectFrom("projects")
 			.select("default")
 			.where("default", "=", true)
+			.where("userId", "=", ctx.id)
 			.executeTakeFirst();
 
 		if (!defaultProject?.default) {
