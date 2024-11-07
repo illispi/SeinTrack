@@ -11,19 +11,14 @@ export const newProject = publicProcedure
 		),
 	)
 	.mutation(async ({ ctx, input }) => {
-		await ctx.db
+		const project = await ctx.db
 			.insertInto("projects")
 			.values({
 				name: input.name,
 				targetHours: input.hoursTarget,
 				userId: ctx.id,
 			})
-			.executeTakeFirstOrThrow();
-
-		const project = await ctx.db
-			.selectFrom("projects")
-			.select("id")
-			.where("projects.name", "=", input.name)
+			.returning("projects.id")
 			.executeTakeFirstOrThrow();
 
 		for (let index = 0; index < 5; index++) {

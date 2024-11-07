@@ -94,8 +94,8 @@ app.use(
 					.selectFrom("user")
 					.select("id")
 					.where("id", "=", user)
-					.executeTakeFirstOrThrow();
-				if (!exists.id) {
+					.executeTakeFirst();
+				if (!exists?.id) {
 					if (process.env.DEMO) {
 						const userDb = await db
 							.insertInto("user")
