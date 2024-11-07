@@ -4,7 +4,7 @@ import { Hono } from "hono";
 import { db } from "./database/db";
 import { appRouter } from "./trpc/routers/mainRouter";
 import { v4 as uuidv4 } from "uuid";
-import { appendResponseHeader, getCookie } from "vinxi/server";
+import { appendResponseHeader, getCookie, setCookie } from "vinxi/server";
 
 const app = new Hono();
 
@@ -60,16 +60,15 @@ app.use(
 		createContext: async (opts, c) => {
 			const user = getCookie("user");
 			let id: string;
-			console.log("start");
 			if (!user) {
 				if (process.env.DEMO) {
-					console.log("here");
 					const userDb = await db
 						.insertInto("user")
 						.values({ id: uuidv4() })
 						.returning("id")
 						.executeTakeFirstOrThrow();
-					appendResponseHeader("Set-Cookie", userDb.id);
+
+					setCookie("user", userDb.id);
 					id = userDb.id;
 				} else {
 					const userDb = await db
@@ -82,7 +81,8 @@ app.use(
 							.values({ id: uuidv4() })
 							.returning("id")
 							.executeTakeFirstOrThrow();
-						appendResponseHeader("Set-Cookie", userDb.id);
+						setCookie("user", userDb.id);
+
 						id = userDb.id;
 					} else {
 						id = userDb.id;
