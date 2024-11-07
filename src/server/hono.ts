@@ -97,7 +97,6 @@ app.use(
 					.executeTakeFirstOrThrow();
 				if (!exists.id) {
 					if (process.env.DEMO) {
-						console.log("wwwwww");
 						const userDb = await db
 							.insertInto("user")
 							.values({ id: uuidv4() })
