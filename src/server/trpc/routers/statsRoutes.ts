@@ -4,6 +4,41 @@ import { adjustDateByOne } from "~/utils/functionsAndVariables";
 import { publicProcedure } from "../initTrpc";
 import { sql } from "kysely";
 
+export const allProjectsStats = publicProcedure.query(async ({ ctx }) => {
+	const totalTime = await ctx.db
+		.selectFrom("dates")
+		.select(["dates.hoursWorked"])
+		// .where(lhs, op, rhs); //TODO add the concept user from here
+		.execute();
+
+	const total = totalTime
+		.filter((e) => e.hoursWorked)
+		.map((e) => e.hoursWorked)
+		.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	const avgTime = total / totalTime.filter((e) => e.hoursWorked).length;
+
+	const todoQuery = await ctx.db
+		.selectFrom("todos")
+		.select("hoursWorked")
+		.where("completed", "=", true)
+		.execute();
+
+	const totalTodo = todoQuery
+		.filter((e) => e.hoursWorked)
+		.map((e) => e.hoursWorked)
+		.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	const avgTodo = totalTodo / todoQuery.filter((e) => e.hoursWorked).length;
+
+	return {
+		totalTime: total,
+		totalTodoTime: totalTodo,
+		avgTime: avgTime,
+		avgTodoTime: avgTodo,
+	};
+});
+
 export const tagsDistribution = publicProcedure
 	.input(
 		v.parser(

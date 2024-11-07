@@ -16,6 +16,7 @@ import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Switch, SwitchControl, SwitchThumb } from "./ui/switch";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import FormatTime from "./FormatTime";
 
 const Menu: Component<{
 	selectedProjectId: number;
@@ -53,6 +54,8 @@ const Menu: Component<{
 	const newProject = trpc.newProject.createMutation();
 
 	const setDefault = trpc.setDefault.createMutation();
+
+	const projectStats = trpc.allProjectsStats.createQuery();
 	return (
 		<>
 			<h2 class="m-8 text-4xl font-light">Menu</h2>
@@ -66,7 +69,44 @@ const Menu: Component<{
 						>
 							Statistics
 						</DialogTrigger>
-						<DialogContent></DialogContent>
+						<DialogContent>
+							<div class=" grid flex-1  grid-cols-2 gap-4">
+								<div>
+									<h4 class="text-center">Total spent</h4>
+									<p class="mx-auto flex w-fit items-center justify-center text-center">
+										<FormatTime
+											hours={projectStats.data?.totalTime}
+										></FormatTime>{" "}
+										h
+									</p>
+								</div>
+								<div>
+									<h4 class="text-center">Todo total</h4>
+									<p class="mx-auto flex w-fit items-center justify-center text-center">
+										<FormatTime
+											hours={projectStats.data?.totalTodoTime}
+										></FormatTime>{" "}
+										h
+									</p>
+								</div>
+								<div>
+									<h4 class="text-center">Avg. per day</h4>
+									<p class="mx-auto flex w-fit items-center justify-center text-center">
+										<FormatTime hours={projectStats.data?.avgTime}></FormatTime>{" "}
+										h
+									</p>
+								</div>
+								<div>
+									<h4 class="text-center">Avg. todo</h4>
+									<p class="mx-auto flex w-fit items-center justify-center text-center">
+										<FormatTime
+											hours={projectStats.data?.avgTodoTime}
+										></FormatTime>{" "}
+										h
+									</p>
+								</div>
+							</div>
+						</DialogContent>
 					</Dialog>
 				</BackNav>
 				<BackNav setOpen={setOpenEditProjects} open={openEditProjects()}>

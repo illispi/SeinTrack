@@ -800,7 +800,7 @@ export default function Home() {
 																		</p>
 																	</div>
 																	<div>
-																		<h4>Todo time</h4>
+																		<h4>Todo total</h4>
 																		<p class="mx-auto flex w-fit items-center justify-center">
 																			<FormatTime
 																				hours={baseStats.data?.totalTodoTime}
