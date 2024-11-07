@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "vinxi dev --host",
 		"build": "vinxi build",
-		"start": "pnpx node-env-run .output/server/index.mjs",
+		"start": "pnpm dlx install tsx && pnpm run migrate:latest && pnpm dlx node-env-run .output/server/index.mjs",
 		"sql": "kysely-codegen --dialect postgres --camel-case",
 		"migrate:latest": "tsx ./src/tools/migrate.ts",
 		"migrate:down": "tsx ./src/tools/migrate.ts down",
@@ -47,6 +47,7 @@
 		"tailwindcss": "^3.4.14",
 		"tailwindcss-animate": "^1.0.7",
 		"tsx": "^4.19.1",
+		"uuid": "^11.0.2",
 		"valibot": "1.0.0-beta.1",
 		"vinxi": "^0.4.3"
 	},

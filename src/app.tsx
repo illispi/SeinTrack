@@ -21,12 +21,10 @@ export default function App() {
 					</Show>
 					<Router
 						root={(props) => (
-							<ErrorBoundary fallback="boundary">
-								<Suspense>
-									{props.children}
-									<Toaster />
-								</Suspense>
-							</ErrorBoundary>
+							<Suspense>
+								{props.children}
+								<Toaster />
+							</Suspense>
 						)}
 					>
 						<FileRoutes />

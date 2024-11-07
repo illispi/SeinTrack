@@ -57,7 +57,6 @@ export const zeroTimer = publicProcedure
 			.where("date", "=", input.date)
 			.executeTakeFirst();
 
-		console.log(exists);
 
 		if (exists) {
 			await ctx.db

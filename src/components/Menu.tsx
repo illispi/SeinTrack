@@ -15,6 +15,8 @@ import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Switch, SwitchControl, SwitchThumb } from "./ui/switch";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import FormatTime from "./FormatTime";
 
 const Menu: Component<{
 	selectedProjectId: number;
@@ -23,6 +25,7 @@ const Menu: Component<{
 	const [name, setName] = createSignal("");
 	const [hours, setHours] = createSignal("");
 	const [showHidden, setShowHidden] = createSignal(false);
+	const [statistics, setStatistics] = createSignal(false);
 
 	const [openEditProjects, setOpenEditProjects] = createSignal(false);
 
@@ -51,24 +54,75 @@ const Menu: Component<{
 	const newProject = trpc.newProject.createMutation();
 
 	const setDefault = trpc.setDefault.createMutation();
+
+	const projectStats = trpc.allProjectsStats.createQuery();
 	return (
 		<>
 			<h2 class="m-8 text-4xl font-light">Menu</h2>
 			<div class="flex w-11/12 items-center justify-center gap-12">
-				<Button class="w-full flex-1" variant={"secondary"}>
-					<A href="stastics">Statistics</A>
-				</Button>
+				<BackNav setOpen={setStatistics} open={statistics()}>
+					<Dialog onOpenChange={setStatistics} open={statistics()}>
+						<DialogTrigger
+							class="w-full flex-1"
+							as={Button<"button">}
+							variant={"secondary"}
+						>
+							Statistics
+						</DialogTrigger>
+						<DialogContent>
+							<div class=" grid flex-1  grid-cols-2 gap-4">
+								<div>
+									<h4 class="text-center">Total spent</h4>
+									<p class="mx-auto flex w-fit items-center justify-center text-center">
+										<FormatTime
+											hours={projectStats.data?.totalTime}
+										></FormatTime>{" "}
+										h
+									</p>
+								</div>
+								<div>
+									<h4 class="text-center">Todo total</h4>
+									<p class="mx-auto flex w-fit items-center justify-center text-center">
+										<FormatTime
+											hours={projectStats.data?.totalTodoTime}
+										></FormatTime>{" "}
+										h
+									</p>
+								</div>
+								<div>
+									<h4 class="text-center">Avg. per day</h4>
+									<p class="mx-auto flex w-fit items-center justify-center text-center">
+										<FormatTime hours={projectStats.data?.avgTime}></FormatTime>{" "}
+										h
+									</p>
+								</div>
+								<div>
+									<h4 class="text-center">Avg. todo</h4>
+									<p class="mx-auto flex w-fit items-center justify-center text-center">
+										<FormatTime
+											hours={projectStats.data?.avgTodoTime}
+										></FormatTime>{" "}
+										h
+									</p>
+								</div>
+							</div>
+						</DialogContent>
+					</Dialog>
+				</BackNav>
 				<BackNav setOpen={setOpenEditProjects} open={openEditProjects()}>
-					<Sheet onOpenChange={setOpenEditProjects} open={openEditProjects()}>
-						<SheetTrigger
+					<Dialog onOpenChange={setOpenEditProjects} open={openEditProjects()}>
+						<DialogTrigger
 							class="w-full flex-1"
 							as={Button<"button">}
 							variant={"secondary"}
 						>
 							Edit Projects
-						</SheetTrigger>
-						<SheetContent class="w-full max-w-96 p-0">
-							<div class="flex min-h-screen grow flex-col items-center gap-6 border border-t-4 border-gray-200 border-t-green-500 bg-white py-8 shadow-md">
+						</DialogTrigger>
+						<DialogContent
+							onOpenAutoFocus={(e) => e.preventDefault()}
+							class="w-full max-w-96 p-0"
+						>
+							<div class="flex  grow flex-col items-center gap-6 border border-t-2 border-gray-200 border-t-green-500 bg-white py-8 shadow-md">
 								<h3 class="text-xl">Edit Projects</h3>
 								<div class="flex w-11/12 flex-col items-center justify-start gap-6 rounded-lg border px-4 py-8 shadow-md">
 									<h3 class="text-xl">Create New Project</h3>
@@ -131,8 +185,8 @@ const Menu: Component<{
 									)}
 								</For>
 							</div>
-						</SheetContent>
-					</Sheet>
+						</DialogContent>
+					</Dialog>
 				</BackNav>
 			</div>
 			<div class="flex w-11/12 flex-col gap-8">

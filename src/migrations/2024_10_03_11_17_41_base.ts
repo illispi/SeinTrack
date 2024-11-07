@@ -3,14 +3,22 @@ import { sql } from "kysely";
 
 export async function up(db: Kysely<any>): Promise<void> {
 	await db.schema
+		.createTable("user")
+		.addColumn("id", "uuid", (col) => col.primaryKey())
+		.execute();
+
+	await db.schema
 		.createTable("projects")
 		.addColumn("id", "serial", (col) => col.primaryKey())
-		.addColumn("name", "text", (col) => col.notNull().unique())
+		.addColumn("name", "text", (col) => col.notNull())
 		.addColumn("target_hours", "float4", (col) => col.defaultTo(3).notNull())
 		.addColumn("active", "boolean", (col) => col.notNull().defaultTo(true))
 		.addColumn("default", "boolean", (col) => col.notNull().defaultTo(false))
 		.addColumn("created_at", "timestamp", (col) =>
 			col.notNull().defaultTo(sql`NOW()`),
+		)
+		.addColumn("user_id", "uuid", (col) =>
+			col.references("user.id").onDelete("cascade").notNull(),
 		)
 		.execute();
 
@@ -88,4 +96,5 @@ export async function down(db: Kysely<any>): Promise<void> {
 	await db.schema.dropTable("dates").ifExists().execute();
 	await db.schema.dropTable("counted_days").ifExists().execute();
 	await db.schema.dropTable("projects").ifExists().execute();
+	await db.schema.dropTable("user").ifExists().execute();
 }

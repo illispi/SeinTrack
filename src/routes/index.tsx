@@ -57,6 +57,10 @@ import type {
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { createVisibilityObserver } from "@solid-primitives/intersection-observer";
+import type { Instance } from "flatpickr/dist/types/instance";
+import flatpickr from "flatpickr";
+import AddTime from "~/components/AddTime";
+import { Switch, SwitchControl, SwitchThumb } from "~/components/ui/switch";
 
 const countFilters = (
 	month: number | null,
@@ -65,7 +69,7 @@ const countFilters = (
 	tagGroup: number | null,
 ) => {
 	let total = 0;
-	total += month ? 1 : 0;
+	total += month !== null ? 1 : 0;
 	total += year ? 1 : 0;
 	total += tagGroup ? 1 : 0;
 	total += tag !== undefined ? 1 : 0;
@@ -85,6 +89,8 @@ export default function Home() {
 	const [difYear, setDifYear] = createSignal(curYear());
 	const [todoStatsOpen, setTodoStatsOpen] = createSignal(false);
 	const [monthDialog, setMonthDialog] = createSignal(false);
+	const [addHours, setAddHours] = createSignal(0);
+	const [addMinutes, setAddMinutes] = createSignal(0);
 
 	const [dirStats, setDirStats] = createSignal(1);
 	const [pageStats, setPageStats] = createSignal(0);
@@ -92,6 +98,23 @@ export default function Home() {
 	createEffect(() => {
 		setDirStats(dirCalendar());
 		setPageStats(pageCalendar());
+	});
+
+	let datePickerInstance: Instance;
+	const [datePickerRef, setDatePickerRef] = createSignal("");
+	createEffect(() => {
+		if (datePickerRef() !== "") {
+			datePickerInstance = flatpickr(datePickerRef(), {
+				static: true,
+				inline: true,
+				onReady: (selectedDates, dateStr, instance) => {
+					instance.setDate(new Date());
+				},
+				altInput: true,
+				altFormat: "F j, Y",
+				dateFormat: "Y-m-d",
+			}) as Instance;
+		}
 	});
 
 	const [filterDialog, setFilterDialog] = createSignal(false);
@@ -103,6 +126,8 @@ export default function Home() {
 	const [filterTagGroup, setFilterTagGroup] = createSignal<number | null>(null);
 	const [tagSelect, setTagSelect] = createSignal("All");
 	const [tagGroupSelect, setTagGroupSelect] = createSignal("All");
+
+	const [completed, setCompleted] = createSignal(true);
 
 	const [todo, setTodo] = createSignal<{
 		id: number;
@@ -564,10 +589,11 @@ export default function Home() {
 											<DialogContent
 												onOpenAutoFocus={(e) => e.preventDefault()}
 											>
-												<div class="flex h-[110px] items-start justify-between">
+												<div class="flex h-[110px] items-start justify-between gap-4">
 													<div class="flex-1">
 														<h5 class="text-lg font-semibold">Year</h5>
 														<Button
+															class="w-full"
 															variant={"outline"}
 															onClick={() =>
 																filterYear()
@@ -579,7 +605,7 @@ export default function Home() {
 														</Button>
 														<Show when={filterYear()}>
 															<NumberField
-																defaultValue={filterYear()}
+																defaultValue={filterYear()!}
 																onRawValueChange={setFilterYear}
 															>
 																<NumberFieldGroup>
@@ -595,16 +621,25 @@ export default function Home() {
 														<Show when={filterYear()}>
 															<h5 class="text-lg font-semibold">Month</h5>
 															<Button
+																class="w-full"
 																variant={"outline"}
 																onClick={() =>
-																	filterMonth()
-																		? setFilterMonth(null)
-																		: setFilterMonth(curMonth())
+																	filterMonth() === null
+																		? setFilterMonth(curMonth())
+																		: setFilterMonth(null)
 																}
 															>
-																{filterMonth() ? "All" : "Filter"}
+																{filterMonth() >= 0 && filterMonth() !== null
+																	? "All"
+																	: "Filter"}
 															</Button>
-															<Show when={filterMonth() && filterYear()}>
+															<Show
+																when={
+																	filterMonth() >= 0 &&
+																	filterMonth() !== null &&
+																	filterYear()
+																}
+															>
 																<NumberField
 																	defaultValue={filterMonth() + 1}
 																	onRawValueChange={(e) =>
@@ -739,7 +774,7 @@ export default function Home() {
 																			setFilterDialog(true);
 																		}}
 																		class="w-48"
-																		variant={"secondary"}
+																		variant={"outline"}
 																	>
 																		{`Filters (${countFilters(filterMonth(), filterYear(), filterTag(), filterTagGroup())} on)`}
 																	</Button>
@@ -751,7 +786,7 @@ export default function Home() {
 																		variant={"secondary"}
 																		class="w-48"
 																	>
-																		More statistics
+																		Statistics
 																	</Button>
 																</div>
 																<div class=" grid flex-1  grid-cols-2 gap-4">
@@ -765,7 +800,7 @@ export default function Home() {
 																		</p>
 																	</div>
 																	<div>
-																		<h4>Todo time</h4>
+																		<h4>Todo total</h4>
 																		<p class="mx-auto flex w-fit items-center justify-center">
 																			<FormatTime
 																				hours={baseStats.data?.totalTodoTime}
@@ -854,6 +889,19 @@ export default function Home() {
 																								<Button
 																									onClick={() => {
 																										setTodo(todoDone);
+																										setAddHours(
+																											Math.floor(
+																												todoDone.hoursWorked,
+																											),
+																										);
+																										setAddMinutes(
+																											(todoDone.hoursWorked -
+																												Math.floor(
+																													todoDone.hoursWorked,
+																												)) *
+																												60,
+																										);
+
 																										setSelectedTag(
 																											todoDone.tag || "none",
 																										);
@@ -862,6 +910,9 @@ export default function Home() {
 																										);
 																										setTodoText(todoDone.todo);
 																										setTodoEditOpen(true);
+																										datePickerInstance.setDate(
+																											todoDone.dateCompleted,
+																										);
 																									}}
 																									class="flex h-8 w-12 items-center justify-center "
 																									variant={"outline"}
@@ -898,10 +949,6 @@ export default function Home() {
 										<DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
 											<DialogHeader>
 												<DialogTitle class="mx-auto">Edit todo</DialogTitle>
-												<DialogDescription>
-													If you want to edit hours or date completed just
-													delete this todo, and create new one
-												</DialogDescription>
 											</DialogHeader>
 											<Show when={todo()}>
 												{(td) => (
@@ -926,98 +973,120 @@ export default function Home() {
 																<path d="M864 256H736v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zm-200 0H360v-72h304v72z"></path>
 															</svg>
 														</button>
-														<div class="mx-auto flex w-full flex-col items-center justify-between gap-12">
-															<TextField
-																value={todoText()}
-																onChange={setTodoText}
-																class="grid w-full items-center gap-1.5"
-															>
-																<div class="flex items-center justify-start gap-4">
-																	<TextFieldInput
-																		type="text"
-																		id="editTodo"
-																		placeholder="editTodo"
-																	/>
-																</div>
-															</TextField>
+														<div class="mx-auto my-8 flex w-full flex-col items-center justify-between gap-8">
+															<div class=" w-full">
+																<h3 class="font-semibold">Todo name</h3>
+																<TextField
+																	value={todoText()}
+																	onChange={setTodoText}
+																	class="grid w-full items-center gap-1.5"
+																>
+																	<div class="flex items-center justify-start gap-4">
+																		<TextFieldInput
+																			type="text"
+																			id="editTodo"
+																			placeholder="editTodo"
+																		/>
+																	</div>
+																</TextField>
+															</div>
 															<div class="grid w-full grid-cols-2">
 																<h3 class="font-semibold">Tag</h3>
 																<h3 class="font-semibold">Tag group</h3>
-																<Show
-																	when={tagsActive.data}
-																	fallback="No tags found"
-																>
-																	{(tags) => (
-																		<>
-																			<Select
-																				class="flex"
-																				defaultValue={td().tag || "none"}
-																				value={selectedTag()}
-																				onChange={setSelectedTag}
-																				options={[
-																					"none",
-																					...massageTagsAndGroupsToArr(tags()),
-																				]}
-																				placeholder="Select a tag"
-																				itemComponent={(props) => (
-																					<SelectItem item={props.item}>
-																						{props.item.rawValue}
-																					</SelectItem>
-																				)}
-																			>
-																				<SelectTrigger aria-label="Tag">
-																					<SelectValue<string>>
-																						{(state) => state.selectedOption()}
-																					</SelectValue>
-																				</SelectTrigger>
-																				<SelectContent />
-																			</Select>
-																		</>
+
+																<Select
+																	class="flex"
+																	defaultValue={td().tag || "none"}
+																	value={selectedTag()}
+																	onChange={setSelectedTag}
+																	options={[
+																		"none",
+																		...massageTagsAndGroupsToArr(
+																			tagsActive.data,
+																		),
+																	]}
+																	placeholder="Select a tag"
+																	itemComponent={(props) => (
+																		<SelectItem item={props.item}>
+																			{props.item.rawValue}
+																		</SelectItem>
 																	)}
-																</Show>
-																<Show
-																	when={tagGroupsActive.data}
-																	fallback="No tag groups found"
 																>
-																	{(tagGroups) => (
-																		<>
-																			<Select
-																				class="flex"
-																				defaultValue={td().tagGroup}
-																				value={selectedTagGroup()}
-																				onChange={setSelectedTagGroup}
-																				options={[
-																					...massageTagsAndGroupsToArr(
-																						tagGroups(),
-																					),
-																				]}
-																				placeholder="Select a tag"
-																				itemComponent={(props) => (
-																					<SelectItem item={props.item}>
-																						{props.item.rawValue}
-																					</SelectItem>
-																				)}
-																			>
-																				<SelectTrigger aria-label="Tag">
-																					<SelectValue<string>>
-																						{(state) => state.selectedOption()}
-																					</SelectValue>
-																				</SelectTrigger>
-																				<SelectContent />
-																			</Select>
-																		</>
+																	<SelectTrigger aria-label="Tag">
+																		<SelectValue<string>>
+																			{(state) => state.selectedOption()}
+																		</SelectValue>
+																	</SelectTrigger>
+																	<SelectContent />
+																</Select>
+
+																<Select
+																	class="flex"
+																	defaultValue={td().tagGroup}
+																	value={selectedTagGroup()}
+																	onChange={setSelectedTagGroup}
+																	options={[
+																		...massageTagsAndGroupsToArr(
+																			tagGroupsActive.data,
+																		),
+																	]}
+																	placeholder="Select a tag"
+																	itemComponent={(props) => (
+																		<SelectItem item={props.item}>
+																			{props.item.rawValue}
+																		</SelectItem>
 																	)}
-																</Show>
+																>
+																	<SelectTrigger aria-label="Tag">
+																		<SelectValue<string>>
+																			{(state) => state.selectedOption()}
+																		</SelectValue>
+																	</SelectTrigger>
+																	<SelectContent />
+																</Select>
+															</div>
+															{/* NOTE calendar here */}
+															<div class="flex h-80 w-full items-center justify-center">
+																<input
+																	class="w-full"
+																	type="text"
+																	ref={setDatePickerRef}
+																></input>
+															</div>
+
+															<div>
+																<AddTime
+																	hours={addHours()}
+																	minutes={addMinutes()}
+																	setHours={setAddHours}
+																	setMinutes={setAddMinutes}
+																/>
+															</div>
+															<div class="w-full">
+																<h3 class="my-4 font-semibold">Completed</h3>
+																<Switch
+																	checked={completed()}
+																	onChange={setCompleted}
+																>
+																	<SwitchControl>
+																		<SwitchThumb />
+																	</SwitchControl>
+																</Switch>
 															</div>
 														</div>
 														<DialogFooter class="mx-auto w-full">
 															<Button
 																onClick={() => {
 																	editTodo.mutate({
-																		dateCompleted: td().dateCompleted,
-																		hoursWorked: td().hoursWorked,
+																		dateCompleted:
+																			datePickerInstance.selectedDates[0],
+																		hoursWorked: Number(
+																			Number(
+																				addHours() + addMinutes() / 60,
+																			).toFixed(2),
+																		),
 																		todoId: td().id,
-																		completed: true,
+																		completed: completed(),
 																		tagId:
 																			selectedTag() === "none"
 																				? null

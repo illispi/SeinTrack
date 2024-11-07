@@ -11,15 +11,14 @@ export const newProject = publicProcedure
 		),
 	)
 	.mutation(async ({ ctx, input }) => {
-		await ctx.db
-			.insertInto("projects")
-			.values({ name: input.name, targetHours: input.hoursTarget })
-			.executeTakeFirstOrThrow();
-
 		const project = await ctx.db
-			.selectFrom("projects")
-			.select("id")
-			.where("projects.name", "=", input.name)
+			.insertInto("projects")
+			.values({
+				name: input.name,
+				targetHours: input.hoursTarget,
+				userId: ctx.id,
+			})
+			.returning("projects.id")
 			.executeTakeFirstOrThrow();
 
 		for (let index = 0; index < 5; index++) {
@@ -39,6 +38,15 @@ export const newProject = publicProcedure
 			"learning",
 		];
 
+		const defaultTags = ["backend", "frontend"];
+
+		for (const tag of defaultTags) {
+			await ctx.db
+				.insertInto("tags")
+				.values({ projectId: project.id, tagActive: true, tag })
+				.executeTakeFirstOrThrow();
+		}
+
 		for (const group of defaultGroups) {
 			await ctx.db
 				.insertInto("tagGroups")
@@ -54,6 +62,7 @@ export const newProject = publicProcedure
 			.selectFrom("projects")
 			.select("default")
 			.where("default", "=", true)
+			.where("userId", "=", ctx.id)
 			.executeTakeFirst();
 
 		if (!defaultProject?.default) {
@@ -164,6 +173,7 @@ export const allProjects = publicProcedure.query(async ({ ctx }) => {
 	const projects = await ctx.db
 		.selectFrom("projects")
 		.select(["name", "targetHours", "id", "active", "default"])
+		.where("userId", "=", ctx.id)
 		.orderBy("id asc")
 		.execute();
 	if (projects.length === 0) {
