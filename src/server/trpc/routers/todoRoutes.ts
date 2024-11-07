@@ -98,16 +98,15 @@ export const editTodo = publicProcedure
 		),
 	)
 	.mutation(async ({ input, ctx }) => {
-		console.log(input);
 		await ctx.db
 			.updateTable("todos")
 			.set({
 				completed: input.completed,
-				hoursWorked: input.hoursWorked,
+				hoursWorked: input.completed ? input.hoursWorked : null,
 				tagGroupId: input.tagGroupId,
 				tagId: input.tagId,
 				todo: input.todo,
-				dateCompleted: input.dateCompleted,
+				dateCompleted: input.completed ? input.dateCompleted : null,
 			})
 			.where("id", "=", input.todoId)
 			.executeTakeFirstOrThrow();

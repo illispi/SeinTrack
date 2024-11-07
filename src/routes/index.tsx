@@ -60,6 +60,7 @@ import { createVisibilityObserver } from "@solid-primitives/intersection-observe
 import type { Instance } from "flatpickr/dist/types/instance";
 import flatpickr from "flatpickr";
 import AddTime from "~/components/AddTime";
+import { Switch, SwitchControl, SwitchThumb } from "~/components/ui/switch";
 
 const countFilters = (
 	month: number | null,
@@ -125,6 +126,8 @@ export default function Home() {
 	const [filterTagGroup, setFilterTagGroup] = createSignal<number | null>(null);
 	const [tagSelect, setTagSelect] = createSignal("All");
 	const [tagGroupSelect, setTagGroupSelect] = createSignal("All");
+
+	const [completed, setCompleted] = createSignal(true);
 
 	const [todo, setTodo] = createSignal<{
 		id: number;
@@ -1059,6 +1062,17 @@ export default function Home() {
 																	setMinutes={setAddMinutes}
 																/>
 															</div>
+															<div class="w-full">
+																<h3 class="my-4 font-semibold">Completed</h3>
+																<Switch
+																	checked={completed()}
+																	onChange={setCompleted}
+																>
+																	<SwitchControl>
+																		<SwitchThumb />
+																	</SwitchControl>
+																</Switch>
+															</div>
 														</div>
 														<DialogFooter class="mx-auto w-full">
 															<Button
@@ -1072,7 +1086,7 @@ export default function Home() {
 																			).toFixed(2),
 																		),
 																		todoId: td().id,
-																		completed: true, //TODO validate backend that if false dateCompleted and hoursworked are null then
+																		completed: completed(),
 																		tagId:
 																			selectedTag() === "none"
 																				? null
