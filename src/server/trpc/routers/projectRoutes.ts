@@ -13,7 +13,11 @@ export const newProject = publicProcedure
 	.mutation(async ({ ctx, input }) => {
 		await ctx.db
 			.insertInto("projects")
-			.values({ name: input.name, targetHours: input.hoursTarget })
+			.values({
+				name: input.name,
+				targetHours: input.hoursTarget,
+				userId: ctx.id,
+			})
 			.executeTakeFirstOrThrow();
 
 		const project = await ctx.db
@@ -164,6 +168,7 @@ export const allProjects = publicProcedure.query(async ({ ctx }) => {
 	const projects = await ctx.db
 		.selectFrom("projects")
 		.select(["name", "targetHours", "id", "active", "default"])
+		.where("userId", "=", ctx.id)
 		.orderBy("id asc")
 		.execute();
 	if (projects.length === 0) {

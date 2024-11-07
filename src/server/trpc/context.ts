@@ -1,10 +1,9 @@
 import type { createSolidAPIHandlerContext } from "@solid-mediakit/trpc/handler";
+import { v4 as uuidv4 } from "uuid";
 import {
 	appendResponseHeader,
-	getCookie,
-	setResponseStatus,
+	getCookie
 } from "vinxi/server";
-import { v4 as uuidv4 } from "uuid";
 
 import { db } from "~/server/database/db";
 
