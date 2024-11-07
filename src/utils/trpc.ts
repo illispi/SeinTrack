@@ -57,16 +57,16 @@ export const queryClient = new QueryClient({
 			queryClient.invalidateQueries();
 		},
 	}),
-	queryCache: new QueryCache({
-		onError: (error) => {
-			//NOTE this doesnt work
-			console.log("error here");
-			showToast({
-				title: "Error!",
-				description: error.message,
-				variant: "error",
-			});
-		},
-	}),
+	// queryCache: new QueryCache({
+	// 	onError: (error) => {
+	// 		//NOTE this doesnt work
+	// 		console.log("error here");
+	// 		showToast({
+	// 			title: "Error!",
+	// 			description: error.message,
+	// 			variant: "error",
+	// 		});
+	// 	},
+	// }),
 });
 //NOTE test this query cache
