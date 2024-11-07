@@ -60,6 +60,7 @@ app.use(
 		createContext: async (opts, c) => {
 			const user = getCookie("user");
 			let id: string;
+
 			if (!user) {
 				if (process.env.DEMO) {
 					const userDb = await db
@@ -89,7 +90,43 @@ app.use(
 					}
 				}
 			} else {
-				id = user;
+				const exists = await db
+					.selectFrom("user")
+					.select("id")
+					.where("id", "=", user)
+					.executeTakeFirstOrThrow();
+				if (!exists.id) {
+					if (process.env.DEMO) {
+						console.log("wwwwww");
+						const userDb = await db
+							.insertInto("user")
+							.values({ id: uuidv4() })
+							.returning("id")
+							.executeTakeFirstOrThrow();
+
+						setCookie("user", userDb.id);
+						id = userDb.id;
+					} else {
+						const userDb = await db
+							.selectFrom("user")
+							.select(["id"])
+							.executeTakeFirstOrThrow();
+						if (!userDb.id) {
+							const userDb = await db
+								.insertInto("user")
+								.values({ id: uuidv4() })
+								.returning("id")
+								.executeTakeFirstOrThrow();
+							setCookie("user", userDb.id);
+
+							id = userDb.id;
+						} else {
+							id = userDb.id;
+						}
+					}
+				} else {
+					id = user;
+				}
 			}
 			return { db, id, req: c.req, res: c.res };
 		},
