@@ -1,17 +1,16 @@
 import type { createSolidAPIHandlerContext } from "@solid-mediakit/trpc/handler";
 import { v4 as uuidv4 } from "uuid";
-import {
-	appendResponseHeader,
-	getCookie
-} from "vinxi/server";
+import { appendResponseHeader, getCookie } from "vinxi/server";
 
 import { db } from "~/server/database/db";
 
 export const createContext = async (opts: createSolidAPIHandlerContext) => {
 	const user = getCookie("user");
 	let id: string;
+	console.log("start");
 	if (!user) {
 		if (process.env.DEMO) {
+			console.log("here");
 			const userDb = await db
 				.insertInto("user")
 				.values({ id: uuidv4() })

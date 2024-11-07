@@ -3,6 +3,8 @@ import { CronJob } from "cron";
 import { Hono } from "hono";
 import { db } from "./database/db";
 import { appRouter } from "./trpc/routers/mainRouter";
+import { v4 as uuidv4 } from "uuid";
+import { appendResponseHeader, getCookie } from "vinxi/server";
 
 const app = new Hono();
 
@@ -55,19 +57,54 @@ app.use(
 	trpcServer({
 		endpoint: "/api/trpc",
 		router: appRouter,
-		createContext: (opts, c) => ({ db, req: c.req, res: c.res }),
+		createContext: async (opts, c) => {
+			const user = getCookie("user");
+			let id: string;
+			console.log("start");
+			if (!user) {
+				if (process.env.DEMO) {
+					console.log("here");
+					const userDb = await db
+						.insertInto("user")
+						.values({ id: uuidv4() })
+						.returning("id")
+						.executeTakeFirstOrThrow();
+					appendResponseHeader("Set-Cookie", userDb.id);
+					id = userDb.id;
+				} else {
+					const userDb = await db
+						.selectFrom("user")
+						.select(["id"])
+						.executeTakeFirstOrThrow();
+					if (!userDb.id) {
+						const userDb = await db
+							.insertInto("user")
+							.values({ id: uuidv4() })
+							.returning("id")
+							.executeTakeFirstOrThrow();
+						appendResponseHeader("Set-Cookie", userDb.id);
+						id = userDb.id;
+					} else {
+						id = userDb.id;
+					}
+				}
+			} else {
+				id = user;
+			}
+			return { db, id, req: c.req, res: c.res };
+		},
 	}),
 );
 
-if (process.env.DEMO) {
-	const test = CronJob.from({
-		cronTime: "0 * * * *",
-		onTick: () => {
-			console.log("You will see this message every hour");
-		},
-		timeZone: "America/Los_Angeles",
-	});
+// if (process.env.DEMO) {
+// 	const test = CronJob.from({
+// 		cronTime: "0 * * * *",
+// 		onTick: () => {
+// 			console.log("You will see this message every hour");
+// 		},
+// 		timeZone: "America/Los_Angeles",
+// 	});
 
-	test.start();
-}
+// 	test.start();
+// }
 export default app;

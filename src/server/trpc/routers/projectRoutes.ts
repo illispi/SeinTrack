@@ -11,6 +11,7 @@ export const newProject = publicProcedure
 		),
 	)
 	.mutation(async ({ ctx, input }) => {
+		console.log(ctx.id);
 		await ctx.db
 			.insertInto("projects")
 			.values({
