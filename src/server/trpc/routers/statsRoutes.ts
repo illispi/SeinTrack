@@ -155,14 +155,13 @@ export const statsTodosFiltered = publicProcedure
 			.select([
 				"todos.todo",
 				"todos.id",
-				"todos.tagId",
+				"todos.tagId as tagId",
 				"tagGroups.tagGroup",
-				"tagGroups.id",
+				"tagGroups.id as tagGroupId",
 				"tags.tag",
 				"todos.hoursWorked",
 				"todos.dateCompleted",
 			])
-			.select("tagGroups.id as tagGroupId")
 			.where("todos.completed", "=", true)
 			.where("todos.projectId", "=", input.projectId)
 			.where("todos.hoursWorked", "is not", null);
@@ -171,16 +170,20 @@ export const statsTodosFiltered = publicProcedure
 			if (input.month) {
 				const nextMonth = adjustDateByOne(input.year, input.month, true);
 				baseSelect = baseSelect
-					.where("dateCompleted", ">=", new Date(input.year, input.month, 1))
 					.where(
-						"dateCompleted",
+						"todos.dateCompleted",
+						">=",
+						new Date(input.year, input.month, 1),
+					)
+					.where(
+						"todos.dateCompleted",
 						"<",
 						new Date(nextMonth.year, nextMonth.month, 1),
 					);
 			} else {
 				baseSelect = baseSelect
-					.where("dateCompleted", ">=", new Date(input.year, 0, 1))
-					.where("dateCompleted", "<", new Date(input.year + 1, 0, 1));
+					.where("todos.dateCompleted", ">=", new Date(input.year, 0, 1))
+					.where("todos.dateCompleted", "<", new Date(input.year + 1, 0, 1));
 			}
 		}
 
@@ -202,16 +205,21 @@ export const statsTodosFiltered = publicProcedure
 			avgTodoTime = 0;
 			totalTodoTime = 0;
 		} else {
-			const temp = final.map((e) => e.hoursWorked);
+			const temp = final
+				.filter((e) => e.hoursWorked !== null)
+				.map((e) => e.hoursWorked);
 			let acc = 0;
 			for (const num of temp) {
-				acc += num!;
+				acc += num;
 			}
 			avgTodoTime = acc / temp.length;
 			totalTodoTime = acc;
 		}
 
-		let timeSelect = ctx.db.selectFrom("dates").select(["dates.hoursWorked"]);
+		let timeSelect = ctx.db
+			.selectFrom("dates")
+			.select(["dates.hoursWorked"])
+			.where("projectId", "=", input.projectId);
 		if (input.year) {
 			if (input.month) {
 				const nextMonth = adjustDateByOne(input.year, input.month, true);
@@ -226,6 +234,7 @@ export const statsTodosFiltered = publicProcedure
 		}
 
 		const time = await timeSelect.execute();
+		console.log(time);
 
 		let avgTime: number;
 		let totalTime: number;
@@ -234,10 +243,10 @@ export const statsTodosFiltered = publicProcedure
 			avgTime = 0;
 			totalTime = 0;
 		} else {
-			const temp = time.map((e) => e.hoursWorked);
+			const temp = time.filter((e) => e.hoursWorked).map((e) => e.hoursWorked);
 			let acc = 0;
 			for (const num of temp) {
-				acc += num!;
+				acc += num;
 			}
 			avgTime = acc / temp.length;
 			totalTime = acc;

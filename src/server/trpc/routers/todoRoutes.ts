@@ -303,7 +303,6 @@ export const doneTodosInf = publicProcedure
 		}
 
 		const doneTodos = await doneTodosPartial.execute();
-		console.log(doneTodos);
 
 		if (doneTodos.length === 0) {
 			return null;
