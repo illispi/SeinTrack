@@ -5,35 +5,59 @@ import { publicProcedure } from "../initTrpc";
 import { sql } from "kysely";
 
 export const allProjectsStats = publicProcedure.query(async ({ ctx }) => {
-	const totalTime = await ctx.db
-		.selectFrom("dates")
-		.select(["dates.hoursWorked"])
-		// .where(lhs, op, rhs); //TODO add the concept user from here, needs first project ids from user.ctx
+	const projects = await ctx.db
+		.selectFrom("projects")
+		.select("projects.id")
+		.where("projects.userId", "=", ctx.id)
 		.execute();
 
-	let total = totalTime
-		.filter((e) => e.hoursWorked)
-		.map((e) => e.hoursWorked)
-		.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	const totalArrHours: number[] = [];
+
+	for (const project of projects) {
+		const totalTime = await ctx.db
+			.selectFrom("dates")
+			.select(["dates.hoursWorked"])
+			.where("projectId", "=", project.id)
+			.execute();
+		const filtered = totalTime
+			.filter((e) => e.hoursWorked !== null)
+			.map((e) => e.hoursWorked);
+		totalArrHours.push(...filtered);
+	}
+
+	let total = totalArrHours.reduce(
+		(accumulator, currentValue) => accumulator + currentValue,
+		0,
+	);
 
 	total = total ?? 0;
 
-	const avgTime = total / totalTime.filter((e) => e.hoursWorked).length;
+	const avgTime = total / totalArrHours.length;
 
-	const todoQuery = await ctx.db
-		.selectFrom("todos")
-		.select("hoursWorked")
-		.where("completed", "=", true)
-		.execute();
+	const totalTodoArr: number[] = [];
 
-	let totalTodo = todoQuery
-		.filter((e) => e.hoursWorked)
-		.map((e) => e.hoursWorked)
-		.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	for (const project of projects) {
+		const todoQuery = await ctx.db
+			.selectFrom("todos")
+			.select("hoursWorked")
+			.where("completed", "=", true)
+			.where("projectId", "=", project.id)
+			.execute();
+
+		const filtered = todoQuery
+			.filter((e) => e.hoursWorked !== null)
+			.map((e) => e.hoursWorked);
+		totalTodoArr.push(...filtered);
+	}
+
+	let totalTodo = totalTodoArr.reduce(
+		(accumulator, currentValue) => accumulator + currentValue,
+		0,
+	);
 
 	totalTodo = totalTodo ?? 0;
 
-	const avgTodo = totalTodo / todoQuery.filter((e) => e.hoursWorked).length;
+	const avgTodo = totalTodo / totalTodoArr.length;
 
 	return {
 		totalTime: total,
@@ -234,7 +258,6 @@ export const statsTodosFiltered = publicProcedure
 		}
 
 		const time = await timeSelect.execute();
-		console.log(time);
 
 		let avgTime: number;
 		let totalTime: number;
