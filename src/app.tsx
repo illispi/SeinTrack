@@ -8,8 +8,10 @@ import { queryClient, trpc } from "./utils/trpc";
 import { MetaProvider } from "@solidjs/meta";
 import { Toaster } from "./components/ui/toast";
 import { withSentryRouterRouting } from "@sentry/solidstart/solidrouter";
+import { withSentryErrorBoundary } from "@sentry/solidstart";
 
 const SentryRouter = withSentryRouterRouting(Router);
+const SentryErrorBoundary = withSentryErrorBoundary(ErrorBoundary);
 
 export default function App() {
 	return (
@@ -24,10 +26,14 @@ export default function App() {
 					</Show>
 					<SentryRouter
 						root={(props) => (
-							<Suspense>
-								{props.children}
-								<Toaster />
-							</Suspense>
+							<SentryErrorBoundary
+								fallback={(err) => <div>Error: {err.message}</div>}
+							>
+								<Suspense>
+									{props.children}
+									<Toaster />
+								</Suspense>
+							</SentryErrorBoundary>
 						)}
 					>
 						<FileRoutes />
