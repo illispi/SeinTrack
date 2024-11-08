@@ -98,7 +98,6 @@ export const editTodo = publicProcedure
 		),
 	)
 	.mutation(async ({ input, ctx }) => {
-		console.log(input);
 		const test = await ctx.db
 			.updateTable("todos")
 			.set({
@@ -113,7 +112,6 @@ export const editTodo = publicProcedure
 			.returningAll()
 			.executeTakeFirstOrThrow();
 
-		console.log(test);
 		return;
 	});
 export const addTagOrGroup = publicProcedure
@@ -249,11 +247,11 @@ export const doneTodosInf = publicProcedure
 			.innerJoin("tagGroups", "tagGroups.id", "todos.tagGroupId")
 			.leftJoin("tags", "tags.id", "todos.tagId")
 			.select([
-				"todos.id as todoId",
+				"todos.id",
 				"todos.todo",
-				"todos.tagId",
+				"todos.tagId as tagId",
 				"tagGroups.tagGroup",
-				"tagGroups.id",
+				"tagGroups.id as tagGroupId",
 				"tags.tag",
 				"todos.hoursWorked",
 				"todos.dateCompleted",
@@ -269,16 +267,20 @@ export const doneTodosInf = publicProcedure
 			if (input.month) {
 				const nextMonth = adjustDateByOne(input.year, input.month, true);
 				doneTodosPartial = doneTodosPartial
-					.where("dateCompleted", ">=", new Date(input.year, input.month, 1))
 					.where(
-						"dateCompleted",
+						"todos.dateCompleted",
+						">=",
+						new Date(input.year, input.month, 1),
+					)
+					.where(
+						"todos.dateCompleted",
 						"<",
 						new Date(nextMonth.year, nextMonth.month, 1),
 					);
 			} else {
 				doneTodosPartial = doneTodosPartial
-					.where("dateCompleted", ">=", new Date(input.year, 0, 1))
-					.where("dateCompleted", "<", new Date(input.year + 1, 0, 1));
+					.where("todos.dateCompleted", ">=", new Date(input.year, 0, 1))
+					.where("todos.dateCompleted", "<", new Date(input.year + 1, 0, 1));
 			}
 		}
 
