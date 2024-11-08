@@ -7,6 +7,9 @@ import { SolidQueryDevtools } from "@tanstack/solid-query-devtools";
 import { queryClient, trpc } from "./utils/trpc";
 import { MetaProvider } from "@solidjs/meta";
 import { Toaster } from "./components/ui/toast";
+import { withSentryRouterRouting } from "@sentry/solidstart/solidrouter";
+
+const SentryRouter = withSentryRouterRouting(Router);
 
 export default function App() {
 	return (
@@ -27,7 +30,9 @@ export default function App() {
 							</Suspense>
 						)}
 					>
-						<FileRoutes />
+						<SentryRouter>
+							<FileRoutes />
+						</SentryRouter>
 					</Router>
 				</QueryClientProvider>
 			</trpc.Provider>
