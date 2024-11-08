@@ -85,10 +85,11 @@ export const setDefault = publicProcedure
 		),
 	)
 	.mutation(async ({ input, ctx }) => {
-		ctx.db
+		await ctx.db
 			.updateTable("projects")
 			.set({ default: false })
 			.where("default", "=", true)
+			.where("projects.userId", "=", ctx.id)
 			.executeTakeFirstOrThrow();
 
 		await ctx.db
@@ -116,6 +117,7 @@ export const editProject = publicProcedure
 		const atLeastOneActive = await ctx.db
 			.selectFrom("projects")
 			.select("id")
+			.where("projects.userId", "=", ctx.id)
 			.where("active", "=", true)
 			.execute();
 
@@ -138,6 +140,7 @@ export const editProject = publicProcedure
 				.selectFrom("projects")
 				.select(["id", "active", "default"])
 				.where("default", "=", true)
+				.where("projects.userId", "=", ctx.id)
 				.executeTakeFirstOrThrow();
 		} else {
 			defaultActive = await ctx.db
@@ -158,6 +161,7 @@ export const editProject = publicProcedure
 				.selectFrom("projects")
 				.select("id")
 				.where("active", "=", true)
+				.where("projects.userId", "=", ctx.id)
 				.executeTakeFirstOrThrow();
 			await ctx.db
 				.updateTable("projects")
