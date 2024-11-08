@@ -202,6 +202,7 @@ export default function Home() {
 				variant: "success",
 			});
 			setTodoEditOpen(false);
+			setCompleted(true);
 		},
 	}));
 
@@ -1085,7 +1086,7 @@ export default function Home() {
 																				addHours() + addMinutes() / 60,
 																			).toFixed(2),
 																		),
-																		todoId: td().id,
+																		todoId: td().todoId,
 																		completed: completed(),
 																		tagId:
 																			selectedTag() === "none"

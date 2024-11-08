@@ -98,7 +98,8 @@ export const editTodo = publicProcedure
 		),
 	)
 	.mutation(async ({ input, ctx }) => {
-		await ctx.db
+		console.log(input);
+		const test = await ctx.db
 			.updateTable("todos")
 			.set({
 				completed: input.completed,
@@ -108,9 +109,11 @@ export const editTodo = publicProcedure
 				todo: input.todo,
 				dateCompleted: input.completed ? input.dateCompleted : null,
 			})
-			.where("id", "=", input.todoId)
+			.where("todos.id", "=", input.todoId)
+			.returningAll()
 			.executeTakeFirstOrThrow();
 
+		console.log(test);
 		return;
 	});
 export const addTagOrGroup = publicProcedure
@@ -246,8 +249,8 @@ export const doneTodosInf = publicProcedure
 			.innerJoin("tagGroups", "tagGroups.id", "todos.tagGroupId")
 			.leftJoin("tags", "tags.id", "todos.tagId")
 			.select([
+				"todos.id as todoId",
 				"todos.todo",
-				"todos.id",
 				"todos.tagId",
 				"tagGroups.tagGroup",
 				"tagGroups.id",
@@ -298,6 +301,7 @@ export const doneTodosInf = publicProcedure
 		}
 
 		const doneTodos = await doneTodosPartial.execute();
+		console.log(doneTodos);
 
 		if (doneTodos.length === 0) {
 			return null;
