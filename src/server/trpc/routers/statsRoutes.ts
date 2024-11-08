@@ -11,10 +11,12 @@ export const allProjectsStats = publicProcedure.query(async ({ ctx }) => {
 		// .where(lhs, op, rhs); //TODO add the concept user from here, needs first project ids from user.ctx
 		.execute();
 
-	const total = totalTime
+	let total = totalTime
 		.filter((e) => e.hoursWorked)
 		.map((e) => e.hoursWorked)
 		.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	total = total ?? 0;
 
 	const avgTime = total / totalTime.filter((e) => e.hoursWorked).length;
 
@@ -24,10 +26,12 @@ export const allProjectsStats = publicProcedure.query(async ({ ctx }) => {
 		.where("completed", "=", true)
 		.execute();
 
-	const totalTodo = todoQuery
+	let totalTodo = todoQuery
 		.filter((e) => e.hoursWorked)
 		.map((e) => e.hoursWorked)
 		.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	totalTodo = totalTodo ?? 0;
 
 	const avgTodo = totalTodo / todoQuery.filter((e) => e.hoursWorked).length;
 
