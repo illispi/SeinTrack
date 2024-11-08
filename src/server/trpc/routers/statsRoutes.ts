@@ -5,31 +5,59 @@ import { publicProcedure } from "../initTrpc";
 import { sql } from "kysely";
 
 export const allProjectsStats = publicProcedure.query(async ({ ctx }) => {
-	const totalTime = await ctx.db
-		.selectFrom("dates")
-		.select(["dates.hoursWorked"])
-		// .where(lhs, op, rhs); //TODO add the concept user from here, needs first project ids from user.ctx
+	const projects = await ctx.db
+		.selectFrom("projects")
+		.select("projects.id")
+		.where("projects.userId", "=", ctx.id)
 		.execute();
 
-	const total = totalTime
-		.filter((e) => e.hoursWorked)
-		.map((e) => e.hoursWorked)
-		.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	const totalArrHours: number[] = [];
 
-	const avgTime = total / totalTime.filter((e) => e.hoursWorked).length;
+	for (const project of projects) {
+		const totalTime = await ctx.db
+			.selectFrom("dates")
+			.select(["dates.hoursWorked"])
+			.where("projectId", "=", project.id)
+			.execute();
+		const filtered = totalTime
+			.filter((e) => e.hoursWorked !== null)
+			.map((e) => e.hoursWorked);
+		totalArrHours.push(...filtered);
+	}
 
-	const todoQuery = await ctx.db
-		.selectFrom("todos")
-		.select("hoursWorked")
-		.where("completed", "=", true)
-		.execute();
+	let total = totalArrHours.reduce(
+		(accumulator, currentValue) => accumulator + currentValue,
+		0,
+	);
 
-	const totalTodo = todoQuery
-		.filter((e) => e.hoursWorked)
-		.map((e) => e.hoursWorked)
-		.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	total = total ?? 0;
 
-	const avgTodo = totalTodo / todoQuery.filter((e) => e.hoursWorked).length;
+	const avgTime = total / totalArrHours.length;
+
+	const totalTodoArr: number[] = [];
+
+	for (const project of projects) {
+		const todoQuery = await ctx.db
+			.selectFrom("todos")
+			.select("hoursWorked")
+			.where("completed", "=", true)
+			.where("projectId", "=", project.id)
+			.execute();
+
+		const filtered = todoQuery
+			.filter((e) => e.hoursWorked !== null)
+			.map((e) => e.hoursWorked);
+		totalTodoArr.push(...filtered);
+	}
+
+	let totalTodo = totalTodoArr.reduce(
+		(accumulator, currentValue) => accumulator + currentValue,
+		0,
+	);
+
+	totalTodo = totalTodo ?? 0;
+
+	const avgTodo = totalTodo / totalTodoArr.length;
 
 	return {
 		totalTime: total,
@@ -151,14 +179,13 @@ export const statsTodosFiltered = publicProcedure
 			.select([
 				"todos.todo",
 				"todos.id",
-				"todos.tagId",
+				"todos.tagId as tagId",
 				"tagGroups.tagGroup",
-				"tagGroups.id",
+				"tagGroups.id as tagGroupId",
 				"tags.tag",
 				"todos.hoursWorked",
 				"todos.dateCompleted",
 			])
-			.select("tagGroups.id as tagGroupId")
 			.where("todos.completed", "=", true)
 			.where("todos.projectId", "=", input.projectId)
 			.where("todos.hoursWorked", "is not", null);
@@ -167,16 +194,20 @@ export const statsTodosFiltered = publicProcedure
 			if (input.month) {
 				const nextMonth = adjustDateByOne(input.year, input.month, true);
 				baseSelect = baseSelect
-					.where("dateCompleted", ">=", new Date(input.year, input.month, 1))
 					.where(
-						"dateCompleted",
+						"todos.dateCompleted",
+						">=",
+						new Date(input.year, input.month, 1),
+					)
+					.where(
+						"todos.dateCompleted",
 						"<",
 						new Date(nextMonth.year, nextMonth.month, 1),
 					);
 			} else {
 				baseSelect = baseSelect
-					.where("dateCompleted", ">=", new Date(input.year, 0, 1))
-					.where("dateCompleted", "<", new Date(input.year + 1, 0, 1));
+					.where("todos.dateCompleted", ">=", new Date(input.year, 0, 1))
+					.where("todos.dateCompleted", "<", new Date(input.year + 1, 0, 1));
 			}
 		}
 
@@ -198,16 +229,21 @@ export const statsTodosFiltered = publicProcedure
 			avgTodoTime = 0;
 			totalTodoTime = 0;
 		} else {
-			const temp = final.map((e) => e.hoursWorked);
+			const temp = final
+				.filter((e) => e.hoursWorked !== null)
+				.map((e) => e.hoursWorked);
 			let acc = 0;
 			for (const num of temp) {
-				acc += num!;
+				acc += num;
 			}
 			avgTodoTime = acc / temp.length;
 			totalTodoTime = acc;
 		}
 
-		let timeSelect = ctx.db.selectFrom("dates").select(["dates.hoursWorked"]);
+		let timeSelect = ctx.db
+			.selectFrom("dates")
+			.select(["dates.hoursWorked"])
+			.where("projectId", "=", input.projectId);
 		if (input.year) {
 			if (input.month) {
 				const nextMonth = adjustDateByOne(input.year, input.month, true);
@@ -230,10 +266,10 @@ export const statsTodosFiltered = publicProcedure
 			avgTime = 0;
 			totalTime = 0;
 		} else {
-			const temp = time.map((e) => e.hoursWorked);
+			const temp = time.filter((e) => e.hoursWorked).map((e) => e.hoursWorked);
 			let acc = 0;
 			for (const num of temp) {
-				acc += num!;
+				acc += num;
 			}
 			avgTime = acc / temp.length;
 			totalTime = acc;

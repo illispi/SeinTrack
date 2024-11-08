@@ -202,6 +202,7 @@ export default function Home() {
 				variant: "success",
 			});
 			setTodoEditOpen(false);
+			setCompleted(true);
 		},
 	}));
 
