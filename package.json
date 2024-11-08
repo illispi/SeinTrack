@@ -16,6 +16,7 @@
 	"dependencies": {
 		"@hono/trpc-server": "^0.3.2",
 		"@kobalte/core": "^0.13.7",
+		"@sentry/solidstart": "^8.37.1",
 		"@solid-mediakit/trpc": "^3.0.3",
 		"@solid-primitives/intersection-observer": "^2.1.6",
 		"@solidjs/meta": "^0.29.4",

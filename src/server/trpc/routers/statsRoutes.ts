@@ -8,7 +8,7 @@ export const allProjectsStats = publicProcedure.query(async ({ ctx }) => {
 	const totalTime = await ctx.db
 		.selectFrom("dates")
 		.select(["dates.hoursWorked"])
-		// .where(lhs, op, rhs); //TODO add the concept user from here
+		// .where(lhs, op, rhs); //TODO add the concept user from here, needs first project ids from user.ctx
 		.execute();
 
 	const total = totalTime
