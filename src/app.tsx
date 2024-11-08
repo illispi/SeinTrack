@@ -22,7 +22,7 @@ export default function App() {
 							buttonPosition="bottom-left"
 						/>
 					</Show>
-					<Router
+					<SentryRouter
 						root={(props) => (
 							<Suspense>
 								{props.children}
@@ -30,10 +30,8 @@ export default function App() {
 							</Suspense>
 						)}
 					>
-						<SentryRouter>
-							<FileRoutes />
-						</SentryRouter>
-					</Router>
+						<FileRoutes />
+					</SentryRouter>
 				</QueryClientProvider>
 			</trpc.Provider>
 		</MetaProvider>
