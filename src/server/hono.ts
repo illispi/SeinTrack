@@ -60,6 +60,8 @@ app.use(
 		createContext: async (opts, c) => {
 			const user = getCookie("user");
 			let id: string;
+			const date = new Date();
+			date.setFullYear(date.getFullYear() + 1); // Add one year to the current date
 
 			if (!user) {
 				if (process.env.DEMO) {
@@ -69,7 +71,7 @@ app.use(
 						.returning("id")
 						.executeTakeFirstOrThrow();
 
-					setCookie("user", userDb.id);
+					setCookie("user", userDb.id, { httpOnly: true, expires: date });
 					id = userDb.id;
 				} else {
 					const userDb = await db
@@ -82,7 +84,7 @@ app.use(
 							.values({ id: uuidv4() })
 							.returning("id")
 							.executeTakeFirstOrThrow();
-						setCookie("user", userDb.id);
+						setCookie("user", userDb.id, { httpOnly: true, expires: date });
 
 						id = userDb.id;
 					} else {
@@ -103,7 +105,7 @@ app.use(
 							.returning("id")
 							.executeTakeFirstOrThrow();
 
-						setCookie("user", userDb.id);
+						setCookie("user", userDb.id, { httpOnly: true, expires: date });
 						id = userDb.id;
 					} else {
 						const userDb = await db
@@ -116,7 +118,7 @@ app.use(
 								.values({ id: uuidv4() })
 								.returning("id")
 								.executeTakeFirstOrThrow();
-							setCookie("user", userDb.id);
+							setCookie("user", userDb.id, { httpOnly: true, expires: date });
 
 							id = userDb.id;
 						} else {
