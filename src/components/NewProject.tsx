@@ -35,7 +35,7 @@ const NewProject: Component = (props) => {
 				</p>
 				<h3 class="mt-12 text-2xl font-semibold">Create new project</h3>
 				<TextField class="flex flex-col gap-4">
-					<TextFieldLabel class="text-left">Name</TextFieldLabel>
+					<TextFieldLabel class="text-left">Project name</TextFieldLabel>
 					<TextFieldInput
 						type="text"
 						onInput={(e) => {

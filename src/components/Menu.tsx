@@ -139,7 +139,9 @@ const Menu: Component<{
 										/>
 									</TextField>
 									<TextField class="grid w-full grid-cols-4 items-center gap-4">
-										<TextFieldLabel class="text-right">Hours</TextFieldLabel>
+										<TextFieldLabel class="text-right">
+											Target Hours (a day)
+										</TextFieldLabel>
 										<TextFieldInput
 											class="col-span-3"
 											type="number"
