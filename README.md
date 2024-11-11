@@ -1,32 +1,31 @@
-# SolidStart
+# SeinTrack
 
-Everything you need to build a Solid project, powered by [`solid-start`](https://start.solidjs.com);
+This a web application, that combines seinfeld calendar method with project time tracking. Point is the keep consistent, by working your target hours a day, and build a streak. Time tracking allows you to see what takes time on your project like frontend or backend, bug fixes or new features.
 
-## Creating a project
-
-```bash
-# create a new project in the current directory
-npm init solid@latest
-
-# create a new project in my-app
-npm init solid@latest my-app
-```
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+```
+#.env at root folder of the project
 
-```bash
-npm run dev
+DATABASE_URL=postgres://seintrack:mysecretpassword@localhost:5432/seintrack
+SITE_URL=http://localhost:3000
+VITE_SITE=http://localhost:3000
+DEMO=true/false
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+```bash
+pnpm install
 
-Solid apps are built with _presets_, which optimise your project for deployment to different environments.
+docker run --name seintrack -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_USER=seintrack -e POSTGRES_DB=seintrack -p 5432:5432 -d postgres
 
-By default, `npm run build` will generate a Node app that you can run with `npm start`. To use a different preset, add it to the `devDependencies` in `package.json` and specify in your `app.config.js`.
+pnpm run migrate:latest
 
-## This project was created with the [Solid CLI](https://solid-cli.netlify.app)
+pnpm dev
+```
+
+
+
+## Self hosting, TBD
+
