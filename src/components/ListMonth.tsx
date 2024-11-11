@@ -118,7 +118,7 @@ const ListMonth: Component<{
 	const targetHours = trpc.getTargetHours.createQuery(() => props.projectId);
 
 	return (
-		<div class="flex w-11/12 max-w-5xl flex-col items-center justify-start lg:mx-6 lg:min-w-[600px] xl:min-w-[700px]">
+		<div class="flex w-11/12  flex-col items-center justify-start ">
 			<div class="grid w-full grid-cols-7 place-content-center place-items-center">
 				<For each={weekdaysArr}>
 					{(day) => <div class="hidden pb-6 2xl:block">{day}</div>}

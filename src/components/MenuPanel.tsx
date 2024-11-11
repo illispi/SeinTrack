@@ -11,7 +11,7 @@ const MenuPanel: Component<{
 }> = (props) => {
 	return (
 		<>
-			<div class="hidden w-full justify-end xl:flex">
+			<div class="hidden w-full justify-center xl:flex">
 				<div class="z-40 my-8 hidden min-h-screen w-11/12 max-w-md grow flex-col items-center rounded-xl border border-t-4 border-gray-200 border-t-green-500 bg-white shadow-md xl:flex">
 					<Menu
 						selectedProjectId={props.selectedProjectId}

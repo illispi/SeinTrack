@@ -411,11 +411,11 @@ export default function Home() {
 					</Button>
 				</div>
 			</div>
-			<main class="mx-auto w-full items-start justify-center lg:flex ">
-				<Suspense>
-					<Show when={projects.data} fallback={<NewProject />}>
-						{(data) => (
-							<>
+			<Suspense>
+				<Show when={projects.data} fallback={<NewProject />}>
+					{(data) => (
+						<>
+							<main class="mx-auto grid w-full max-w-[1700px] lg:grid-cols-[1fr,1fr] xl:grid-cols-[2fr,3fr,2fr] ">
 								<MenuPanel
 									menuOpen={menuOpen()}
 									setMenuOpen={setMenuOpen}
@@ -1111,11 +1111,11 @@ export default function Home() {
 										</DialogContent>
 									</Dialog>
 								</BackNav>
-							</>
-						)}
-					</Show>
-				</Suspense>
-			</main>
+							</main>
+						</>
+					)}
+				</Show>
+			</Suspense>
 		</>
 	);
 }
