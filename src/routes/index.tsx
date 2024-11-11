@@ -350,8 +350,8 @@ export default function Home() {
 				Testing
 			</A> */}
 			<div class="sticky top-0 z-50 mx-auto flex h-12 w-full items-center justify-between bg-gradient-to-t from-green-500 to-green-400 shadow-md">
-				<div class="flex-1">
-					<div class="flex h-12 max-w-20 items-center justify-end rounded-e-full pr-5">
+				<div class="w-14">
+					<div class="flex h-12 max-w-20 items-center justify-end rounded-e-full bg-white pr-2">
 						<A href="/">
 							<img
 								class="size-12"
@@ -772,22 +772,21 @@ export default function Home() {
 																<div class="flex flex-1 flex-col items-center justify-center gap-4">
 																	<Button
 																		onClick={() => {
-																			setFilterDialog(true);
-																		}}
-																		class="w-48"
-																		variant={"outline"}
-																	>
-																		{`Filters (${countFilters(filterMonth(), filterYear(), filterTag(), filterTagGroup())} on)`}
-																	</Button>
-
-																	<Button
-																		onClick={() => {
 																			setTodoStatsOpen(true);
 																		}}
 																		variant={"secondary"}
 																		class="w-48"
 																	>
 																		Statistics
+																	</Button>
+																	<Button
+																		onClick={() => {
+																			setFilterDialog(true);
+																		}}
+																		class="w-48"
+																		variant={"outline"}
+																	>
+																		{`Filters (${countFilters(filterMonth(), filterYear(), filterTag(), filterTagGroup())} on)`}
 																	</Button>
 																</div>
 																<div class=" grid flex-1  grid-cols-2 gap-4">
