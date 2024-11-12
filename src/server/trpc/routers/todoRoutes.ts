@@ -15,7 +15,7 @@ export const addTodo = publicProcedure
 					v.nonEmpty(),
 				),
 				tagId: v.nullish(v.number()),
-				tagGroupId: v.number(),
+				tagGroupId: v.number("You need to activate tag group and use it!"),
 				projectId: v.number(),
 			}),
 		),
@@ -98,7 +98,7 @@ export const editTodo = publicProcedure
 		),
 	)
 	.mutation(async ({ input, ctx }) => {
-		const test = await ctx.db
+		await ctx.db
 			.updateTable("todos")
 			.set({
 				completed: input.completed,
