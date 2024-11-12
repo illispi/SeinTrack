@@ -349,55 +349,75 @@ const Menu: Component<{
 					}}
 					variant={"outline"}
 				>
-					{`${showHidden() ? "Hide deactivated" : "Show deactivated"}`}
+					{`${showHidden() ? "Hide deactivated" : `Show deactivated (${allTags.data?.filter((e) => !e.tagActive).length + allTagGroups.data?.filter((e) => !e.tagGroupActive).length} hidden)`}`}
 				</Button>
 				<div class={"flex flex-col items-center justify-center gap-4"}>
 					<h3 class="mb-4 w-full text-left text-xl">Tags</h3>
+					<Show
+						when={
+							allTags.data &&
+							allTags.data.filter((e) => e.tagActive).length === 0
+						}
+					>
+						<div>Activate at least one tag!</div>
+					</Show>
 					<For each={allTags.data}>
 						{(tag) => (
 							<>
-								<Show when={tag.tagActive || showHidden()}>
-									<div class="flex w-11/12 items-center justify-between">
-										<p class=" w-fit text-left ">{tag.tag}</p>
-										<Switch
-											checked={tag.tagActive}
-											onChange={(e) => {
-												toggleTag.mutate({ setActive: e, tagId: tag.id });
-											}}
-										>
-											<SwitchControl>
-												<SwitchThumb />
-											</SwitchControl>
-										</Switch>
-									</div>
-								</Show>
+								<Suspense>
+									<Show when={tag.tagActive || showHidden()}>
+										<div class="flex w-11/12 items-center justify-between">
+											<p class=" w-fit text-left ">{tag.tag}</p>
+											<Switch
+												checked={tag.tagActive}
+												onChange={(e) => {
+													toggleTag.mutate({ setActive: e, tagId: tag.id });
+												}}
+											>
+												<SwitchControl>
+													<SwitchThumb />
+												</SwitchControl>
+											</Switch>
+										</div>
+									</Show>
+								</Suspense>
 							</>
 						)}
 					</For>
 				</div>
 				<div class={"mb-12 flex flex-col items-center justify-center gap-4"}>
 					<h3 class="mb-4 w-full text-left text-xl">Tag Groups</h3>
+					<Show
+						when={
+							allTagGroups.data &&
+							allTagGroups.data.filter((e) => e.tagGroupActive).length === 0
+						}
+					>
+						<div>Activate at least one tagGroup!</div>
+					</Show>
 					<For each={allTagGroups.data}>
 						{(tagGroup) => (
 							<>
-								<Show when={tagGroup.tagGroupActive || showHidden()}>
-									<div class="flex w-11/12 items-center justify-between">
-										<p class=" w-fit text-left ">{tagGroup.tagGroup}</p>
-										<Switch
-											checked={tagGroup.tagGroupActive}
-											onChange={(e) => {
-												toggleTagGroup.mutate({
-													setActive: e,
-													tagGroupId: tagGroup.id,
-												});
-											}}
-										>
-											<SwitchControl>
-												<SwitchThumb />
-											</SwitchControl>
-										</Switch>
-									</div>
-								</Show>
+								<Suspense>
+									<Show when={tagGroup.tagGroupActive || showHidden()}>
+										<div class="flex w-11/12 items-center justify-between">
+											<p class=" w-fit text-left ">{tagGroup.tagGroup}</p>
+											<Switch
+												checked={tagGroup.tagGroupActive}
+												onChange={(e) => {
+													toggleTagGroup.mutate({
+														setActive: e,
+														tagGroupId: tagGroup.id,
+													});
+												}}
+											>
+												<SwitchControl>
+													<SwitchThumb />
+												</SwitchControl>
+											</Switch>
+										</div>
+									</Show>
+								</Suspense>
 							</>
 						)}
 					</For>

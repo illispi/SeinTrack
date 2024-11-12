@@ -56,9 +56,9 @@ const TodoPanel: Component<{
 	const [selectedTagGroup, setSelectedTagGroup] = createSignal("");
 
 	createEffect(() => {
-		if (tagGroupsActive.data[0]?.tagGroup) {
+		if (tagGroupsActive.data?.find((e) => e.tagGroup)) {
 			setSelectedTagGroup(tagGroupsActive.data[0]?.tagGroup);
-		}
+		} else setSelectedTagGroup("");
 	});
 
 	const addTag = trpc.addTagOrGroup.createMutation(() => ({
