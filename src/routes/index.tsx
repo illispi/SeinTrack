@@ -363,53 +363,55 @@ export default function Home() {
 						</A>
 					</div>
 				</div>
-				<div class="flex h-12 items-center justify-center gap-6 rounded-s-full bg-white px-6 xl:hidden">
-					<Button
-						onClick={() => {
-							setMenuOpen(!menuOpen());
-						}}
-						class="size-10 rounded-full bg-green-400 shadow-lg hover:bg-green-500 active:bg-green-500"
-					>
-						<svg
-							fill="none"
-							stroke-width="2"
-							xmlns="http://www.w3.org/2000/svg"
-							stroke="currentColor"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							viewBox="0 0 24 24"
-							height="2em"
-							width="2em"
-							style="overflow: visible; color: currentcolor;"
+				<Show when={projects.data}>
+					<div class="flex h-12 items-center justify-center gap-6 rounded-s-full bg-white px-6 xl:hidden">
+						<Button
+							onClick={() => {
+								setMenuOpen(!menuOpen());
+							}}
+							class="size-10 rounded-full bg-green-400 shadow-lg hover:bg-green-500 active:bg-green-500"
 						>
-							<path d="M3 12 21 12"></path>
-							<path d="M3 6 21 6"></path>
-							<path d="M3 18 21 18"></path>
-						</svg>
-					</Button>
-					<Button
-						class="size-10 rounded-full bg-green-400 shadow-lg hover:bg-green-500 active:bg-green-500 lg:hidden"
-						onClick={() => {
-							setOpenFirst(!openFirst());
-						}}
-					>
-						<svg
-							fill="currentColor"
-							stroke-width="6"
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 1024 1024"
-							height="2em"
-							width="2em"
-							style="overflow: visible; color: currentcolor;"
+							<svg
+								fill="none"
+								stroke-width="2"
+								xmlns="http://www.w3.org/2000/svg"
+								stroke="currentColor"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								viewBox="0 0 24 24"
+								height="2em"
+								width="2em"
+								style="overflow: visible; color: currentcolor;"
+							>
+								<path d="M3 12 21 12"></path>
+								<path d="M3 6 21 6"></path>
+								<path d="M3 18 21 18"></path>
+							</svg>
+						</Button>
+						<Button
+							class="size-10 rounded-full bg-green-400 shadow-lg hover:bg-green-500 active:bg-green-500 lg:hidden"
+							onClick={() => {
+								setOpenFirst(!openFirst());
+							}}
 						>
-							<defs>
-								<style></style>
-							</defs>
-							<path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8Z"></path>
-							<path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8Z"></path>
-						</svg>
-					</Button>
-				</div>
+							<svg
+								fill="currentColor"
+								stroke-width="6"
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 1024 1024"
+								height="2em"
+								width="2em"
+								style="overflow: visible; color: currentcolor;"
+							>
+								<defs>
+									<style></style>
+								</defs>
+								<path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8Z"></path>
+								<path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8Z"></path>
+							</svg>
+						</Button>
+					</div>
+				</Show>
 			</div>
 			<Suspense>
 				<Show when={projects.data} fallback={<NewProject />}>
@@ -1119,6 +1121,3 @@ export default function Home() {
 		</>
 	);
 }
-
-//TODO should Listmonth do all of the selections of month and showing?
-//TODO fetch infinite with intersection observer
