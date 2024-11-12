@@ -560,10 +560,21 @@ export default function Home() {
 											<DialogContent
 												onOpenAutoFocus={(e) => e.preventDefault()}
 											>
-												<div class="flex w-full flex-col items-center justify-start">
-													<canvas ref={setChartElA} />
-													<canvas ref={setChartElB} />
-												</div>
+												<Show
+													when={tagStats.data?.tags[0]}
+													fallback={
+														<div class="flex h-28 items-center justify-center">
+															<div class="text-lg">
+																Complete todos to show stats (+ icon)
+															</div>
+														</div>
+													}
+												>
+													<div class="flex w-full flex-col items-center justify-start">
+														<canvas ref={setChartElA} />
+														<canvas ref={setChartElB} />
+													</div>
+												</Show>
 											</DialogContent>
 										</Dialog>
 									</BackNav>
