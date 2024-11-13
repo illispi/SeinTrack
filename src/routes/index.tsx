@@ -1,4 +1,4 @@
-import { A } from "@solidjs/router";
+import { A, useSearchParams } from "@solidjs/router";
 import {
 	For,
 	Show,
@@ -6,6 +6,8 @@ import {
 	batch,
 	createEffect,
 	createSignal,
+	createUniqueId,
+	onMount,
 } from "solid-js";
 import BackNav from "~/components/BackNav";
 import DayEditor from "~/components/DayEditor";
@@ -98,6 +100,19 @@ export default function Home() {
 	createEffect(() => {
 		setDirStats(dirCalendar());
 		setPageStats(pageCalendar());
+	});
+
+	const [searchParams, setSearchParams] = useSearchParams();
+	const id = createUniqueId();
+	onMount(() => {
+		const test = location.search.match(/cl-\d{1,5}/g);
+		if (test) {
+			for (const el of test) {
+				if (id !== el) {
+					setSearchParams({ [el]: null });
+				}
+			}
+		}
 	});
 
 	let datePickerInstance: Instance;

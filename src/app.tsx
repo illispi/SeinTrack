@@ -1,6 +1,6 @@
-import { Router } from "@solidjs/router";
+import { Router, useSearchParams } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
-import { DEV, ErrorBoundary, lazy, Show, Suspense } from "solid-js";
+import { createUniqueId, DEV, ErrorBoundary, lazy, onMount, Show, Suspense } from "solid-js";
 import "./app.css";
 import { QueryClientProvider } from "@tanstack/solid-query";
 import { queryClient, trpc } from "./utils/trpc";
@@ -19,6 +19,7 @@ const SolidQueryDevtools = lazy(() =>
 );
 
 export default function App() {
+
 	return (
 		<MetaProvider>
 			<trpc.Provider queryClient={queryClient}>
