@@ -1040,6 +1040,7 @@ export default function Home() {
 																		...massageTagsAndGroupsToArr(
 																			tagsActive.data,
 																		),
+																		selectedTag(),
 																	]}
 																	placeholder="Select a tag"
 																	itemComponent={(props) => (
@@ -1065,6 +1066,7 @@ export default function Home() {
 																		...massageTagsAndGroupsToArr(
 																			tagGroupsActive.data,
 																		),
+																		selectedTagGroup(),
 																	]}
 																	placeholder="Select a tag"
 																	itemComponent={(props) => (
