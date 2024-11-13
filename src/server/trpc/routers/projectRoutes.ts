@@ -8,7 +8,7 @@ export const newProject = publicProcedure
 				name: v.pipe(v.string(), v.minLength(3, "At least 3 character name")),
 				hoursTarget: v.pipe(
 					v.number(),
-					v.minValue(0.1, "At least 15min target!"),
+					v.minValue(0.1, "At least 1 hour target!"),
 				),
 			}),
 		),

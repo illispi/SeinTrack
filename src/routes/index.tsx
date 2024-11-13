@@ -776,6 +776,8 @@ export default function Home() {
 														setFilterYear(null);
 														setFilterTag(undefined);
 														setFilterTagGroup(null);
+														setTagGroupSelect("All");
+														setTagSelect("All");
 													}}
 													variant={"secondary"}
 												>
@@ -875,6 +877,9 @@ export default function Home() {
 																								type="button"
 																								onClick={() => {
 																									setFilterTag(todoDone.tagId);
+																									setTagSelect(
+																										todoDone.tag || "none",
+																									);
 																								}}
 																								class="mt-4 text-sm italic"
 																							>{`tag: ${todoDone.tag ? todoDone.tag : "none"}`}</button>
@@ -883,6 +888,9 @@ export default function Home() {
 																								onClick={() => {
 																									setFilterTagGroup(
 																										todoDone.tagGroupId,
+																									);
+																									setTagGroupSelect(
+																										todoDone.tagGroup,
 																									);
 																								}}
 																								class="mt-4 text-sm italic"
