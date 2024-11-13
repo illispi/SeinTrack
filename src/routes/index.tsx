@@ -696,7 +696,7 @@ export default function Home() {
 																	setTagSelect("All");
 																	return;
 																}
-																if (e === "None") {
+																if (e === "none") {
 																	setFilterTag(null);
 																	setTagSelect(e);
 																	return;
@@ -709,10 +709,9 @@ export default function Home() {
 															}}
 															options={[
 																"All",
-																"None",
-																tags.data
-																	? [...tags.data?.map((e) => e.tag)]
-																	: "",
+																"none",
+																//TODO filter inactive, but include tagSelect
+																...tags.data?.map((e) => e.tag),
 															]}
 															placeholder="Tag"
 															itemComponent={(props) => (
