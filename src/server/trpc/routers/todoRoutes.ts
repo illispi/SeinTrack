@@ -41,7 +41,10 @@ export const completeTodo = publicProcedure
 		v.parser(
 			v.object({
 				todoId: v.number(),
-				hoursWorked: v.pipe(v.number(), v.minValue(0.1)),
+				hoursWorked: v.pipe(
+					v.number("Add time to complete todo!"),
+					v.minValue(0.1, "Add time to complete todo!"),
+				),
 				date: v.date(),
 			}),
 		),

@@ -6,6 +6,7 @@ import {
 	type Setter,
 	Show,
 	Suspense,
+	createEffect,
 	createSignal,
 } from "solid-js";
 import { daysOfWeekJsDate } from "~/utils/functionsAndVariables";
@@ -17,6 +18,7 @@ import { Switch, SwitchControl, SwitchThumb } from "./ui/switch";
 import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import FormatTime from "./FormatTime";
+import { showToast } from "./ui/toast";
 
 const Menu: Component<{
 	selectedProjectId: number;
@@ -51,7 +53,24 @@ const Menu: Component<{
 	const toggleTagGroup = trpc.toggleTagGroupActive.createMutation();
 	const allProjects = trpc.allProjects.createQuery();
 	const editProjects = trpc.editProject.createMutation();
-	const newProject = trpc.newProject.createMutation();
+	const newProject = trpc.newProject.createMutation(() => ({
+		onSuccess: () => {
+			setName("");
+			setHours("");
+			setOpenEditProjects(false);
+		},
+	}));
+
+	createEffect(() => {
+		if (newProject.isError) {
+			showToast({
+				title: "ERROR!",
+				description: newProject.error?.message,
+				variant: "error",
+			});
+			newProject.reset();
+		}
+	});
 
 	const setDefault = trpc.setDefault.createMutation();
 
