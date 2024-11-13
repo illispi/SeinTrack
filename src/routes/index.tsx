@@ -1039,7 +1039,7 @@ export default function Home() {
 																		"none",
 																		...massageTagsAndGroupsToArr(
 																			tagsActive.data,
-																		),
+																		).filter((e) => e !== selectedTag()),
 																		selectedTag(),
 																	]}
 																	placeholder="Select a tag"
@@ -1065,7 +1065,7 @@ export default function Home() {
 																	options={[
 																		...massageTagsAndGroupsToArr(
 																			tagGroupsActive.data,
-																		),
+																		).filter((e) => e !== selectedTagGroup()),
 																		selectedTagGroup(),
 																	]}
 																	placeholder="Select a tag"
