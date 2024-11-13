@@ -246,6 +246,7 @@ export default function Home() {
 
 	createEffect(() => {
 		if (visible()) {
+			console.log(filterMonth(), filterYear());
 			doneTodos.fetchNextPage();
 		}
 	});

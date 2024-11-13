@@ -263,8 +263,8 @@ export const doneTodosInf = publicProcedure
 			.limit(input.limit)
 			.offset(cursor * input.limit);
 
-		if (input.year) {
-			if (input.month) {
+		if (input.year !== null) {
+			if (input.month !== null) {
 				const nextMonth = adjustDateByOne(input.year, input.month, true);
 				doneTodosPartial = doneTodosPartial
 					.where(
