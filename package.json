@@ -1,6 +1,6 @@
 {
 	"name": "seintrack",
-	"description": "Seinfeld and prodcuct time tracking hybrid",
+	"description": "Seinfeld calendar and prodcuct time tracking hybrid",
 	"author": "Illispi",
 	"type": "module",
 	"scripts": {
