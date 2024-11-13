@@ -1036,11 +1036,12 @@ export default function Home() {
 																	value={selectedTag()}
 																	onChange={setSelectedTag}
 																	options={[
-																		"none",
+																		selectedTag() === "none"
+																			? selectedTag()
+																			: "none",
 																		...massageTagsAndGroupsToArr(
 																			tagsActive.data,
 																		).filter((e) => e !== selectedTag()),
-																		selectedTag(),
 																	]}
 																	placeholder="Select a tag"
 																	itemComponent={(props) => (
