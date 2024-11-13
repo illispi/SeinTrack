@@ -15,7 +15,7 @@ export const addTodo = publicProcedure
 					v.nonEmpty(),
 				),
 				tagId: v.nullish(v.number()),
-				tagGroupId: v.number(),
+				tagGroupId: v.number("You need to activate tag group and use it!"),
 				projectId: v.number(),
 			}),
 		),
@@ -41,7 +41,10 @@ export const completeTodo = publicProcedure
 		v.parser(
 			v.object({
 				todoId: v.number(),
-				hoursWorked: v.pipe(v.number(), v.minValue(0.1)),
+				hoursWorked: v.pipe(
+					v.number("Add time to complete todo!"),
+					v.minValue(0.1, "Add time to complete todo!"),
+				),
 				date: v.date(),
 			}),
 		),
@@ -98,7 +101,7 @@ export const editTodo = publicProcedure
 		),
 	)
 	.mutation(async ({ input, ctx }) => {
-		const test = await ctx.db
+		await ctx.db
 			.updateTable("todos")
 			.set({
 				completed: input.completed,
@@ -263,8 +266,8 @@ export const doneTodosInf = publicProcedure
 			.limit(input.limit)
 			.offset(cursor * input.limit);
 
-		if (input.year) {
-			if (input.month) {
+		if (input.year !== null) {
+			if (input.month !== null) {
 				const nextMonth = adjustDateByOne(input.year, input.month, true);
 				doneTodosPartial = doneTodosPartial
 					.where(

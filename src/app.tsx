@@ -1,9 +1,8 @@
-import { Router } from "@solidjs/router";
+import { Router, useSearchParams } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
-import { DEV, ErrorBoundary, Show, Suspense } from "solid-js";
+import { createUniqueId, DEV, ErrorBoundary, lazy, onMount, Show, Suspense } from "solid-js";
 import "./app.css";
 import { QueryClientProvider } from "@tanstack/solid-query";
-import { SolidQueryDevtools } from "@tanstack/solid-query-devtools";
 import { queryClient, trpc } from "./utils/trpc";
 import { MetaProvider } from "@solidjs/meta";
 import { Toaster } from "./components/ui/toast";
@@ -13,17 +12,22 @@ import { withSentryErrorBoundary } from "@sentry/solidstart";
 const SentryRouter = withSentryRouterRouting(Router);
 const SentryErrorBoundary = withSentryErrorBoundary(ErrorBoundary);
 
+const SolidQueryDevtools = lazy(() =>
+	import("@tanstack/solid-query-devtools").then((m) => ({
+		default: m.SolidQueryDevtools,
+	})),
+);
+
 export default function App() {
+
 	return (
 		<MetaProvider>
 			<trpc.Provider queryClient={queryClient}>
 				<QueryClientProvider client={queryClient}>
-					<Show when={DEV}>
-						<SolidQueryDevtools
-							initialIsOpen={false}
-							buttonPosition="bottom-left"
-						/>
-					</Show>
+					{import.meta.env.DEV && (
+						<SolidQueryDevtools buttonPosition="bottom-left" />
+					)}
+
 					<SentryRouter
 						root={(props) => (
 							<SentryErrorBoundary

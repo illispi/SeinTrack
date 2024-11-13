@@ -5,8 +5,11 @@ export const newProject = publicProcedure
 	.input(
 		v.parser(
 			v.object({
-				name: v.string(),
-				hoursTarget: v.number(),
+				name: v.pipe(v.string(), v.minLength(3, "At least 3 character name")),
+				hoursTarget: v.pipe(
+					v.number(),
+					v.minValue(0.1, "At least 1 hour target!"),
+				),
 			}),
 		),
 	)

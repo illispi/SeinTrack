@@ -1,4 +1,4 @@
-import { A } from "@solidjs/router";
+import { A, useSearchParams } from "@solidjs/router";
 import {
 	For,
 	Show,
@@ -6,6 +6,8 @@ import {
 	batch,
 	createEffect,
 	createSignal,
+	createUniqueId,
+	onMount,
 } from "solid-js";
 import BackNav from "~/components/BackNav";
 import DayEditor from "~/components/DayEditor";
@@ -98,6 +100,19 @@ export default function Home() {
 	createEffect(() => {
 		setDirStats(dirCalendar());
 		setPageStats(pageCalendar());
+	});
+
+	const [searchParams, setSearchParams] = useSearchParams();
+	const id = createUniqueId();
+	onMount(() => {
+		const test = location.search.match(/cl-\d{1,5}/g);
+		if (test) {
+			for (const el of test) {
+				if (id !== el) {
+					setSearchParams({ [el]: null });
+				}
+			}
+		}
 	});
 
 	let datePickerInstance: Instance;
@@ -560,10 +575,21 @@ export default function Home() {
 											<DialogContent
 												onOpenAutoFocus={(e) => e.preventDefault()}
 											>
-												<div class="flex w-full flex-col items-center justify-start">
-													<canvas ref={setChartElA} />
-													<canvas ref={setChartElB} />
-												</div>
+												<Show
+													when={tagStats.data?.tags[0]}
+													fallback={
+														<div class="flex h-28 items-center justify-center">
+															<div class="text-lg">
+																Complete todos to show stats (+ icon)
+															</div>
+														</div>
+													}
+												>
+													<div class="flex w-full flex-col items-center justify-start">
+														<canvas ref={setChartElA} />
+														<canvas ref={setChartElB} />
+													</div>
+												</Show>
 											</DialogContent>
 										</Dialog>
 									</BackNav>
@@ -670,7 +696,7 @@ export default function Home() {
 																	setTagSelect("All");
 																	return;
 																}
-																if (e === "None") {
+																if (e === "none") {
 																	setFilterTag(null);
 																	setTagSelect(e);
 																	return;
@@ -683,10 +709,9 @@ export default function Home() {
 															}}
 															options={[
 																"All",
-																"None",
-																tags.data
-																	? [...tags.data?.map((e) => e.tag)]
-																	: "",
+																"none",
+																//TODO filter inactive, but include tagSelect
+																...tags.data?.map((e) => e.tag),
 															]}
 															placeholder="Tag"
 															itemComponent={(props) => (
@@ -750,6 +775,8 @@ export default function Home() {
 														setFilterYear(null);
 														setFilterTag(undefined);
 														setFilterTagGroup(null);
+														setTagGroupSelect("All");
+														setTagSelect("All");
 													}}
 													variant={"secondary"}
 												>
@@ -849,6 +876,9 @@ export default function Home() {
 																								type="button"
 																								onClick={() => {
 																									setFilterTag(todoDone.tagId);
+																									setTagSelect(
+																										todoDone.tag || "none",
+																									);
 																								}}
 																								class="mt-4 text-sm italic"
 																							>{`tag: ${todoDone.tag ? todoDone.tag : "none"}`}</button>
@@ -857,6 +887,9 @@ export default function Home() {
 																								onClick={() => {
 																									setFilterTagGroup(
 																										todoDone.tagGroupId,
+																									);
+																									setTagGroupSelect(
+																										todoDone.tagGroup,
 																									);
 																								}}
 																								class="mt-4 text-sm italic"
@@ -1002,10 +1035,12 @@ export default function Home() {
 																	value={selectedTag()}
 																	onChange={setSelectedTag}
 																	options={[
-																		"none",
+																		selectedTag() === "none"
+																			? selectedTag()
+																			: "none",
 																		...massageTagsAndGroupsToArr(
 																			tagsActive.data,
-																		),
+																		).filter((e) => e !== selectedTag()),
 																	]}
 																	placeholder="Select a tag"
 																	itemComponent={(props) => (
@@ -1030,7 +1065,8 @@ export default function Home() {
 																	options={[
 																		...massageTagsAndGroupsToArr(
 																			tagGroupsActive.data,
-																		),
+																		).filter((e) => e !== selectedTagGroup()),
+																		selectedTagGroup(),
 																	]}
 																	placeholder="Select a tag"
 																	itemComponent={(props) => (
