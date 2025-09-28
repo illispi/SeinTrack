@@ -53,7 +53,7 @@
 		"vinxi": "^0.4.3"
 	},
 	"engines": {
-		"node": ">=18"
+		"node": ">=24"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
