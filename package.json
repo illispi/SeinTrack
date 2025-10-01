@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "vinxi dev --host",
 		"build": "vinxi build",
-		"start": "pnpx tsx && tsx ./src/tools/migrate.ts && NODE_OPTIONS='--import ./public/instrument.server.mjs' pnpx node-env-run .output/server/index.mjs",
+		"start": "pnpx tsx && NODE_OPTIONS='--import ./public/instrument.server.mjs' pnpx node-env-run .output/server/index.mjs",
 		"sql": "kysely-codegen --dialect postgres --camel-case",
 		"migrate:latest": "tsx ./src/tools/migrate.ts",
 		"migrate:down": "tsx ./src/tools/migrate.ts down",
