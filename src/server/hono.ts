@@ -1,10 +1,7 @@
 import { trpcServer } from "@hono/trpc-server";
-import { CronJob } from "cron";
 import { Hono } from "hono";
-import { db } from "./database/db";
+import { createContext } from "./trpc/context";
 import { appRouter } from "./trpc/routers/mainRouter";
-import { v4 as uuidv4 } from "uuid";
-import { appendResponseHeader, getCookie, setCookie } from "vinxi/server";
 
 const app = new Hono();
 
@@ -57,92 +54,8 @@ app.use(
 	trpcServer({
 		endpoint: "/api/trpc",
 		router: appRouter,
-		createContext: async (opts, c) => {
-			const user = getCookie("user");
-			let id: string;
-			const date = new Date();
-			date.setFullYear(date.getFullYear() + 1); // Add one year to the current date
-
-			if (!user) {
-				if (process.env.DEMO) {
-					const userDb = await db
-						.insertInto("user")
-						.values({ id: uuidv4() })
-						.returning("id")
-						.executeTakeFirstOrThrow();
-
-					setCookie("user", userDb.id, { httpOnly: true, expires: date });
-					id = userDb.id;
-				} else {
-					const userDb = await db
-						.selectFrom("user")
-						.select(["id"])
-						.executeTakeFirstOrThrow();
-					if (!userDb.id) {
-						const userDb = await db
-							.insertInto("user")
-							.values({ id: uuidv4() })
-							.returning("id")
-							.executeTakeFirstOrThrow();
-						setCookie("user", userDb.id, { httpOnly: true, expires: date });
-
-						id = userDb.id;
-					} else {
-						id = userDb.id;
-					}
-				}
-			} else {
-				const exists = await db
-					.selectFrom("user")
-					.select("id")
-					.where("id", "=", user)
-					.executeTakeFirst();
-				if (!exists?.id) {
-					if (process.env.DEMO) {
-						const userDb = await db
-							.insertInto("user")
-							.values({ id: uuidv4() })
-							.returning("id")
-							.executeTakeFirstOrThrow();
-
-						setCookie("user", userDb.id, { httpOnly: true, expires: date });
-						id = userDb.id;
-					} else {
-						const userDb = await db
-							.selectFrom("user")
-							.select(["id"])
-							.executeTakeFirstOrThrow();
-						if (!userDb.id) {
-							const userDb = await db
-								.insertInto("user")
-								.values({ id: uuidv4() })
-								.returning("id")
-								.executeTakeFirstOrThrow();
-							setCookie("user", userDb.id, { httpOnly: true, expires: date });
-
-							id = userDb.id;
-						} else {
-							id = userDb.id;
-						}
-					}
-				} else {
-					id = user;
-				}
-			}
-			return { db, id, req: c.req, res: c.res };
-		},
+		createContext,
 	}),
 );
 
-// if (process.env.DEMO) {
-// 	const test = CronJob.from({
-// 		cronTime: "0 * * * *",
-// 		onTick: () => {
-// 			console.log("You will see this message every hour");
-// 		},
-// 		timeZone: "America/Los_Angeles",
-// 	});
-
-// 	test.start();
-// }
 export default app;

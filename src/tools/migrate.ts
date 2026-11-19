@@ -2,20 +2,21 @@ import * as path from "node:path";
 import PG from "pg";
 const Pool = PG.Pool;
 import { promises as fs } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 // import { Database } from "./dbTypes";
-import * as dotenv from "dotenv";
-import {
-	FileMigrationProvider,
-	Kysely,
-	Migrator,
-	PostgresDialect,
-} from "kysely";
+// Kysely 0.29 moved the migration API to the "kysely/migration" entry point.
+import { Kysely, PostgresDialect } from "kysely";
+import { FileMigrationProvider, Migrator } from "kysely/migration";
 // import { env } from "./env";
 
 const __dirname = fileURLToPath(new URL("../", import.meta.url));
 
-dotenv.config();
+// Load .env if present (Node >= 21.7; replaces the dotenv package).
+try {
+	process.loadEnvFile();
+} catch {
+	// no .env file: rely on the real environment
+}
 
 async function migrateToLatest(dir: string[]) {
 	console.log(dir);
@@ -36,6 +37,8 @@ async function migrateToLatest(dir: string[]) {
 			fs,
 			path,
 			migrationFolder: path.join(__dirname, "migrations"),
+			// import() needs a file:// URL for absolute Windows paths (C:\...)
+			import: (filePath) => import(pathToFileURL(filePath).href),
 		}),
 	});
 

@@ -1,4 +1,11 @@
 allowBuilds:
-  '@biomejs/biome': set this to true or false
-  '@sentry/cli': set this to true or false
-  esbuild: set this to true or false
+  '@biomejs/biome': true
+  esbuild: true
+
+# Supply-chain protection: only install versions published at least 24h ago.
+minimumReleaseAge: 1440
+
+# Security floors for transitive dependencies flagged by `pnpm audit`.
+overrides:
+  seroval: ^1.6.8
+  seroval-plugins: ^1.6.8

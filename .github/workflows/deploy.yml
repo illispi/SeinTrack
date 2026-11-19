@@ -7,8 +7,23 @@ on:
       - main
 
 jobs:
+  # Stop the deploy if production dependencies have high/critical advisories.
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: pnpm audit --prod --audit-level=high
+
   publish-docker-hub:
     name: Publish image to Docker Hub
+    needs: audit
     runs-on: ubuntu-latest
 
     steps:
@@ -21,7 +36,7 @@ jobs:
 
       # We need to login so we can later push the image without issues.
       - name: Login to Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}

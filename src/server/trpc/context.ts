@@ -1,42 +1,63 @@
-import type { createSolidAPIHandlerContext } from "@solid-mediakit/trpc/handler";
-import { v4 as uuidv4 } from "uuid";
-import { appendResponseHeader, getCookie } from "vinxi/server";
+import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
+import type { Context as HonoContext } from "hono";
+import { getCookie } from "hono/cookie";
+import { serialize } from "hono/utils/cookie";
 
 import { db } from "~/server/database/db";
 
-export const createContext = async (opts: createSolidAPIHandlerContext) => {
-	const user = getCookie("user");
+// Previously used vinxi/server getCookie/setCookie (SolidStart only).
+// Cookies are now read through Hono and written via tRPC's resHeaders,
+// which the fetch adapter copies onto the final response.
+export const createContext = async (
+	opts: FetchCreateContextFnOptions,
+	c: HonoContext,
+) => {
+	const user = getCookie(c, "user");
 	let id: string;
-	console.log("start");
-	if (!user) {
+	const date = new Date();
+	date.setFullYear(date.getFullYear() + 1); // Add one year to the current date
+
+	const setUserCookie = (value: string) => {
+		opts.resHeaders.append(
+			"Set-Cookie",
+			serialize("user", value, { httpOnly: true, expires: date, path: "/" }),
+		);
+	};
+
+	const createUser = async () => {
+		const userDb = await db
+			.insertInto("user")
+			.values({ id: crypto.randomUUID() })
+			.returning("id")
+			.executeTakeFirstOrThrow();
+		setUserCookie(userDb.id);
+		return userDb.id;
+	};
+
+	const resolveUser = async () => {
 		if (process.env.DEMO) {
-			console.log("here");
-			const userDb = await db
-				.insertInto("user")
-				.values({ id: uuidv4() })
-				.returning("id")
-				.executeTakeFirstOrThrow();
-			appendResponseHeader("Set-Cookie", userDb.id);
-			id = userDb.id;
-		} else {
-			const userDb = await db
-				.selectFrom("user")
-				.select(["id"])
-				.executeTakeFirstOrThrow();
-			if (!userDb.id) {
-				const userDb = await db
-					.insertInto("user")
-					.values({ id: uuidv4() })
-					.returning("id")
-					.executeTakeFirstOrThrow();
-				appendResponseHeader("Set-Cookie", userDb.id);
-				id = userDb.id;
-			} else {
-				id = userDb.id;
-			}
+			return createUser();
 		}
+		const userDb = await db
+			.selectFrom("user")
+			.select(["id"])
+			.executeTakeFirstOrThrow();
+		if (!userDb.id) {
+			return createUser();
+		}
+		return userDb.id;
+	};
+
+	if (!user) {
+		id = await resolveUser();
 	} else {
-		id = user;
+		const exists = await db
+			.selectFrom("user")
+			.select("id")
+			.where("id", "=", user)
+			.executeTakeFirst();
+		id = exists?.id ? user : await resolveUser();
 	}
-	return { db, id, req: opts.req, res: opts.res };
+
+	return { db, id, req: opts.req, resHeaders: opts.resHeaders };
 };

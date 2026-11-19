@@ -2,6 +2,25 @@
 
 _Written 2026-11-19._
 
+## Status (2026-11-19)
+
+Phases 1–3 are applied on `upgrade/solidstart-v2` (uncommitted). Package versions were taken from the npm registry on 2026-11-19:
+- `@solidjs/start` 2.0.4 and `nitro` 3.0.261103-rc (Nitro 3 is still a release candidate)
+- `vite` 8.3.8
+- `solid-js` 1.9.19
+- `@solidjs/router` 1.0.3 (the Solid 1 line; 2.0 needs Solid 2)
+- `@solidjs/meta` 0.29.8
+- `@kobalte/core` 0.13.14
+- `@tanstack/solid-query` 5.108.0
+- tRPC 11.28
+- `hono` 4.13.18
+- `kysely` 0.29.9
+- `valibot` 1.5.0
+- `@sentry/solid` and `@sentry/node` 11.14 (`@sentry/solidstart` 10.71 still requires Start v1, so it was dropped)
+
+**Still to do by hand:** `pnpm install` (writes the new lockfile), `pnpm typecheck`, `pnpm build`, `pnpm dev`, the section 6 checklist, `pnpm audit --prod`. Then commit `pnpm-lock.yaml`, because Docker uses `--frozen-lockfile`.
+**Deliberately not done:** Biome 1 → 2, ESLint 9 → 10, Tailwind 3 → 4, Solid 2.0.
+
 ## 1. Where things stand
 
 | | `origin/main` (last working) | local `main` (2 unpushed commits: "failed update", "ges") |

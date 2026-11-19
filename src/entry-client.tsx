@@ -1,9 +1,9 @@
-import * as Sentry from "@sentry/solidstart";
-import { solidRouterBrowserTracingIntegration } from "@sentry/solidstart/solidrouter";
+// @refresh reload
+import * as Sentry from "@sentry/solid";
+import { solidRouterBrowserTracingIntegration } from "@sentry/solid/solidrouter";
 import { mount, StartClient } from "@solidjs/start/client";
-import { DEV } from "solid-js";
 
-if (!DEV) {
+if (!import.meta.env.DEV) {
 	Sentry.init({
 		dsn: "https://a08e442af63a38172c7977ef6c05b586@o4508194761801728.ingest.de.sentry.io/4508194769076304",
 		integrations: [solidRouterBrowserTracingIntegration()],
@@ -11,4 +11,4 @@ if (!DEV) {
 	});
 }
 
-mount(() => <StartClient />, document.getElementById("app"));
+mount(() => <StartClient />, document.getElementById("app")!);
