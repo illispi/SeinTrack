@@ -38,13 +38,15 @@ export const createContext = async (
 		if (process.env.DEMO) {
 			return createUser();
 		}
+		// Single-user mode: reuse the existing user, or create it on a fresh DB.
 		const userDb = await db
 			.selectFrom("user")
 			.select(["id"])
-			.executeTakeFirstOrThrow();
-		if (!userDb.id) {
+			.executeTakeFirst();
+		if (!userDb?.id) {
 			return createUser();
 		}
+		setUserCookie(userDb.id);
 		return userDb.id;
 	};
 
