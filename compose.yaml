@@ -1,0 +1,27 @@
+# Local development database for SeinTrack.
+#   docker compose up -d      start (data persists in the "pgdata" volume)
+#   docker compose down       stop
+#   docker compose down -v    stop and delete all data
+services:
+  db:
+    image: postgres:18
+    container_name: seintrack-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: seintrack
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: seintrack
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      # Postgres 18+ images keep data under /var/lib/postgresql/<version>/,
+      # so the volume is mounted one level up from the old .../data path.
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U seintrack -d seintrack"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:

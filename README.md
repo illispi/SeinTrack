@@ -5,27 +5,13 @@ This a web application, that combines seinfeld calendar method with project time
 
 ## Developing
 
-```
-#.env at root folder of the project
-
-DATABASE_URL=postgres://seintrack:mysecretpassword@localhost:5432/seintrack
-SITE_URL=http://localhost:3000
-VITE_SITE=http://localhost:3000
-DEMO=true/false
-
-```
-
 ```bash
+cp .env.example .env      # adjust if needed
 pnpm install
-
-docker run --name seintrack -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_USER=seintrack -e POSTGRES_DB=seintrack -p 5432:5432 -d postgres
-
+docker compose up -d      # Postgres on localhost:5432 (see compose.yaml)
 pnpm run migrate:latest
-
 pnpm dev
 ```
-
-
 
 ## Self hosting, TBD
 
