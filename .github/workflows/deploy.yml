@@ -1,49 +1,78 @@
-name: Deploy # Name of the workflow
+name: Build and publish image
 
-# On a push to the branch named main
+# Runs only when you push a version tag (e.g. `git tag v1.2.0 && git push origin v1.2.0`)
+# or click "Run workflow" in the Actions tab. Ordinary commits don't trigger it.
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  # Stop the deploy if production dependencies have high/critical advisories.
-  audit:
-    name: Dependency audit
+  build:
+    name: Audit, build and publish
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: pnpm/action-setup@v4
         with:
           version: 10
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
-      - run: pnpm audit --prod --audit-level=high
+          node-version: 26
+          cache: pnpm
 
-  publish-docker-hub:
-    name: Publish image to Docker Hub
-    needs: audit
-    runs-on: ubuntu-latest
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-    steps:
-      # Checkout to the repository
-      - uses: actions/checkout@v4
+      # Stop before publishing if production dependencies have high/critical advisories.
+      - name: Audit production dependencies
+        run: pnpm audit --prod --audit-level=high
 
-      # Workaround: https://github.com/docker/build-push-action/issues/461
-      - name: Setup Docker buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Build app
+        run: pnpm build
 
-      # We need to login so we can later push the image without issues.
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+      # The server preloads Sentry from instrument.server.mjs; .output doesn't
+      # bundle @sentry/node, so the image installs the exact locked version.
+      - name: Read @sentry/node version
+        id: sentry
+        run: echo "version=$(node -p "require('./node_modules/@sentry/node/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Image tags
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: illispi/seintrack
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,format=short
+            type=raw,value=latest
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      # Builds image
-      - name: Build and push
-        uses: docker/build-push-action@v5
+
+      - name: Package and push image
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: illispi/seintrack:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            SENTRY_NODE_VERSION=${{ steps.sentry.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

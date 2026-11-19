@@ -1,0 +1,57 @@
+# Dependabot version updates. Security updates and alerts are switched on in
+# GitHub: Settings → Code security → Dependabot alerts / security updates.
+version: 2
+updates:
+  # npm packages (pnpm lockfile)
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    # Match pnpm's minimumReleaseAge: don't propose versions younger than this.
+    cooldown:
+      default-days: 3
+    open-pull-requests-limit: 10
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      # The app stays on Solid 1 until Kobalte / TanStack Query have stable
+      # Solid 2 releases. Major bumps of these mean the Solid 2 migration.
+      - dependency-name: solid-js
+        update-types: [version-update:semver-major]
+      - dependency-name: "@solidjs/*"
+        update-types: [version-update:semver-major]
+      - dependency-name: "@kobalte/*"
+        update-types: [version-update:semver-major]
+      - dependency-name: "@tanstack/solid-query*"
+        update-types: [version-update:semver-major]
+      - dependency-name: "@solid-primitives/*"
+        update-types: [version-update:semver-major]
+      # Majors that need config rewrites; handle by hand.
+      - dependency-name: tailwindcss
+        update-types: [version-update:semver-major]
+      - dependency-name: "@biomejs/biome"
+        update-types: [version-update:semver-major]
+
+  # Node.js runtime: the node:<version>-slim base image in the Dockerfile
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+
+  # Postgres image in compose.yaml
+  - package-ecosystem: docker-compose
+    directory: /
+    schedule:
+      interval: monthly
+
+  # Versions of the GitHub Actions used in workflows
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]

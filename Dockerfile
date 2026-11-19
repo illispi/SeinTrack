@@ -1,19 +1,21 @@
-FROM node:26-slim AS base
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
-COPY . /app
+# Runtime-only image. The app is built beforehand (by GitHub Actions, or locally
+# with `pnpm build`); this image only packages the finished .output folder.
+#
+#   pnpm build
+#   docker build --build-arg SENTRY_NODE_VERSION=11.14.0 -t seintrack .
+FROM node:26-slim
+
+ARG SENTRY_NODE_VERSION=11
+ENV NODE_ENV=production
 WORKDIR /app
 
-FROM base AS prod-deps
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+# instrument.server.mjs preloads Sentry, which isn't part of the bundled output.
+RUN npm install --no-save --no-package-lock --omit=dev "@sentry/node@${SENTRY_NODE_VERSION}" \
+	&& npm cache clean --force
 
-FROM base AS build
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpm run build
+COPY instrument.server.mjs ./
+COPY .output ./.output
 
-FROM base
-COPY --from=prod-deps /app/node_modules /app/node_modules
-COPY --from=build /app/.output /app/.output
+USER node
 EXPOSE 3000
-CMD [ "pnpm", "start" ]
+CMD ["node", "--env-file-if-exists=.env", "--import", "./instrument.server.mjs", ".output/server/index.mjs"]
