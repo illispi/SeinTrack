@@ -1,5 +1,6 @@
 import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
+import { migrateOnStart } from "./database/migrate";
 import { createContext } from "./trpc/context";
 import { appRouter } from "./trpc/routers/mainRouter";
 
@@ -47,6 +48,16 @@ const app = new Hono();
 // 		c.res = new Response(blob, myOptions);
 // 	}
 // });
+
+// Apply pending database migrations as soon as the server loads this module,
+// and make API requests wait until they've finished.
+migrateOnStart().catch(() => {
+	// already logged; the next request retries
+});
+app.use("/api/trpc/*", async (_c, next) => {
+	await migrateOnStart();
+	await next();
+});
 
 // Custom endpoint configuration
 app.use(
